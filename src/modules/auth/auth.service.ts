@@ -1,29 +1,59 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
+import { REPOSITORY } from 'src/core/constants';
+import User from 'src/core/database/models/user.model';
+import { USER_ROLE } from 'src/core/enums';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(REPOSITORY) private readonly userRepository: typeof User,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
+  async onModuleInit() {
+    const admin = await this.userRepository
+      .findOne({ where: { email: process.env.SUPER_ADMIN_EMAIL as string } })
+      .then((user) => {
+        console.log('admin exist');
+        return user;
+      })
+
+      .catch((error) => {
+        console.log('admin not found', error);
+      });
+    if (!admin) {
+      this.userRepository
+        .create({
+          firstName: process.env.SUPER_ADMIN_FIRST_NAME,
+          lastName: process.env.SUPER_ADMIN_LAST_NAME,
+          email: process.env.SUPER_ADMIN_EMAIL,
+          password: await bcrypt.hash(
+            process.env.SUPER_ADMIN_PASSWORD as string,
+            10,
+          ),
+          role: USER_ROLE.SUPER_ADMIN,
+          isDefaultPassword: false,
+        })
+        .then(() => {
+          console.log('admin created');
+        })
+        .catch((err) => console.log('could not create admin', err));
+    }
+  }
+
   async validateUser(username: string, pass: string) {
-    // find if user exist with this email
     const user = await this.userService.findOneByEmail(username);
     if (!user) {
       return null;
     }
-
-    // find if user password match
     const match = await this.comparePassword(pass, user.password);
     if (!match) {
       return null;
     }
-
-    // tslint:disable-next-line: no-string-literal
     const { ...result } = user['dataValues'];
     return result;
   }
@@ -34,19 +64,13 @@ export class AuthService {
   }
 
   public async create(user) {
-    // hash the password
     const pass = await this.hashPassword(user.password);
 
-    // create the user
     const newUser = await this.userService.create({ ...user, password: pass });
 
-    // tslint:disable-next-line: no-string-literal
     const { ...result } = newUser['dataValues'];
 
-    // generate token
     const token = await this.generateToken(result);
-
-    // return the user and the token
     return { user: result, token };
   }
 
