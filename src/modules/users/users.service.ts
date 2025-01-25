@@ -27,11 +27,4 @@ export class UsersService {
     }
     return user;
   }
-  //   async deleteUser(id: string): Promise<void> {
-  //     const user = await this.findOneById(id);
-  //     if (!user) {
-  //       throw new NotFoundException(`User with id ${id} not found`);
-  //     }
-  //     return await user.destroy();
-  //   }
 }

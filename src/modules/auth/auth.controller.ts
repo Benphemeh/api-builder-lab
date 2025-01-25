@@ -26,10 +26,6 @@ export class AuthController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-  //   @Post('login')
-  //   async login(@Request() req) {
-  //     return await this.authService.login(req.user);
-  //   }
 
   @Post('signup')
   async signUp(@Body() user: CreateUserDTO) {
