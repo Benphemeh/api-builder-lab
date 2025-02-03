@@ -1,14 +1,22 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import User from 'src/core/database/models/user.model';
+import { AdminGuard } from 'src/core/guards/admin.guard';
+import { AuthGuard } from '@nestjs/passport';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  //   @UseGuards(JwtGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
     return await this.usersService.getUserById(id);
   }
+  @UseGuards(AdminGuard)
+  @Get()
+  async getAllUsers(): Promise<User[]> {
+    return await this.usersService.getAllUsers();
+  }
+
   //   @Delete(':id')
   //   async deleteUser(@Param('id') id: string): Promise<void> {
   //     return await this.usersService.deleteUser(id);
