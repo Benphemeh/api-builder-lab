@@ -29,4 +29,18 @@ export class UsersService {
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.findAll<User>({});
   }
+  async updateUser(id: string, user: User): Promise<User> {
+    const [, [updatedUser]] = await this.userRepository.update(
+      { ...user },
+      { where: { id }, returning: true },
+    );
+    return updatedUser;
+  }
+  async deleteUser(id: string): Promise<void> {
+    const user = await this.userRepository.findOne<User>({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    await user.destroy();
+  }
 }
