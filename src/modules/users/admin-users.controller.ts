@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AdminGuard } from 'src/core/guards/admin.guard';
 
@@ -9,6 +9,14 @@ export class AdminUsersController {
 
   @Get()
   async findAllUsers() {
-    return await this.usersService.findAllUsers();
+    return await this.usersService.getAllUsers();
   }
+  @Get(':id')
+  async findOneUser(@Param('id') id: string) {
+    return await this.usersService.getUserById(id);
+  }
+  //   @Delete(':id')
+  //   async deleteUser(@Param('id') id: string) {
+  //     return await this.usersService.deleteUser(id);
+  //   }
 }

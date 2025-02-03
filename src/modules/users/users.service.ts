@@ -12,14 +12,13 @@ export class UsersService {
   async create(user: CreateUserDTO): Promise<User> {
     return await this.userRepository.create<User>({ ...user });
   }
-
   async findOneByEmail(email: string): Promise<User> {
     return await this.userRepository.findOne<User>({ where: { email } });
   }
-
   async findOneById(id: number): Promise<User> {
     return await this.userRepository.findOne<User>({ where: { id } });
   }
+
   async getUserById(id: string): Promise<User> {
     const user = await this.userRepository.findOne<User>({ where: { id } });
     if (!user) {
@@ -27,7 +26,7 @@ export class UsersService {
     }
     return user;
   }
-  async findAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<User[]> {
     return await this.userRepository.findAll<User>({});
   }
 }
