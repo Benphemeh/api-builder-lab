@@ -37,6 +37,7 @@ export class AuthService {
           ),
           role: USER_ROLE.SUPER_ADMIN,
           isDefaultPassword: false,
+          gender: 'MALE',
         })
         .then(() => {
           console.log('admin created');

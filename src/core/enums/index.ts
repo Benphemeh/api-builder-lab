@@ -8,3 +8,9 @@ export enum OperationStatus {
   ERROR = 'error',
   SUCCESS = 'success',
 }
+
+export enum Gender {
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHER = 'other',
+}
