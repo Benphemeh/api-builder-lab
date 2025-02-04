@@ -6,7 +6,7 @@ import { CreateUserDTO } from './dto/user.dto';
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(REPOSITORY) private readonly userRepository: typeof User,
+    @Inject(REPOSITORY.USER) private readonly userRepository: typeof User,
   ) {}
 
   async create(user: CreateUserDTO): Promise<User> {

@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { modelInstances } from 'src/core/model-instances';
 import { UsersController } from './users.controller';
+import { AdminUsersController } from './admin-users.controller';
 
 @Module({
-  // imports: [SequelizeModule.forFeature([...modelInstances])],
-  controllers: [UsersController],
+  controllers: [UsersController, AdminUsersController],
   providers: [UsersService, ...modelInstances],
   exports: [UsersService],
 })
