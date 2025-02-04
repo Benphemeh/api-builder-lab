@@ -9,7 +9,7 @@ import { USER_ROLE } from 'src/core/enums';
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(REPOSITORY) private readonly userRepository: typeof User,
+    @Inject(REPOSITORY.USER) private readonly userRepository: typeof User,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
