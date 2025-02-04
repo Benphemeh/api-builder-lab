@@ -1,6 +1,6 @@
 import { Column, DataType } from 'sequelize-typescript';
 import { BaseModel } from '../base-model';
-import { USER_ROLE } from 'src/core/enums';
+import { Gender, USER_ROLE } from 'src/core/enums';
 import { IUSER } from 'src/core/interfaces/users.interface';
 import { ApiBuilderTable } from '../base-model/table-decorators';
 
@@ -34,8 +34,7 @@ export default class User extends BaseModel implements IUSER {
   })
   password: string;
   @Column({
-    type: DataType.ENUM,
-    values: ['male', 'female'],
+    type: DataType.ENUM(...Object.values(Gender)),
     allowNull: false,
   })
   gender: string;
