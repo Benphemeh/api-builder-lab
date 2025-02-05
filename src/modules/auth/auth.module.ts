@@ -13,7 +13,7 @@ import { modelInstances } from 'src/core/model-instances';
     PassportModule,
     UsersModule,
     JwtModule.register({
-      secret: process.env.JWTKEY,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     }),
   ],
