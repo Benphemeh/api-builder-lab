@@ -2,6 +2,7 @@ import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { REPOSITORY } from '../../core/constants';
 import User from 'src/core/database/models/user.model';
 import { CreateUserDTO } from './dto/user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +16,7 @@ export class UsersService {
   async findOneByEmail(email: string): Promise<User> {
     return await this.userRepository.findOne<User>({ where: { email } });
   }
-  async findOneById(id: number): Promise<User> {
+  async findOneById(id: string): Promise<User> {
     return await this.userRepository.findOne<User>({ where: { id } });
   }
 
@@ -29,6 +30,15 @@ export class UsersService {
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.findAll<User>({});
   }
+
+  async updateUserProfile(
+    id: string,
+    data: Partial<UpdateUserDTO>,
+  ): Promise<void> {
+    const user = await this.findOneById(id);
+    await user.update(data);
+  }
+
   async updateUser(id: string, user: User): Promise<User> {
     const [, [updatedUser]] = await this.userRepository.update(
       { ...user },

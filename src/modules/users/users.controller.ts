@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import User from 'src/core/database/models/user.model';
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { UpdateUserDTO } from './dto/update-user.dto';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -19,15 +20,15 @@ export class UsersController {
   async getUser(@Param('id') id: string): Promise<User> {
     return await this.usersService.getUserById(id);
   }
-  @UseGuards(AdminGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async getAllUsers(): Promise<User[]> {
     return await this.usersService.getAllUsers();
   }
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
-  async updateUser(@Param('id') id: string, @Body() user: User): Promise<User> {
-    return await this.usersService.updateUser(id, user);
+  async updateUser(@Param('id') id: string, @Body() data: UpdateUserDTO) {
+    return await this.usersService.updateUserProfile(id, data);
   }
 
   @Delete(':id')
