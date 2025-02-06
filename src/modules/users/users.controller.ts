@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import User from 'src/core/database/models/user.model';
-import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateUserDTO } from './dto/update-user.dto';
 @Controller('users')
