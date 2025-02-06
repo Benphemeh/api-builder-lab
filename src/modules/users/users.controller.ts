@@ -24,6 +24,7 @@ export class UsersController {
   async getAllUsers(): Promise<User[]> {
     return await this.usersService.getAllUsers();
   }
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   async updateUser(@Param('id') id: string, @Body() user: User): Promise<User> {
     return await this.usersService.updateUser(id, user);
