@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import User from 'src/core/database/models/user.model';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { AdminGuard } from 'src/core/guards/admin.guard';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -29,7 +30,7 @@ export class UsersController {
   async updateUser(@Param('id') id: string, @Body() data: UpdateUserDTO) {
     return await this.usersService.updateUserProfile(id, data);
   }
-
+  @UseGuards(AdminGuard)
   @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<void> {
     return await this.usersService.deleteUser(id);
