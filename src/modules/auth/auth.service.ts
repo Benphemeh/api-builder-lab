@@ -1,17 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { REPOSITORY } from 'src/core/constants';
 import User from 'src/core/database/models/user.model';
 import { USER_ROLE } from 'src/core/enums';
+import { MailService } from 'src/core/mail/mail.service';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
   constructor(
     @Inject(REPOSITORY.USER) private readonly userRepository: typeof User,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async onModuleInit() {
@@ -72,6 +74,10 @@ export class AuthService {
     const { ...result } = newUser['dataValues'];
 
     const token = await this.generateToken(result);
+
+    // Send confirmation email
+    await this.sendUserConfirmation(result);
+
     return { user: result, token };
   }
 
@@ -88,5 +94,21 @@ export class AuthService {
   private async comparePassword(enteredPassword, dbPassword) {
     const match = await bcrypt.compare(enteredPassword, dbPassword);
     return match;
+  }
+
+  private async sendUserConfirmation(user) {
+    try {
+      await this.mailService.sendUserConfirmation({
+        email: user.email,
+        subject: 'Welcome to Our Service',
+        content: `Hello ${user.username}, please confirm your email address.`,
+      });
+      console.log(`Confirmation email sent to ${user.email}`);
+    } catch (error) {
+      console.error(
+        `Failed to send confirmation email to ${user.email}:`,
+        error,
+      );
+    }
   }
 }

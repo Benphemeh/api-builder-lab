@@ -7,6 +7,7 @@ import { LocalStrategy } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { modelInstances } from 'src/core/model-instances';
+import { MailService } from 'src/core/mail/mail.service';
 
 @Module({
   imports: [
@@ -17,7 +18,13 @@ import { modelInstances } from 'src/core/model-instances';
       signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, ...modelInstances],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    ...modelInstances,
+    MailService,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}
