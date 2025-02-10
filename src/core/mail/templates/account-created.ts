@@ -1,6 +1,6 @@
 export const userOnBoardEmail = (email: string, url: string) => {
   return `<p>Hi ${email},</p>
-  <p>Your account has been created on api-builder App. </p>
+  <p>Your login is successful on api-builder App. </p>
   <p>Click on the link below to change the default password to your desired password </p>
   
   <p>
@@ -13,7 +13,7 @@ export const userOnBoardEmail = (email: string, url: string) => {
 
 export const sendUserConfirmation = (email: string, url: string) => {
   return `<p>Hi ${email},</p>
-  <p>Your account has been created on api-builder App. </p>
+  <p>You are welcome and your account has been created on api-builder App. </p>
   <p>Click on the link below to change the default password to your desired password </p>
   
   <p>
