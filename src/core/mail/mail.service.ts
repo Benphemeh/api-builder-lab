@@ -36,8 +36,8 @@ export class MailService {
   }
   constructor(private mailerService: MailerService) {}
 
-  async sendUserOnBoard(email: string, username: string) {
-    const msg = userOnBoardEmail(username);
+  async sendUserOnBoard(email: string, user: string) {
+    const msg = userOnBoardEmail(user);
     await this.mailerService.sendMail({
       to: email,
       from: {

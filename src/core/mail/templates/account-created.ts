@@ -107,7 +107,7 @@ export const userOnBoardEmail = (firstName: string) => {
   <p>Welcome to the future of entertainment payments!</p>
   <p>With Precision and Care,<br> Rollpay Africa</p>
   `;
-  const subject = `Welcome to Rollpay Africa`;
+  const subject = `Welcome to API-bulider Lab`;
   return { msg: emailTemplate(msg), subject };
 };
 
@@ -118,6 +118,6 @@ export const sendUserConfirmation = (email: string) => {
   <p>Click on the link below to change the default password to your desired password </p>
 
   <p>If you did not request this email you can safely ignore it.</p>`;
-  const subject = `Welcome to Rollpay Africa`;
+  const subject = `Welcome to API-bulider Lab`;
   return { msg: emailTemplate(msg), subject };
 };
