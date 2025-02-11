@@ -6,7 +6,10 @@ import { REPOSITORY } from 'src/core/constants';
 import User from 'src/core/database/models/user.model';
 import { USER_ROLE } from 'src/core/enums';
 import { MailService } from 'src/core/mail/mail.service';
-import { sendUserConfirmation } from 'src/core/mail/templates/account-created';
+import {
+  sendUserConfirmation,
+  userOnBoardEmail,
+} from 'src/core/mail/templates/account-created';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -116,6 +119,12 @@ export class AuthService implements OnModuleInit {
     }
   }
   private async sendUserOnBoardEmail(username: string, email: string) {
-    await this.mailService.sendUserOnBoard(email, username);
+    try {
+      userOnBoardEmail(username);
+      await this.mailService.sendUserOnBoard(email, username);
+      console.log(`Onboarding email sent to ${email}`);
+    } catch (error) {
+      console.error(`Failed to send onboarding email to ${email}:`, error);
+    }
   }
 }
