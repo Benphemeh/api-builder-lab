@@ -6,6 +6,7 @@ import { REPOSITORY } from 'src/core/constants';
 import User from 'src/core/database/models/user.model';
 import { USER_ROLE } from 'src/core/enums';
 import { MailService } from 'src/core/mail/mail.service';
+import { sendUserConfirmation } from 'src/core/mail/templates/account-created';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -100,10 +101,11 @@ export class AuthService implements OnModuleInit {
 
   private async sendUserConfirmation(user) {
     try {
+      const msg = sendUserConfirmation(user.username);
       await this.mailService.sendUserConfirmation({
         email: user.email,
-        subject: 'Welcome to Our Service',
-        content: `Hello ${user.username}, please confirm your email address.`,
+        subject: msg.subject,
+        content: msg.msg,
       });
       console.log(`Confirmation email sent to ${user.email}`);
     } catch (error) {
