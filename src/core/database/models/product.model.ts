@@ -20,7 +20,7 @@ export default class Product extends BaseModel implements IPRODUCT {
   description: string;
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.FLOAT,
     allowNull: false,
   })
   price: number;
