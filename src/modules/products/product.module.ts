@@ -8,4 +8,4 @@ import { modelInstances } from 'src/core/model-instances';
   providers: [ProductService, ...modelInstances],
   exports: [ProductService],
 })
-export class ProductModule {}
+export class ProductsModule {}
