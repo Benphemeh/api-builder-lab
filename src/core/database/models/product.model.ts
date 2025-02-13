@@ -30,6 +30,8 @@ export default class Product extends BaseModel implements IPRODUCT {
     allowNull: false,
   })
   stock: number;
+  //   @BelongsTo(() => User)
+  //   author: User;
 
   //   @ForeignKey(() => Category)
   @Column({
