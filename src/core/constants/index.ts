@@ -6,4 +6,5 @@ export const PRODUCTION = 'production';
 export const REPOSITORY = {
   USER: 'USER_REPOSITORY',
   PRODUCT: 'PRODUCT_REPOSITORY',
+  ACTIVITY: 'ACTIVITY_REPOSITORY',
 };
