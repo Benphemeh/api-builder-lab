@@ -2,12 +2,36 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
 import ActivityModel from '../database/models/activity-log.model';
+import { ApiLoggerService } from 'src/api-logger/api-logger.service';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly logService: ApiLoggerService,
+  ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
+    try {
+      const logData = {
+        method: req.method,
+        url: req.originalUrl,
+        body: req.body,
+        headers: req.headers,
+      };
+      await this.logService.log(JSON.stringify(logData));
+      next();
+    } catch (error) {
+      console.error('Error creating log:', error);
+      next(error); // Pass the error to the next middleware
+    }
+    // try {
+    //   await this.logService.log(JSON.stringify(req));
+    //   next();
+    // } catch (error) {
+    //   console.error('Error creating log:', error);
+    //   next(error); // Pass the error to the next middleware
+    // }
     const method = req.method;
     const url = req.originalUrl;
     const body = req.body;
