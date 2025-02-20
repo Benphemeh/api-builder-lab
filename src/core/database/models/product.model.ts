@@ -1,7 +1,8 @@
-import { Column, DataType } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType } from 'sequelize-typescript';
 import { BaseModel } from '../base-model';
 import { ApiBuilderTable } from '../base-model/table-decorators';
 import { IPRODUCT } from 'src/core/interfaces/products.interface';
+import User from './user.model';
 
 @ApiBuilderTable({
   tableName: 'products',
@@ -30,10 +31,9 @@ export default class Product extends BaseModel implements IPRODUCT {
     allowNull: false,
   })
   stock: number;
-  //   @BelongsTo(() => User)
-  //   author: User;
+  @BelongsTo(() => User)
+  author: User;
 
-  //   @ForeignKey(() => Category)
   @Column({
     type: DataType.UUID,
     allowNull: true,
