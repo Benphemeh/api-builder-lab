@@ -2,8 +2,13 @@ import { Sequelize } from 'sequelize-typescript';
 import { SEQUELIZE, DEVELOPMENT, TEST, PRODUCTION } from '../constants';
 import { databaseConfig } from './database.config';
 import User from './models/user.model';
+import sequelize from 'sequelize';
 
 export const databaseProviders = [
+  {
+    provide: 'SEQUELIZE',
+    useValue: sequelize,
+  },
   {
     provide: SEQUELIZE,
     useFactory: async () => {
