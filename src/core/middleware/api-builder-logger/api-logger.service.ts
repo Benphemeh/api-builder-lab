@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { Sequelize } from 'sequelize';
 import { REPOSITORY } from 'src/core/constants';
 import ActivityModel from 'src/core/database/models/activity-log.model';
 import Log from 'src/core/database/models/log.model';
@@ -6,6 +7,7 @@ import Log from 'src/core/database/models/log.model';
 @Injectable()
 export class ApiLoggerService {
   constructor(
+    @Inject('SEQUELIZE') private readonly sequelize: Sequelize,
     @Inject(REPOSITORY.LOG) private logRepo: typeof Log,
     @Inject(REPOSITORY.ACTIVITY) private activityRepo: typeof ActivityModel,
   ) {}

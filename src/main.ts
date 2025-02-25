@@ -6,6 +6,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidateInputPipe());
-  await app.listen(3010);
+  await app.listen(3000);
 }
 bootstrap();
