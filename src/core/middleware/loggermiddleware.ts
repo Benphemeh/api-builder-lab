@@ -42,7 +42,7 @@ export class LoggerMiddleware implements NestMiddleware {
 
   private async jwtAuth(token: string) {
     const decodedToken = await this.jwtService.verify(token, {
-      secret: process.env.JWTKEY,
+      secret: process.env.JWT_SECRET,
     });
     const user = decodedToken;
     return user;
