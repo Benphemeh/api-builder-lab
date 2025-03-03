@@ -1,6 +1,6 @@
 const headerTemplate = `
 <div class="header">
-    <a href="https://x.com/Rollpay_Africa" style="color: #ffffff; margin: 0 10px;" target="_blank"><img src="https://rollpay-media.s3.af-south-1.amazonaws.com/rollpay_pry_logo.png" alt="Rollpay Logo" /></a>
+    <a href="https://oben-brands.onrender.com/" style="color: #ffffff; margin: 0 10px;" target="_blank"><img src="/images/IMG_9484.JPG" alt="Onimuelede Logo" /></a>
     <div>
         <a href="https://www.rollpay.app" style="color: #000; margin: 0 10px;">Home</a>
         <a href="https://blog.rollpay.app/" style="color: #000; margin: 0 10px;">Blog</a>
@@ -98,9 +98,12 @@ const emailTemplate = (content: string) => `
 </body>
 </html>
 `;
-export const userOnBoardEmail = (firstName: string) => {
+interface UserOnBoardParams {
+  firstName: string;
+}
+export const userOnBoardEmail = (params: UserOnBoardParams) => {
   const msg = `
-  <p>Dear ${firstName},</p>
+  <p>Dear ${params.firstName},</p>
 
   <p>Welcome to <strong>OnimuElede</strong>, your one-stop platform for premium pig farming, pork products, and farm services. We're thrilled to have you join our community!</p>
 
@@ -131,6 +134,6 @@ export const sendUserConfirmation = (email: string) => {
   <p>If you did not request this email you can safely ignore it.</p>
    <p>Best regards,</p>
   <p><strong>O'Ben brands</strong></p>`;
-  const subject = `Confirm Your OnimuElede Account`;
+  const subject = `Confirmation of Your OnimuElede Account`;
   return { msg: emailTemplate(msg), subject };
 };

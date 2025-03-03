@@ -67,7 +67,7 @@ export class AuthService implements OnModuleInit {
 
   public async login(user) {
     const token = await this.generateToken(user);
-    await this.sendUserOnBoardEmail(user.username, user.email);
+    await this.sendUserOnBoardEmail(user.firstName, user.email);
 
     return { user, token };
   }
@@ -84,8 +84,8 @@ export class AuthService implements OnModuleInit {
     // Send confirmation email
     await this.sendUserConfirmation(result);
 
-    //send user onboarding email
-    await this.sendUserOnBoardEmail(result.username, result.email);
+    //send UserOnBoard email
+    await this.sendUserOnBoardEmail(user.firstName, user.email);
 
     return { user: result, token };
   }
@@ -121,10 +121,13 @@ export class AuthService implements OnModuleInit {
       );
     }
   }
-  private async sendUserOnBoardEmail(username: string, email: string) {
+  private async sendUserOnBoardEmail(firstName: string, email: string) {
     try {
-      userOnBoardEmail(username);
-      await this.mailService.sendUserOnBoard(email, username);
+      userOnBoardEmail({ firstName });
+      await this.mailService.sendUserOnBoard(email, {
+        firstName,
+        email,
+      } as User);
       console.log(`Onboarding email sent to ${email}`);
     } catch (error) {
       console.error(`Failed to send onboarding email to ${email}:`, error);
