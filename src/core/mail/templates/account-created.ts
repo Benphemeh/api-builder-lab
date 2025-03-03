@@ -101,23 +101,36 @@ const emailTemplate = (content: string) => `
 export const userOnBoardEmail = (firstName: string) => {
   const msg = `
   <p>Dear ${firstName},</p>
-  <p>Welcome to API builder APP, the comprehensive payment platform for the diverse African entertainment industry. We're excited to have you on board!</p>
-  <p>Our platform facilitates seamless transactions, provides tailored payment solutions, and incorporates project management features, all aimed at supporting the growth and sustainability of your projects.</p>
-  <p>Get started by creating your profile and initiating your first project. If you have any questions or need assistance, our support team is always ready to help.</p>
-  <p>Welcome to the future of entertainment payments!</p>
-  <p>With Precision and Care,<br> Rollpay Africa</p>
-  `;
-  const subject = `Welcome to API-bulider Lab`;
+
+  <p>Welcome to <strong>OnimuElede</strong>, your one-stop platform for premium pig farming, pork products, and farm services. We're thrilled to have you join our community!</p>
+
+  <p>At OnimuElede, you can:</p>
+  <ul>
+    <li>Browse and purchase pigs based on size and breed.</li>
+    <li>Order fresh pork meat by kilogram for delivery.</li>
+    <li>Access essential farm services, including treatments, fumigation, and general farm maintenance.</li>
+  </ul>
+
+  <p>Get started by exploring our store and placing your first order. If you have any questions, our support team is always here to help.</p>
+
+  <p>Thank you for trusting OnimuElede for your farm needs!</p>
+
+  <p>Best regards,</p>
+  <p><strong>O'Ben brands</strong></p>`;
+  const subject = `Welcome to OnimuElede – Your Trusted Hub for Quality Pigs & Farm Products!`;
   return { msg: emailTemplate(msg), subject };
 };
 
 export const sendUserConfirmation = (email: string) => {
   const msg = `
   <p>Hi ${email},</p>
-  <p>You are welcome and your account has been created on api-builder App. </p>
-  <p>Click on the link below to change the default password to your desired password </p>
 
-  <p>If you did not request this email you can safely ignore it.</p>`;
-  const subject = `Welcome to API-bulider Lab`;
+  <p>Welcome to <strong>OnimuElede</strong>! Your account has been successfully created.</p>
+  <p>To secure your account, please click the link below to set your password:</p>
+
+  <p>If you did not request this email you can safely ignore it.</p>
+   <p>Best regards,</p>
+  <p><strong>O'Ben brands</strong></p>`;
+  const subject = `Confirm Your OnimuElede Account`;
   return { msg: emailTemplate(msg), subject };
 };

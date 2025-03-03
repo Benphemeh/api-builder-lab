@@ -84,6 +84,9 @@ export class AuthService implements OnModuleInit {
     // Send confirmation email
     await this.sendUserConfirmation(result);
 
+    //send user onboarding email
+    await this.sendUserOnBoardEmail(result.username, result.email);
+
     return { user: result, token };
   }
 

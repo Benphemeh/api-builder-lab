@@ -16,7 +16,7 @@ export class ProductService {
   // }
 
   async create(createProductDto: CreateProductDto, req: Request) {
-    const user = (req as any).user; // Make sure req.user is defined
+    const user = (req as any).user;
     if (!user) {
       throw new BadRequestException('User not found');
     }
