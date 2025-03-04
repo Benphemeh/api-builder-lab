@@ -1,6 +1,6 @@
 const headerTemplate = `
 <div class="header">
-    <a href="https://oben-brands.onrender.com/" style="color: #ffffff; margin: 0 10px;" target="_blank"><img src="/images/IMG_9484.JPG" alt="Onimuelede Logo" /></a>
+    <a href="https://oben-brands.onrender.com/" style="color: #ffffff; margin: 0 10px;" target="_blank"><img src="https://files.fm/u/ms6dd78z5u" alt="Onimuelede Logo" /></a>
     <div>
         <a href="https://www.rollpay.app" style="color: #000; margin: 0 10px;">Home</a>
         <a href="https://blog.rollpay.app/" style="color: #000; margin: 0 10px;">Blog</a>

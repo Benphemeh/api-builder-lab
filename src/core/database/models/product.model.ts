@@ -1,4 +1,4 @@
-import { BelongsTo, Column, DataType } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey } from 'sequelize-typescript';
 import { BaseModel } from '../base-model';
 import { ApiBuilderTable } from '../base-model/table-decorators';
 import { IPRODUCT } from 'src/core/interfaces/products.interface';
@@ -31,6 +31,14 @@ export default class Product extends BaseModel implements IPRODUCT {
     allowNull: false,
   })
   stock: number;
+
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  userId: string;
+
   @BelongsTo(() => User)
   author: User;
 

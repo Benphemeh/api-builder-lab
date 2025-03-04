@@ -26,6 +26,16 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: true,
       },
+      user_id: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'users', // Name of the target model
+          key: 'id', // Key in the target model that the foreign key references
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
     });
   },
 
