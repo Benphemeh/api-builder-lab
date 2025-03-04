@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
 import { JwtGuard } from '../auth/jwt-guard';
@@ -14,4 +14,24 @@ export class ProductController {
   ) {
     return this.productService.create(createProductDto, req);
   }
+
+  @UseGuards(JwtGuard)
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.productService.findOne(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get()
+  async findAll() {
+    return this.productService.findAll();
+  }
+  // @UseGuards(JwtGuard)
+  // @Patch(':id')
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updateProductDto: UpdateProductDto,
+  // ) {
+  //   return this.productService.update(id, updateProductDto);
+  // }
 }
