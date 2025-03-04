@@ -11,10 +11,6 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  // async create(product: CreateProductDto): Promise<Product> {
-  //   return await this.productRepository.create({ ...product });
-  // }
-
   async create(createProductDto: CreateProductDto, req: Request) {
     const user = (req as any).user;
     if (!user) {
