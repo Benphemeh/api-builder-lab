@@ -29,8 +29,12 @@ export class MailService {
       },
     });
     await transporter.sendMail({
-      from: process.env.MAIL_FROM,
+      // from: process.env.MAIL_FROM,
       to: email,
+      from: {
+        name: "O'Ben brands",
+        address: process.env.MAIL_FROM,
+      },
       subject,
       html: content,
     });
@@ -42,7 +46,7 @@ export class MailService {
     await this.mailerService.sendMail({
       to: email,
       from: {
-        name: 'OnimuElede',
+        name: "O'Ben brands",
         address: process.env.MAIL_FROM,
       },
       subject: msg.subject,
@@ -52,12 +56,12 @@ export class MailService {
   async sendProductListedEmail(email: string, user: User, productName: string) {
     const html = productListedEmail({
       firstName: user.firstName,
-      productName, // Replace with actual product name
+      productName,
     });
     await this.mailerService.sendMail({
       to: email,
       from: {
-        name: 'OnimuElede',
+        name: "O'Ben brands",
         address: process.env.MAIL_FROM,
       },
       subject: html.subject,
