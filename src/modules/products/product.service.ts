@@ -8,12 +8,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { REPOSITORY } from 'src/core/constants';
 import Product from 'src/core/database/models/product.model';
 import { Repository } from 'sequelize-typescript';
+import { MailService } from 'src/core/mail/mail.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @Inject(REPOSITORY.PRODUCT)
     private readonly productRepository: Repository<Product>,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createProductDto: CreateProductDto, req: Request) {
@@ -26,6 +28,13 @@ export class ProductService {
       ...createProductDto,
       userId: user.id,
     });
+
+    // Send email notification
+    await this.mailService.sendProductListedEmail(
+      user.email,
+      user,
+      createProductDto.name, // Assuming the product name is in the DTO
+    );
 
     return product;
   }
