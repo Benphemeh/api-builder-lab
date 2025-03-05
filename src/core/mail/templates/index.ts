@@ -2,17 +2,17 @@ const headerTemplate = `
 <div class="header">
     <a href="https://oben-brands.onrender.com/" style="color: #ffffff; margin: 0 10px;" target="_blank"><img src="https://files.fm/u/ms6dd78z5u" alt="Onimuelede Logo" /></a>
     <div>
-        <a href="https://www.rollpay.app" style="color: #000; margin: 0 10px;">Home</a>
+        <a href="https://oben-brands.onrender.com/" style="color: #000; margin: 0 10px;">Home</a>
         <a href="https://blog.rollpay.app/" style="color: #000; margin: 0 10px;">Blog</a>
         <a href="https://www.rollpay.app/" style="color: #000; margin: 0 10px;">Tutorials</a>
-        <a href="https://www.rollpay.app/contact" style="color: #000; margin: 0 10px;">Support</a>
+        <a href="https://oben-brands.onrender.com/" style="color: #000; margin: 0 10px;">Support</a>
     </div>
 </div>
 `;
 
 const footerTemplate = `
 <div class="footer">
-    <p>&copy; 2024 Rollpay, Muritala Muhammad, Yaba. Lagos</p>
+    <p>&copy; 2024 O'Ben brands, 18, Ogunleye street, off oshinfolarin. Ilaje, Bariga. Lagos</p>
     <div class="social-icons">
         <a href="https://x.com/Rollpay_Africa" style="color: #ffffff; margin: 0 10px;" target="_blank"><img src="https://rollpay-media.s3.af-south-1.amazonaws.com/icons8-x-50.png" alt="X" /></a>
         <a href="https://www.facebook.com/rollpayafrica/" style="color: #ffffff; margin: 0 10px;" target="_blank"><img src="https://rollpay-media.s3.af-south-1.amazonaws.com/icons8-facebook-50-wht.png" alt="Facebook" /></a>
