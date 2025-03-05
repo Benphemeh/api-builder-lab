@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -31,7 +32,21 @@ export class ProductController {
 
   @UseGuards(JwtGuard)
   @Get()
-  async findAll() {
-    return this.productService.findAll();
+  async getAllProducts(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('search') search: string = '',
+    @Query('sortBy') sortBy: string = 'createdAt',
+    @Query('sortOrder') sortOrder: 'ASC' | 'DESC',
+    @Query('category') category: string = '',
+  ) {
+    return this.productService.findAll(
+      page,
+      limit,
+      search,
+      sortBy,
+      sortOrder,
+      category,
+    );
   }
 }

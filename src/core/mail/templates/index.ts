@@ -46,13 +46,13 @@ const emailTemplate = (content: string) => `
         }
         .header {
             background-color: #ffffff;
-            color: #000000;
+            color:rgb(39, 36, 36);
             padding: 20px;
             text-align: center;
         }
         .footer {
-            background-color: #004d40;
-            color: #ffffff;
+            background-color:rgb(9, 39, 31);
+            color:rgb(191, 94, 94);
             padding: 20px;
             text-align: center;
         }

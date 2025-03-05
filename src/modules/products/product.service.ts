@@ -9,6 +9,7 @@ import { REPOSITORY } from 'src/core/constants';
 import Product from 'src/core/database/models/product.model';
 import { Repository } from 'sequelize-typescript';
 import { MailService } from 'src/core/mail/mail.service';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ProductService {
@@ -47,7 +48,31 @@ export class ProductService {
     return product;
   }
 
-  async findAll(): Promise<Product[]> {
-    return this.productRepository.findAll();
+  async findAll(
+    page: number,
+    limit: number,
+    search: string,
+    sortBy: string,
+    sortOrder: 'ASC' | 'DESC',
+    category: string,
+  ): Promise<{ data: Product[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const where: any = {};
+
+    if (search) {
+      where.name = { [Op.like]: `%${search}%` };
+    }
+
+    if (category) {
+      where.category = category;
+    }
+    const { rows, count } = await this.productRepository.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order: [[sortBy, sortOrder]],
+    });
+
+    return { data: rows, total: count };
   }
 }
