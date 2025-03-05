@@ -9,7 +9,7 @@ import { MailService } from 'src/core/mail/mail.service';
 import {
   sendUserConfirmation,
   userOnBoardEmail,
-} from 'src/core/mail/templates/account-created';
+} from 'src/core/mail/templates';
 
 @Injectable()
 export class AuthService implements OnModuleInit {

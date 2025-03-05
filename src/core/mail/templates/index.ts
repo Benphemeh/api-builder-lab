@@ -124,9 +124,9 @@ export const userOnBoardEmail = (params: UserOnBoardParams) => {
   return { msg: emailTemplate(msg), subject };
 };
 
-export const sendUserConfirmation = (email: string) => {
+export const sendUserConfirmation = (firstName: string) => {
   const msg = `
-  <p>Hi ${email},</p>
+  <p>Hi ${firstName},</p>
 
   <p>Welcome to <strong>OnimuElede</strong>! Your account has been successfully created.</p>
   <p>To secure your account, please click the link below to set your password:</p>
@@ -135,5 +135,20 @@ export const sendUserConfirmation = (email: string) => {
    <p>Best regards,</p>
   <p><strong>O'Ben brands</strong></p>`;
   const subject = `Confirmation of Your OnimuElede Account`;
+  return { msg: emailTemplate(msg), subject };
+};
+interface ProductListedParams {
+  firstName: string;
+  productName: string;
+}
+export const productListedEmail = (params: ProductListedParams) => {
+  const msg = `
+<p>Dear ${params.firstName},</p>
+  <p>Your product <strong>${params.productName}</strong> has been listed successfully.</p>
+  <p>Thank you for using our service.</p>
+  <p>Best regards,</p>
+  <p>O'Ben Brands</p>
+`;
+  const subject = `Product Listed Successfully`;
   return { msg: emailTemplate(msg), subject };
 };
