@@ -1,4 +1,5 @@
 'use strict';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const baseModel = require('../base-model/base-model.migration');
 
 /** @type {import('sequelize-cli').Migration} */
@@ -30,8 +31,8 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'users', // Name of the target model
-          key: 'id', // Key in the target model that the foreign key references
+          model: 'users',
+          key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',

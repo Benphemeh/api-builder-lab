@@ -1,4 +1,5 @@
 'use strict';
+
 const baseModel = require('../base-model/base-model.migration');
 
 /** @type {import('sequelize-cli').Migration} */
