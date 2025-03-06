@@ -10,6 +10,7 @@ import Product from 'src/core/database/models/product.model';
 import { Repository } from 'sequelize-typescript';
 import { MailService } from 'src/core/mail/mail.service';
 import { Op } from 'sequelize';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -34,8 +35,9 @@ export class ProductService {
     await this.mailService.sendProductListedEmail(
       user.email,
       user,
-      createProductDto.name, // Assuming the product name is in the DTO
+      createProductDto.name,
     );
+    console.log(`Product listing email successfully sent to ${user.email}`);
 
     return product;
   }
@@ -74,5 +76,19 @@ export class ProductService {
     });
 
     return { data: rows, total: count };
+  }
+  async updateProduct(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    const product = await this.productRepository.findByPk(id);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    await product.update(updateProductDto);
+
+    console.log(`Product ${product.name} updated successfully`);
+    return product;
   }
 }

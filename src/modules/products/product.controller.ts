@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -11,6 +12,7 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
 import { JwtGuard } from '../auth/jwt-guard';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductController {
@@ -48,5 +50,13 @@ export class ProductController {
       sortOrder,
       category,
     );
+  }
+  @UseGuards(JwtGuard)
+  @Patch(':id')
+  async updateProduct(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    return await this.productService.updateProduct(id, updateProductDto);
   }
 }
