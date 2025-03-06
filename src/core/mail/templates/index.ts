@@ -152,3 +152,25 @@ export const productListedEmail = (params: ProductListedParams) => {
   const subject = `Product Listed Successfully`;
   return { msg: emailTemplate(msg), subject };
 };
+interface ProductUpdatedParams {
+  firstName: string;
+  productName: string;
+  price: number;
+  stock: number;
+}
+
+export const productUpdatedEmail = (params: ProductUpdatedParams) => {
+  const msg = `
+  <p>Dear ${params.firstName},</p>
+  <p>Your product <strong>${params.productName}</strong> has been updated successfully.</p>
+  <p><strong>New Price:</strong> $${params.price}</p>
+  <p><strong>New Stock:</strong> ${params.stock} units</p>
+  <p>Thank you for using our service.</p>
+  <p>Best regards,</p>
+  <p>O'Ben Brands</p>
+  `;
+
+  const subject = `Product Updated Successfully`;
+
+  return { msg: emailTemplate(msg), subject };
+};

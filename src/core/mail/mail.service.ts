@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
-import { productListedEmail, userOnBoardEmail } from './templates';
+import { productListedEmail, productUpdatedEmail, userOnBoardEmail } from './templates';
 import { User } from '../database';
 
 @Injectable()
@@ -67,5 +67,31 @@ export class MailService {
       subject: html.subject,
       html: html.msg,
     });
+  }
+  async sendProductUpdatedEmail(
+    email: string,
+    user: User,
+    productName: string,
+    price: number,
+    stock: number,
+  ) {
+    const html = productUpdatedEmail({
+      firstName: user.firstName,
+      productName,
+      price,
+      stock,
+    });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+      subject: html.subject,
+      html: html.msg,
+    });
+
+    console.log(`Product update email sent successfully to ${email}`);
   }
 }
