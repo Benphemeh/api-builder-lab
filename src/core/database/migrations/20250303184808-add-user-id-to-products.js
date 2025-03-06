@@ -6,8 +6,8 @@ module.exports = {
       type: Sequelize.UUID,
       allowNull: false,
       references: {
-        model: 'users', // Name of the target model
-        key: 'id', // Key in the target model that the foreign key references
+        model: 'users',
+        key: 'id',
       },
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
