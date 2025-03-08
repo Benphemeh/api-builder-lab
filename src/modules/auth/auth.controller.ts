@@ -18,7 +18,7 @@ import { DoesUserExist } from 'src/core/guards/doesUserExist.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Post('login')
   async login(@Body() data: LoginDto, @Req() req: AuthUser) {
     try {
