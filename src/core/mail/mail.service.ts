@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
-import { productListedEmail, productUpdatedEmail, userOnBoardEmail } from './templates';
+import {
+  productListedEmail,
+  productUpdatedEmail,
+  userOnBoardEmail,
+} from './templates';
 import { User } from '../database';
 
 @Injectable()

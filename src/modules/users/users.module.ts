@@ -1,12 +1,23 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { modelInstances } from 'src/core/model-instances';
 import { UsersController } from './users.controller';
 import { AdminUsersController } from './admin-users.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from '../auth/auth.module';
+import { usersProviders } from './users.providers';
+import { MailModule } from 'src/core/mail/mail.module';
 
 @Module({
+  imports: [
+    MailModule,
+    forwardRef(() => AuthModule),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
+    }),
+  ],
   controllers: [UsersController, AdminUsersController],
-  providers: [UsersService, ...modelInstances],
+  providers: [UsersService, ...usersProviders],
   exports: [UsersService],
 })
 export class UsersModule {}
