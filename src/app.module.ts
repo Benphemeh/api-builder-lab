@@ -13,7 +13,7 @@ import { ApiLoggerModule } from './core/middleware/api-builder-logger/api-logger
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
     DatabaseModule,
     MailModule,
     UsersModule,

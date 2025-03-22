@@ -7,7 +7,6 @@ import {
   HttpStatus,
   Req,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthUser } from 'src/core/interfaces';

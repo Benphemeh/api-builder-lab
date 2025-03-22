@@ -9,9 +9,11 @@ import { JwtStrategy } from './jwt.strategy';
 import { modelInstances } from 'src/core/model-instances';
 import { MailService } from 'src/core/mail/mail.service';
 import { MailModule } from 'src/core/mail/mail.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     MailModule,
     PassportModule,
     forwardRef(() => UsersModule),

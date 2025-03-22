@@ -7,7 +7,7 @@ import { MailModule } from 'src/core/mail/mail.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule, MailModule, forwardRef(() => AuthModule), ],
+  imports: [DatabaseModule, MailModule, forwardRef(() => AuthModule)],
   controllers: [ProductController],
   providers: [...productProviders],
   exports: [ProductService],
