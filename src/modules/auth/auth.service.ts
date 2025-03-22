@@ -1,4 +1,10 @@
-import { forwardRef, Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  OnModuleInit,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -65,13 +71,30 @@ export class AuthService implements OnModuleInit {
     const { ...result } = user['dataValues'];
     return result;
   }
-
   public async login(user) {
-    const token = await this.generateToken(user);
-    await this.sendUserOnBoardEmail(user.firstName, user.email);
+    try {
+      const token = await this.generateToken(user);
+      await this.sendUserOnBoardEmail(user.firstName, user.email);
 
-    return { user, token };
+      console.log('Generated Token:', token);
+      return { user, token };
+    } catch (error) {
+      console.error('Error during login:', error.message);
+      throw new UnauthorizedException('Invalid credentials');
+    }
   }
+
+  // public async login(user) {
+  //   try {
+  //     const token = await this.generateToken(user);
+  //     await this.sendUserOnBoardEmail(user.firstName, user.email);
+
+  //     return { user, token };
+  //   } catch (error) {
+  //     console.error('Error during login:', error.message);
+  //     throw new UnauthorizedException('Invalid credentials');
+  //   }
+  // }
 
   public async create(user) {
     const pass = await this.hashPassword(user.password);
