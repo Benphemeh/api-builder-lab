@@ -3,14 +3,10 @@ import {
   Body,
   Post,
   UseGuards,
-  HttpException,
-  HttpStatus,
-  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
-import { AuthUser } from 'src/core/interfaces';
 import { CreateUserDTO } from '../users/dto/user.dto';
 import { DoesUserExist } from 'src/core/guards/doesUserExist.guard';
 
@@ -19,13 +15,24 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   // @UseGuards(AuthGuard('jwt'))
+  // @Post('login')
+  // async login(@Body() data: LoginDto, @Req() req: AuthUser) {
+  //   try {
+  //     return req.user;
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
   @Post('login')
-  async login(@Body() data: LoginDto, @Req() req: AuthUser) {
-    try {
-      return req.user;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  async login(@Body() loginDto: LoginDto) {
+    const user = await this.authService.validateUser(
+      loginDto.email,
+      loginDto.password,
+    );
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
+    return this.authService.login(user); // ✅ Ensure this returns the response
   }
 
   @UseGuards(DoesUserExist)
