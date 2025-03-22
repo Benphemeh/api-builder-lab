@@ -12,8 +12,8 @@ import { MailModule } from 'src/core/mail/mail.module';
     MailModule,
     forwardRef(() => AuthModule),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
+      secret: process.env.JWT_SECRET || 'mySecretKeyHere',
+      signOptions: { expiresIn: process.env.TOKEN_EXPIRATION || '48h' },
     }),
   ],
   controllers: [UsersController, AdminUsersController],
