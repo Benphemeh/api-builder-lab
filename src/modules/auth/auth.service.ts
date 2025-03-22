@@ -93,7 +93,7 @@ export class AuthService implements OnModuleInit {
   private async generateToken(user) {
     try {
       // Use a hardcoded secret as fallback
-      const secret = process.env.JWT_SECRET || 'mySecretKeyHere';
+      const secret = process.env.JWT_SECRET;
       console.log(
         'Using JWT secret:',
         secret ? 'Secret is defined' : 'Secret is undefined',
