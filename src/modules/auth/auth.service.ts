@@ -74,27 +74,14 @@ export class AuthService implements OnModuleInit {
   public async login(user) {
     try {
       const token = await this.generateToken(user);
-      await this.sendUserOnBoardEmail(user.firstName, user.email);
 
-      console.log('Generated Token:', token);
+      console.log('login successful');
       return { user, token };
     } catch (error) {
       console.error('Error during login:', error.message);
       throw new UnauthorizedException('Invalid credentials');
     }
   }
-
-  // public async login(user) {
-  //   try {
-  //     const token = await this.generateToken(user);
-  //     await this.sendUserOnBoardEmail(user.firstName, user.email);
-
-  //     return { user, token };
-  //   } catch (error) {
-  //     console.error('Error during login:', error.message);
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
-  // }
 
   public async create(user) {
     const pass = await this.hashPassword(user.password);
