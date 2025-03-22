@@ -16,8 +16,8 @@ import { MailModule } from 'src/core/mail/mail.module';
     PassportModule,
     forwardRef(() => UsersModule),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'mySecretKeyHere',
-      signOptions: { expiresIn: process.env.TOKEN_EXPIRATION || '48h' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     }),
   ],
   providers: [
