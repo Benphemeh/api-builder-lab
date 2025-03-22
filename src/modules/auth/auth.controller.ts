@@ -14,15 +14,6 @@ import { DoesUserExist } from 'src/core/guards/doesUserExist.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @Post('login')
-  // async login(@Body() data: LoginDto, @Req() req: AuthUser) {
-  //   try {
-  //     return req.user;
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(
