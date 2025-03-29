@@ -19,16 +19,18 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
   @UseGuards(JwtGuard)
   @Post()
-  async create(
+  async createProduct(
     @Body() createProductDto: CreateProductDto,
     @Req() req: Request,
   ) {
+    // Log the user from the request to debug
+    console.log('User from request:', (req as any).user);
     return this.productService.create(createProductDto, req);
   }
 
   @UseGuards(JwtGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOneProduct(@Param('id') id: string) {
     return this.productService.findOne(id);
   }
 
