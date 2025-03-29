@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -18,7 +19,10 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
-    return await this.usersService.getUserById(id);
+    if (!id) {
+      throw new BadRequestException('User ID is required');
+    }
+    return this.usersService.getUserById(id);
   }
   @UseGuards(AuthGuard('jwt'))
   @Get()

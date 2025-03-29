@@ -24,9 +24,19 @@ export class ProductService {
 
   async create(createProductDto: CreateProductDto, req: Request) {
     const user = (req as any).user;
+
+    // Add validation and debug logging
     if (!user) {
+      console.error('User not found in request');
       throw new BadRequestException('User not found');
     }
+
+    if (!user.id) {
+      console.error('User ID is undefined', user);
+      throw new BadRequestException('User ID is required');
+    }
+
+    console.log(`Creating product for user ID: ${user.id}`);
 
     const product = await this.productRepository.create({
       ...createProductDto,
@@ -43,6 +53,27 @@ export class ProductService {
 
     return product;
   }
+  // async create(createProductDto: CreateProductDto, req: Request) {
+  //   const user = (req as any).user;
+  //   if (!user) {
+  //     throw new BadRequestException('User not found');
+  //   }
+
+  //   const product = await this.productRepository.create({
+  //     ...createProductDto,
+  //     userId: user.id,
+  //   });
+
+  //   // Send email notification
+  //   await this.mailService.sendProductListedEmail(
+  //     user.email,
+  //     user,
+  //     createProductDto.name,
+  //   );
+  //   console.log(`Product listing email successfully sent to ${user.email}`);
+
+  //   return product;
+  // }
 
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findByPk(id);

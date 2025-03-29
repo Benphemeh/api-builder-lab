@@ -3,6 +3,7 @@ import {
   Inject,
   NotFoundException,
   forwardRef,
+  BadRequestException,
 } from '@nestjs/common';
 import { REPOSITORY } from '../../core/constants';
 import * as bcrypt from 'bcrypt';
@@ -25,11 +26,25 @@ export class UsersService {
     return await this.userRepository.create<User>({ ...user });
   }
   async findOneByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne<User>({ where: { email } });
+    return await this.userRepository.findOne<User>({
+      where: { email },
+      attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
+    });
   }
   async findOneById(id: string): Promise<User> {
-    return await this.userRepository.findOne<User>({ where: { id } });
+    if (!id) {
+      throw new BadRequestException('User ID is required');
+    }
+
+    const user = await this.userRepository.findOne<User>({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return user;
   }
+  // async findOneById(id: string): Promise<User> {
+  //   return await this.userRepository.findOne<User>({ where: { id } });
+  // }
 
   async getUserById(id: string): Promise<User> {
     const user = await this.userRepository.findOne<User>({ where: { id } });
