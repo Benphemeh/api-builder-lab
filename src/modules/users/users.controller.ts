@@ -19,11 +19,18 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
-    if (!id) {
-      throw new BadRequestException('User ID is required');
+    try {
+      if (!id) {
+        throw new BadRequestException('User ID is required');
+      }
+      console.log(`Processing request for user ID: ${id}`);
+      return this.usersService.getUserById(id);
+    } catch (error) {
+      console.error(`Error in getUser controller: ${error.message}`);
+      throw error;
     }
-    return this.usersService.getUserById(id);
   }
+
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getAllUsers(): Promise<User[]> {
