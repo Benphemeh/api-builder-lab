@@ -32,27 +32,39 @@ export class UsersService {
     });
   }
   async findOneById(id: string): Promise<User> {
+    console.log(`findOneById called with ID: "${id}", type: ${typeof id}`);
+
     if (!id) {
+      console.warn('Undefined or empty ID detected');
       throw new BadRequestException('User ID is required');
     }
 
-    const user = await this.userRepository.findOne<User>({ where: { id } });
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
+    try {
+      const user = await this.userRepository.findOne<User>({ where: { id } });
+      if (!user) {
+        throw new NotFoundException(`User with id ${id} not found`);
+      }
+      return user;
+    } catch (error) {
+      console.error(`Error finding user with ID ${id}:`, error.message);
+      throw error;
     }
-    return user;
   }
+
   // async findOneById(id: string): Promise<User> {
   //   return await this.userRepository.findOne<User>({ where: { id } });
   // }
-
   async getUserById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne<User>({ where: { id } });
-    if (!user) {
-      throw new NotFoundException(`User with id ${id} not found`);
-    }
-    return user;
+    console.log(`Fetching user with ID: ${id}`); // Debugging
+    return this.findOneById(id);
   }
+  // async getUserById(id: string): Promise<User> {
+  //   const user = await this.userRepository.findOne<User>({ where: { id } });
+  //   if (!user) {
+  //     throw new NotFoundException(`User with id ${id} not found`);
+  //   }
+  //   return user;
+  // }
   async getAllUsers(): Promise<User[]> {
     return await this.userRepository.findAll<User>({});
   }
