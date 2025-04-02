@@ -23,7 +23,7 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return this.authService.login(user); // ✅ Ensure this returns the response
+    return this.authService.login(user); // Ensure this returns response
   }
 
   @UseGuards(DoesUserExist)

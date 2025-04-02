@@ -75,7 +75,7 @@ export class UsersService {
       return null;
     }
 
-    // Check if user is an admin
+    // check if user is an admin
     if (user.role !== 'admin') {
       return null;
     }
