@@ -15,10 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    // Add debug logging
     console.log('JWT payload:', payload);
-
-    // Use sub for user ID instead of id (standard JWT practice)
     const userId = payload.sub || payload.id;
 
     if (!userId) {

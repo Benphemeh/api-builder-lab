@@ -53,28 +53,6 @@ export class ProductService {
 
     return product;
   }
-  // async create(createProductDto: CreateProductDto, req: Request) {
-  //   const user = (req as any).user;
-  //   if (!user) {
-  //     throw new BadRequestException('User not found');
-  //   }
-
-  //   const product = await this.productRepository.create({
-  //     ...createProductDto,
-  //     userId: user.id,
-  //   });
-
-  //   // Send email notification
-  //   await this.mailService.sendProductListedEmail(
-  //     user.email,
-  //     user,
-  //     createProductDto.name,
-  //   );
-  //   console.log(`Product listing email successfully sent to ${user.email}`);
-
-  //   return product;
-  // }
-
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findByPk(id);
     if (!product) {
@@ -137,7 +115,6 @@ export class ProductService {
           );
         }
       } catch (error) {
-        // Log error but don't fail the product update
         console.error(`Failed to send email update: ${error.message}`);
       }
     }
