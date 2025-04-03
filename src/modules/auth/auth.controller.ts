@@ -14,6 +14,12 @@ import { DoesUserExist } from 'src/core/guards/doesUserExist.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @UseGuards(DoesUserExist)
+  @Post('signup')
+  async signUp(@Body() user: CreateUserDTO) {
+    return await this.authService.create(user);
+  }
+
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     const user = await this.authService.validateUser(
@@ -23,12 +29,6 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    return this.authService.login(user); // Ensure this returns response
-  }
-
-  @UseGuards(DoesUserExist)
-  @Post('signup')
-  async signUp(@Body() user: CreateUserDTO) {
-    return await this.authService.create(user);
+    return this.authService.login(user);
   }
 }

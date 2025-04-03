@@ -102,7 +102,6 @@ export class AuthService implements OnModuleInit {
   }
   private async generateToken(user) {
     try {
-      // Use a hardcoded secret as fallback
       const secret = process.env.JWT_SECRET;
       console.log(
         'Using JWT secret:',
@@ -116,11 +115,6 @@ export class AuthService implements OnModuleInit {
       throw error;
     }
   }
-
-  // private async generateToken(user) {
-  //   const token = await this.jwtService.signAsync(user);
-  //   return token;
-  // }
 
   private async hashPassword(password) {
     const hash = await bcrypt.hash(password, 10);
