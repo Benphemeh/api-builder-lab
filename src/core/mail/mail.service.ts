@@ -96,6 +96,6 @@ export class MailService {
       html: html.msg,
     });
 
-    console.log(`Product update email sent successfully to ${email}`);
+    console.log(`Product update email sent to ${email}`);
   }
 }
