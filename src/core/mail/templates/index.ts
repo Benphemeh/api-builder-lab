@@ -160,10 +160,11 @@ interface ProductUpdatedParams {
 }
 
 export const productUpdatedEmail = (params: ProductUpdatedParams) => {
+  const formattedPrice = `₦${Number(params.price).toLocaleString()}`;
   const msg = `
   <p>Dear ${params.firstName},</p>
   <p>Your product <strong>${params.productName}</strong> has been updated successfully.</p>
-  <p><strong>New Price:</strong> $${params.price}</p>
+  <p><strong>New Price:</strong> ${formattedPrice}</p>
   <p><strong>New Stock:</strong> ${params.stock} units</p>
   <p>Thank you for using our service.</p>
   <p>Best regards,</p>

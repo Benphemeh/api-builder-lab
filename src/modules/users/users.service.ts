@@ -51,11 +51,8 @@ export class UsersService {
     }
   }
 
-  // async findOneById(id: string): Promise<User> {
-  //   return await this.userRepository.findOne<User>({ where: { id } });
-  // }
   async getUserById(id: string): Promise<User> {
-    console.log(`Fetching user with ID: ${id}`); // Debugging
+    console.log(`Fetching user with ID: ${id}`);
     return this.findOneById(id);
   }
   // async getUserById(id: string): Promise<User> {
@@ -84,8 +81,6 @@ export class UsersService {
     if (!isPasswordValid) {
       return null;
     }
-
-    // Better way to remove password from returned user object
     const userObject = user.toJSON ? user.toJSON() : { ...user.dataValues };
     delete userObject.password;
 
