@@ -23,7 +23,6 @@ export class ProductController {
     @Body() createProductDto: CreateProductDto,
     @Req() req: Request,
   ) {
-    // Log the user from the request to debug
     console.log('User from request:', (req as any).user);
     return this.productService.create(createProductDto, req);
   }
