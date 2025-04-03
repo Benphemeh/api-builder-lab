@@ -27,9 +27,7 @@ export class CreateUserDTO {
   password: string;
 
   @IsNotEmpty()
-  @IsEnum(['male', 'female'], {
-    message: 'Gender must be either male or female',
-  })
+  @IsEnum(['male', 'female'])
   gender: string;
 
   @IsOptional()

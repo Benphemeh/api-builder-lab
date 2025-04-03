@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AdminGuard } from 'src/core/guards/admin.guard';
-import { CreateUserDTO } from './dto/user.dto';
+import { AdminDTO } from './dto/admin-login.dto';
 // import { AdminGuard } from 'src/core/guards/admin.guard';
 
 @UseGuards(AdminGuard)
@@ -18,8 +18,9 @@ import { CreateUserDTO } from './dto/user.dto';
 export class AdminUsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(AdminGuard)
   @Post('login')
-  async login(@Body() adminLoginDto: CreateUserDTO) {
+  async login(@Body() adminLoginDto: AdminDTO) {
     const admin = await this.usersService.validateAdmin(
       adminLoginDto.email,
       adminLoginDto.password,

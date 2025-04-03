@@ -7,7 +7,7 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsString()
-  description?: string;
+  description: string;
 
   @Type(() => Number)
   @IsNumber()
@@ -21,5 +21,5 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsString()
-  category?: string;
+  category: string;
 }
