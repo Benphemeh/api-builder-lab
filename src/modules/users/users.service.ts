@@ -51,10 +51,6 @@ export class UsersService {
     }
   }
 
-  // async getUserById(id: string): Promise<User> {
-  //   console.log(`Fetching user with ID: ${id}`);
-  //   return this.findOneById(id);
-  // }
   async getUserById(id: string): Promise<User> {
     const user = await this.userRepository.findOne<User>({ where: { id } });
     if (!user) {

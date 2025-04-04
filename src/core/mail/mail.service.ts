@@ -23,7 +23,7 @@ export class MailService {
     const transporter = nodemailer.createTransport({
       host: MAIL_HOST,
       port: Number(MAIL_PORT),
-      secure: false, // true for 587, false for other ports
+      secure: false, // true for 587
       auth: {
         user: MAIL_USER,
         pass: MAIL_PASSWORD,
