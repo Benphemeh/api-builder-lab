@@ -10,6 +10,7 @@ import { ProductsModule } from './modules/products/product.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { LoggerMiddleware } from './core/middleware/loggermiddleware';
 import { ApiLoggerModule } from './core/middleware/api-builder-logger/api-logger.module';
+import { InternalCacheModule } from './modules/cache/cache.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ApiLoggerModule } from './core/middleware/api-builder-logger/api-logger
     AuthModule,
     ProductsModule,
     ApiLoggerModule,
+    InternalCacheModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
