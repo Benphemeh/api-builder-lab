@@ -18,9 +18,9 @@ export class RedisService {
         },
       }),
       retryStrategy: (times) => {
-        if (times > 5) {
+        if (times > 3) {
           console.error(`Redis connection failed after ${times} attempts`);
-          return null; // don't retry after 5 attempts
+          return null; // don't retry after 3 attempts
         }
         return Math.min(times * 100, 3000); // time between retries
       },
