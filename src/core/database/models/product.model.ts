@@ -47,4 +47,22 @@ export default class Product extends BaseModel implements IPRODUCT {
     allowNull: true,
   })
   categoryId: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  size: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  breed: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  type: string; // e.g., "pork", "fumigation"
 }

@@ -11,7 +11,6 @@ import {
 import { UsersService } from './users.service';
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminDTO } from './dto/admin-login.dto';
-// import { AdminGuard } from 'src/core/guards/admin.guard';
 
 @UseGuards(AdminGuard)
 @Controller('admin/users')

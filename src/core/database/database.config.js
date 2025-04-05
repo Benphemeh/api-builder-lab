@@ -8,7 +8,7 @@ module.exports = {
     database: process.env.DB_NAME_DEVELOPMENT,
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
-    dialect: process.env.DB_DIALECT,
+    dialect: process.env.DB_DIALECT || 'postgres',
     url: process.env.DATABASE_URL,
   },
   test: {
@@ -17,7 +17,7 @@ module.exports = {
     database: process.env.DB_NAME_TEST,
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
-    dialect: process.env.DB_DIALECT,
+    dialect: process.env.DB_DIALECT || 'postgres',
     url: process.env.DATABASE_URL,
   },
   production: {
@@ -25,7 +25,7 @@ module.exports = {
     password: process.env.DB_PASS,
     database: process.env.DB_NAME_PRODUCTION,
     port: Number(process.env.DB_PORT),
-    dialect: process.env.DB_DIALECT,
+    dialect: process.env.DB_DIALECT || 'postgres',
     url: process.env.DATABASE_URL,
   },
 };
