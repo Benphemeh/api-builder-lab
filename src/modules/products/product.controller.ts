@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
-import { JwtGuard } from '../auth/jwt-guard';
+import { JwtGuard } from '../guards/jwt-guard';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
