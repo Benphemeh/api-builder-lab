@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -40,17 +41,37 @@ export class ProductController {
     @Query('limit') limit: number = 10,
     @Query('search') search: string = '',
     @Query('sortBy') sortBy: string = 'createdAt',
-    @Query('sortOrder') sortOrder: 'ASC' | 'DESC',
+    @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
     @Query('category') category: string = '',
   ) {
-    return this.productService.findAll(
-      page,
-      limit,
-      search,
-      sortBy,
-      sortOrder,
-      category,
-    );
+    try {
+      // Validate pagination parameters
+      if (page < 1) {
+        throw new BadRequestException('Page number must be greater than 0');
+      }
+      if (limit < 1) {
+        throw new BadRequestException('Limit must be greater than 0');
+      }
+
+      // Call the service to fetch products
+      const products = await this.productService.findAll(
+        page,
+        limit,
+        search,
+        sortBy,
+        sortOrder,
+        category,
+      );
+
+      return {
+        success: true,
+        message: 'Products retrieved successfully',
+        data: products,
+      };
+    } catch (error) {
+      console.error('Error fetching products:', error.message);
+      throw new BadRequestException('Failed to fetch products');
+    }
   }
   @UseGuards(JwtGuard)
   @Patch(':id')
