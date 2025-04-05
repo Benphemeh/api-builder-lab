@@ -22,4 +22,15 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   category: string;
+  @IsOptional()
+  @IsString()
+  size: string;
+
+  @IsOptional()
+  @IsString()
+  breed: string;
+
+  // @IsNotEmpty()
+  @IsString()
+  type: string;
 }

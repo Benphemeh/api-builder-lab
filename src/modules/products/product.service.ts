@@ -60,7 +60,6 @@ export class ProductService {
     }
     return product;
   }
-
   async findAll(
     page: number,
     limit: number,
@@ -68,17 +67,39 @@ export class ProductService {
     sortBy: string,
     sortOrder: 'ASC' | 'DESC',
     category: string,
+    size?: string,
+    breed?: string,
+    type?: string,
   ): Promise<{ data: Product[]; total: number }> {
     const offset = (page - 1) * limit;
     const where: any = {};
 
+    // Add search filter
     if (search) {
       where.name = { [Op.like]: `%${search}%` };
     }
 
+    // Add category filter
     if (category) {
       where.category = category;
     }
+
+    // Add size filter
+    if (size) {
+      where.size = size;
+    }
+
+    // Add breed filter
+    if (breed) {
+      where.breed = breed;
+    }
+
+    // Add type filter
+    if (type) {
+      where.type = type;
+    }
+
+    // Fetch products with filters, pagination, and sorting
     const { rows, count } = await this.productRepository.findAndCountAll({
       where,
       limit,
