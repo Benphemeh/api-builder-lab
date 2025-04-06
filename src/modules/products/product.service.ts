@@ -74,32 +74,26 @@ export class ProductService {
     const offset = (page - 1) * limit;
     const where: any = {};
 
-    // Add search filter
     if (search) {
       where.name = { [Op.like]: `%${search}%` };
     }
 
-    // Add category filter
     if (category) {
       where.category = category;
     }
 
-    // Add size filter
     if (size) {
       where.size = size;
     }
 
-    // Add breed filter
     if (breed) {
       where.breed = breed;
     }
 
-    // Add type filter
     if (type) {
       where.type = type;
     }
 
-    // Fetch products with filters, pagination, and sorting
     const { rows, count } = await this.productRepository.findAndCountAll({
       where,
       limit,
