@@ -18,7 +18,6 @@ export class OrderService {
     userId: string,
     products: { productId: string; quantity: number }[],
   ): Promise<Order> {
-    // Calculate the total amount for the order
     const totalAmount = await this.calculateTotal(products);
 
     // Deduct stock for each product
