@@ -65,7 +65,7 @@ export class OrderService {
 
       if (!productDetails) {
         throw new NotFoundException(
-          `Product with ID ${product.productId} not found`,
+          `Product with id ${product.productId} not found`,
         );
       }
 
