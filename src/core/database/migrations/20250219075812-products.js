@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      categoryId: {
+      category_id: {
         type: Sequelize.UUID,
         allowNull: true,
       },
