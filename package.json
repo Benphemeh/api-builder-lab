@@ -48,7 +48,6 @@
     "pg-hstore": "^2.3.4",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "sequelize": "^6.37.5",
     "sequelize-typescript": "^2.1.6",
     "swagger": "^0.7.5",
     "swagger-ui-express": "^5.0.1"
@@ -72,6 +71,8 @@
     "eslint-plugin-prettier": "^5.0.0",
     "jest": "^29.5.0",
     "prettier": "^3.0.0",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.1.0",

@@ -2,7 +2,6 @@ import {
   Table,
   Column,
   DataType,
-  Model,
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
