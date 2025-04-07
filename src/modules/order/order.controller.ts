@@ -1,10 +1,9 @@
 import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
-
 import { CreateOrderDto } from './dto/create-order.dto';
-import { OrderService } from './order.service';
 import { JwtGuard } from '../guards/jwt-guard';
+import { OrderService } from './order.service';
 
-@Controller('orders')
+@Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
