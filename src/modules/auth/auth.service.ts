@@ -50,7 +50,7 @@ export class AuthService implements OnModuleInit {
           ),
           role: USER_ROLE.SUPER_ADMIN,
           isDefaultPassword: false,
-          gender: 'MALE',
+          gender: 'male',
         })
         .then(() => {
           console.log('admin created');

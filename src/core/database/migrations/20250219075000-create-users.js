@@ -5,8 +5,8 @@ const baseModelMigration = require('../base-model/base-model.migration');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const Gender = ['MALE', 'FEMALE', 'OTHER'];
-    const USER_ROLE = ['ADMIN', 'USER', 'AUTHOR', 'super admin'];
+    const Gender = ['male', 'female', 'other'];
+    const USER_ROLE = ['ADMIN', 'user', 'author', 'super admin'];
 
     await queryInterface.createTable('users', {
       ...baseModelMigration(Sequelize),
@@ -33,7 +33,7 @@ module.exports = {
       },
       role: {
         type: Sequelize.ENUM(...USER_ROLE),
-        defaultValue: 'AUTHOR',
+        defaultValue: 'author',
       },
     });
   },
