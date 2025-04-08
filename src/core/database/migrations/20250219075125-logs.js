@@ -1,12 +1,12 @@
 'use strict';
+const baseModelMigration = require('../base-model/base-model.migration');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const baseModel = require('../base-model/base-model.migration');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.createTable('logs', {
-      ...baseModel(Sequelize),
+      ...baseModelMigration(Sequelize),
       level: {
         allowNull: true,
         type: Sequelize.STRING,

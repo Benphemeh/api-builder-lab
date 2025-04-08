@@ -1,8 +1,11 @@
 'use strict';
 
+const baseModelMigration = require('../base-model/base-model.migration');
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('orders', {
+      ...baseModelMigration(Sequelize),
       user_id: {
         type: Sequelize.UUID,
         allowNull: false,
