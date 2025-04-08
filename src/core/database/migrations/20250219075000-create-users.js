@@ -1,41 +1,3 @@
-// 'use strict';
-// import { Gender, USER_ROLE } from '../../enums';
-// export default {
-//   async up(queryInterface, Sequelize) {
-//     await queryInterface.createTable('users', {
-//       first_name: {
-//         type: Sequelize.STRING,
-//         allowNull: true,
-//       },
-//       last_name: {
-//         type: Sequelize.STRING,
-//         allowNull: true,
-//       },
-//       email: {
-//         type: Sequelize.STRING,
-//         unique: true,
-//         allowNull: false,
-//       },
-//       password: {
-//         type: Sequelize.STRING,
-//         allowNull: false,
-//       },
-//       gender: {
-//         type: Sequelize.ENUM(...Object.values(Gender)),
-//         allowNull: false,
-//       },
-//       role: {
-//         type: Sequelize.ENUM(...Object.values(USER_ROLE)),
-//         defaultValue: 'AUTHOR',
-//       },
-//     });
-//   },
-
-//   async down(queryInterface) {
-//     await queryInterface.dropTable('users');
-//   },
-// };
-
 'use strict';
 const baseModelMigration = require('../base-model/base-model.migration');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -44,8 +6,8 @@ const baseModelMigration = require('../base-model/base-model.migration');
 module.exports = {
   async up(queryInterface, Sequelize) {
     // First get the enum values for Gender and USER_ROLE
-    const Gender = ['MALE', 'FEMALE', 'OTHER']; // Replace with actual values
-    const USER_ROLE = ['ADMIN', 'USER', 'AUTHOR']; // Replace with actual values
+    const Gender = ['MALE', 'FEMALE', 'OTHER'];
+    const USER_ROLE = ['ADMIN', 'USER', 'AUTHOR', 'super admin'];
 
     await queryInterface.createTable('users', {
       ...baseModelMigration(Sequelize),
