@@ -11,6 +11,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { LoggerMiddleware } from './core/middleware/loggermiddleware';
 import { ApiLoggerModule } from './core/middleware/api-builder-logger/api-logger.module';
 import { InternalCacheModule } from './modules/cache/cache.module';
+import { OrdersModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { InternalCacheModule } from './modules/cache/cache.module';
     UsersModule,
     AuthModule,
     ProductsModule,
+    OrdersModule,
     ApiLoggerModule,
     InternalCacheModule,
     JwtModule.register({
