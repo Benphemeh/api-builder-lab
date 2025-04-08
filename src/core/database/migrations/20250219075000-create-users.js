@@ -5,7 +5,6 @@ const baseModelMigration = require('../base-model/base-model.migration');
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // First get the enum values for Gender and USER_ROLE
     const Gender = ['MALE', 'FEMALE', 'OTHER'];
     const USER_ROLE = ['ADMIN', 'USER', 'AUTHOR', 'super admin'];
 
@@ -40,7 +39,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    // For ENUM types, we need to drop them after dropping the table
     await queryInterface.dropTable('users');
     await queryInterface.sequelize.query(
       'DROP TYPE IF EXISTS "enum_users_gender";',

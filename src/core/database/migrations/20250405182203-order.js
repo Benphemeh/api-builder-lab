@@ -10,8 +10,8 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'users', // Name of the referenced table
-          key: 'id', // Primary key in the referenced table
+          model: 'users',
+          key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
