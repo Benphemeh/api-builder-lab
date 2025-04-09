@@ -9,11 +9,8 @@ export class OrderController {
 
   @Post()
   @UseGuards(JwtGuard)
-  async createOrder(
-    @Req() req: Request,
-    @Body() createOrderDto: CreateOrderDto,
-  ) {
-    const user = (req as any).user;
+  async createOrder(@Req() req: any, @Body() createOrderDto: CreateOrderDto) {
+    const user = req.user;
     return this.orderService.createOrder(user.id, createOrderDto.products);
   }
 }
