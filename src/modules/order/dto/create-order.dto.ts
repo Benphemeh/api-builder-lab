@@ -1,7 +1,17 @@
-import { IsArray, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsInt, Min, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class ProductDto {
+  @IsUUID()
+  productId: string;
+
+  @IsInt()
+  @Min(1)
+  quantity: number;
+}
 
 export class CreateOrderDto {
-  @IsArray()
-  @IsNotEmpty()
-  products: { productId: string; quantity: number }[];
+  @ValidateNested({ each: true })
+  @Type(() => ProductDto)
+  products: ProductDto[];
 }

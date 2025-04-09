@@ -1,7 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'sequelize-typescript';
 import { REPOSITORY } from 'src/core/constants';
-
 import Order from 'src/core/database/models/order.model';
 import Product from 'src/core/database/models/product.model';
 
@@ -9,9 +7,9 @@ import Product from 'src/core/database/models/product.model';
 export class OrderService {
   constructor(
     @Inject(REPOSITORY.PRODUCT)
-    private readonly productRepository: Repository<Product>,
+    private readonly productRepository: typeof Product,
     @Inject(REPOSITORY.ORDER)
-    private readonly orderRepository: Repository<Order>,
+    private readonly orderRepository: typeof Order,
   ) {}
 
   async createOrder(
