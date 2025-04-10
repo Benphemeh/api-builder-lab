@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { REPOSITORY } from 'src/core/constants';
 import Order from 'src/core/database/models/order.model';
 import Product from 'src/core/database/models/product.model';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -71,5 +72,28 @@ export class OrderService {
     }
 
     return total;
+  }
+  async getOrderById(id: string): Promise<Order> {
+    const order = await this.orderRepository.findByPk(id);
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
+    }
+    return order;
+  }
+
+  async getAllOrders(userId: string): Promise<Order[]> {
+    return this.orderRepository.findAll({ where: { userId } });
+  }
+
+  async updateOrder(
+    id: string,
+    updateOrderDto: UpdateOrderDto,
+  ): Promise<Order> {
+    const order = await this.orderRepository.findByPk(id);
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
+    }
+
+    return order.update(updateOrderDto);
   }
 }
