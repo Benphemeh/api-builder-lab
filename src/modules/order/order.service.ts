@@ -96,4 +96,13 @@ export class OrderService {
 
     return order.update(updateOrderDto);
   }
+  async deleteOrder(id: string): Promise<void> {
+    const order = await this.orderRepository.findByPk(id);
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
+    }
+
+    await order.destroy();
+  }
+
 }
