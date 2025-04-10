@@ -30,6 +30,7 @@
     "@nestjs/passport": "^11.0.4",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/sequelize": "github:nestjs/sequelize",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "cache-manager": "^6.4.1",
     "cache-manager-redis-store": "^2.0.0",
