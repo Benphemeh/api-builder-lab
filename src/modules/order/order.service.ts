@@ -3,6 +3,7 @@ import { REPOSITORY } from 'src/core/constants';
 import Order from 'src/core/database/models/order.model';
 import Product from 'src/core/database/models/product.model';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { MailService } from 'src/core/mail/mail.service';
 
 @Injectable()
 export class OrderService {
@@ -11,6 +12,7 @@ export class OrderService {
     private readonly productRepository: typeof Product,
     @Inject(REPOSITORY.ORDER)
     private readonly orderRepository: typeof Order,
+    private readonly mailService: MailService, // Inject MailService
   ) {}
 
   async createOrder(

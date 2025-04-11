@@ -175,3 +175,28 @@ export const productUpdatedEmail = (params: ProductUpdatedParams) => {
 
   return { msg: emailTemplate(msg), subject };
 };
+interface OrderCreationParams {
+  userName: string;
+  orderId: string;
+  totalAmount: number;
+}
+
+export const orderCreationEmail = (params: OrderCreationParams) => {
+  const msg = `
+  <p>Dear ${params.userName},</p>
+
+  <p>Thank you for your order! Your order has been successfully created.</p>
+
+  <p><strong>Order ID:</strong> ${params.orderId}</p>
+  <p><strong>Total Amount:</strong> $${params.totalAmount.toFixed(2)}</p>
+
+  <p>We are processing your order and will notify you once it is ready for shipping.</p>
+
+  <p>Thank you for shopping with us!</p>
+
+  <p>Best regards,</p>
+  <p><strong>The Team</strong></p>`;
+
+  const subject = `Order Confirmation – Order ID: ${params.orderId}`;
+  return { msg: emailTemplate(msg), subject };
+};
