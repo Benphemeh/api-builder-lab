@@ -182,21 +182,58 @@ interface OrderCreationParams {
 }
 
 export const orderCreationEmail = (params: OrderCreationParams) => {
+  const formattedTotalAmount = `₦${Number(params.totalAmount).toLocaleString()}`;
   const msg = `
   <p>Dear ${params.userName},</p>
 
   <p>Thank you for your order! Your order has been successfully created.</p>
 
   <p><strong>Order ID:</strong> ${params.orderId}</p>
-  <p><strong>Total Amount:</strong> $${params.totalAmount.toFixed(2)}</p>
+  <p><strong>Total Amount:</strong> ${formattedTotalAmount}</p>
 
   <p>We are processing your order and will notify you once it is ready for shipping.</p>
 
   <p>Thank you for shopping with us!</p>
 
   <p>Best regards,</p>
-  <p><strong>The Team</strong></p>`;
+  <p><strong>O'Ben brands</strong></p>`;
 
   const subject = `Order Confirmation – Order ID: ${params.orderId}`;
+  return { msg: emailTemplate(msg), subject };
+};
+interface OrderUpdateParams {
+  userName: string;
+  orderId: string;
+  previousStatus: string;
+  newStatus: string;
+  totalAmount: number;
+}
+
+export const orderUpdatedEmail = (params: OrderUpdateParams) => {
+  const formattedTotalAmount = `₦${Number(params.totalAmount).toLocaleString()}`;
+  const msg = `
+  <p>Dear ${params.userName},</p>
+
+  <p>Your order has been updated.</p>
+
+  <p><strong>Order ID:</strong> ${params.orderId}</p>
+  <p><strong>Previous Status:</strong> ${params.previousStatus}</p>
+  <p><strong>New Status:</strong> ${params.newStatus}</p>
+  <p><strong>Total Amount:</strong> ${formattedTotalAmount}</p>
+
+  ${
+    params.newStatus === 'completed'
+      ? '<p>Your order has been completed successfully. Thank you for your purchase!</p>'
+      : params.newStatus === 'canceled'
+        ? '<p>We regret to inform you that your order has been canceled. If you have any questions, please contact our customer support.</p>'
+        : '<p>We are processing your order and will keep you updated on its progress.</p>'
+  }
+
+  <p>Thank you for shopping with us!</p>
+
+  <p>Best regards,</p>
+  <p><strong>O'Ben brands</strong></p>`;
+
+  const subject = `Order Update – Order ID: ${params.orderId}`;
   return { msg: emailTemplate(msg), subject };
 };
