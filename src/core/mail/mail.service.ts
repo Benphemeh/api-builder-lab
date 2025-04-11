@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   orderCreationEmail,
+  orderUpdatedEmail,
   productListedEmail,
   productUpdatedEmail,
   userOnBoardEmail,
@@ -117,5 +118,33 @@ export class MailService {
     });
 
     console.log(`Order creation email sent to ${email}`);
+  }
+  async sendOrderUpdateEmail(
+    email: string,
+    userName: string,
+    orderId: string,
+    previousStatus: string,
+    newStatus: string,
+    totalAmount: number,
+  ) {
+    const html = orderUpdatedEmail({
+      userName,
+      orderId,
+      previousStatus,
+      newStatus,
+      totalAmount,
+    });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+      subject: html.subject,
+      html: html.msg,
+    });
+
+    console.log(`Order update email sent to ${email}`);
   }
 }
