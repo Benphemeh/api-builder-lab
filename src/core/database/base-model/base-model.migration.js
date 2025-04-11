@@ -9,12 +9,12 @@ module.exports = function baseModel(Sequelize) {
     created_at: {
       allowNull: false,
       type: Sequelize.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      defaultValue: new Date(),
     },
     updated_at: {
       allowNull: true,
       type: Sequelize.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      defaultValue: new Date(),
     },
     deleted_at: {
       type: Sequelize.DATE,

@@ -4,6 +4,9 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt,
 } from 'sequelize-typescript';
 import User from './user.model';
 import { BaseModel } from '../base-model';
@@ -16,6 +19,7 @@ export default class Order extends BaseModel {
   @Column({
     type: DataType.UUID,
     allowNull: false,
+    field: 'user_id',
   })
   userId: string;
 
@@ -31,6 +35,7 @@ export default class Order extends BaseModel {
   @Column({
     type: DataType.FLOAT,
     allowNull: false,
+    field: 'total_amount',
   })
   totalAmount: number;
 
@@ -38,6 +43,28 @@ export default class Order extends BaseModel {
     type: DataType.STRING,
     allowNull: false,
     defaultValue: 'pending',
+    field: 'status',
   })
   status: 'pending' | 'completed' | 'canceled';
+
+  @CreatedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  createdAt: Date;
+
+  @UpdatedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  updatedAt: Date;
+
+  @DeletedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  deletedAt: Date;
 }
