@@ -44,7 +44,7 @@ module.exports = {
       },
       deletedAt: {
         type: Sequelize.DATE,
-        allowNull: true, // Allow null for soft deletes
+        allowNull: true,
       },
     });
   },
