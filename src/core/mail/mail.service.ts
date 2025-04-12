@@ -145,6 +145,6 @@ export class MailService {
       html: html.msg,
     });
 
-    console.log(`Order update email sent to ${email}`);
+    console.log(`Order updated email sent to ${email}`);
   }
 }

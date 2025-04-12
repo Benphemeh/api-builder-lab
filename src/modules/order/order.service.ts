@@ -118,34 +118,25 @@ export class OrderService {
       throw new NotFoundException(`Order with id ${id} not found`);
     }
 
-    // Store previous status for the email
-    const previousStatus = order.status;
+    const previousStatus = order.status; // Store the previous status before updating
+    const updatedOrder = await order.update(updateOrderDto); // Update the order
 
-    // Update the order
-    await order.update(updateOrderDto);
-
-    // If status has changed, send notification email
+    // If the status has changed, send an order update email
     if (updateOrderDto.status && updateOrderDto.status !== previousStatus) {
-      try {
-        // Get user information
-        const user = await this.userRepository.findByPk(order.userId);
-        if (user) {
-          await this.mailService.sendOrderUpdateEmail(
-            user.email,
-            user.firstName || 'Customer',
-            order.id,
-            previousStatus,
-            updateOrderDto.status,
-            order.totalAmount,
-          );
-        }
-      } catch (error) {
-        console.error(`Failed to send order update email: ${error.message}`);
-        // Continue with the operation even if email fails
+      const user = await this.userRepository.findByPk(order.userId);
+      if (user) {
+        await this.mailService.sendOrderUpdateEmail(
+          user.email,
+          user.firstName || 'Customer',
+          order.id,
+          previousStatus,
+          updateOrderDto.status,
+          order.totalAmount,
+        );
       }
     }
 
-    return order;
+    return updatedOrder;
   }
   // async updateOrder(
   //   id: string,
