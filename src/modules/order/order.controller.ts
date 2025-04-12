@@ -24,6 +24,10 @@ export class OrderController {
     const user = req.user;
     return this.orderService.createOrder(user.id, createOrderDto.products);
   }
+  @Post('verify/:reference')
+  async verifyPayment(@Param('reference') reference: string) {
+    return this.orderService.verifyOrderPayment(reference);
+  }
 
   @Get(':id')
   @UseGuards(JwtGuard)
