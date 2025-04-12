@@ -6,10 +6,12 @@ import { MailModule } from 'src/core/mail/mail.module';
 import { orderProviders } from './order.provider';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
   imports: [
     DatabaseModule,
+    PaymentModule,
     MailModule,
     UsersModule,
     JwtModule.register({
