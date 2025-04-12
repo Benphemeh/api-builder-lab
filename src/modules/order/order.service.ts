@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { REPOSITORY } from 'src/core/constants';
 import Order from 'src/core/database/models/order.model';
 import Product from 'src/core/database/models/product.model';
@@ -23,7 +17,7 @@ export class OrderService {
     @Inject(REPOSITORY.USER)
     private readonly userRepository: typeof User,
     private readonly mailService: MailService,
-    private readonly paymentService: PaymentService, // Replace with actual payment service
+    private readonly paymentService: PaymentService,
   ) {}
 
   async createOrder(
@@ -85,28 +79,8 @@ export class OrderService {
 
     return {
       ...order.get({ plain: true }),
-      payment: payment.data, // includes authorization_url, reference, etc.
+      payment: payment.data,
     };
-    // // Create the order
-    // const order = await this.orderRepository.create({
-    //   userId,
-    //   products,
-    //   totalAmount,
-    //   status: 'pending',
-    // });
-
-    // // ✅ Fetch user info
-    // const user = await this.userRepository.findByPk(userId);
-    // if (user) {
-    //   await this.mailService.sendOrderCreationEmail(
-    //     user.email,
-    //     user.firstName || 'Customer',
-    //     order.id,
-    //     totalAmount,
-    //   );
-    // }
-
-    // return order;
   }
 
   async verifyOrderPayment(reference: string): Promise<any> {
@@ -130,31 +104,6 @@ export class OrderService {
 
     throw new NotFoundException('Payment verification failed');
   }
-
-  // async verifyOrderPayment(reference: string): Promise<any> {
-  //   const payment = await this.paymentService.verifyPayment(reference);
-
-  //   if (payment.data.status === 'success') {
-  //     const order = await this.orderRepository.findOne({
-  //       where: { id: payment.data.metadata.orderId },
-  //     });
-
-  //     if (!order) {
-  //       throw new NotFoundException(
-  //         `Order with id ${payment.data.metadata.orderId} not found`,
-  //       );
-  //     }
-
-  //     await order.update({ status: 'completed' });
-
-  //     return { message: 'Payment verified and order completed', order };
-  //   }
-
-  //   throw new HttpException(
-  //     'Payment verification failed',
-  //     HttpStatus.BAD_REQUEST,
-  //   );
-  // }
   private async calculateTotal(
     products: { productId: string; quantity: number }[],
   ): Promise<number> {

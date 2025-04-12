@@ -11,7 +11,7 @@ export class PaymentService {
         `${this.paystackBaseUrl}/transaction/initialize`,
         {
           email,
-          amount: amount * 100, // Convert to kobo
+          amount: amount * 100, // Converting to kobo
         },
         {
           headers: {
