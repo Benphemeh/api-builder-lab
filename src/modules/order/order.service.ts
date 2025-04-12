@@ -118,8 +118,8 @@ export class OrderService {
       throw new NotFoundException(`Order with id ${id} not found`);
     }
 
-    const previousStatus = order.status; // Store the previous status before updating
-    const updatedOrder = await order.update(updateOrderDto); // Update the order
+    const previousStatus = order.status;
+    const updatedOrder = await order.update(updateOrderDto);
 
     // If the status has changed, send an order update email
     if (updateOrderDto.status && updateOrderDto.status !== previousStatus) {
@@ -138,17 +138,7 @@ export class OrderService {
 
     return updatedOrder;
   }
-  // async updateOrder(
-  //   id: string,
-  //   updateOrderDto: UpdateOrderDto,
-  // ): Promise<Order> {
-  //   const order = await this.orderRepository.findByPk(id);
-  //   if (!order) {
-  //     throw new NotFoundException(`Order with id ${id} not found`);
-  //   }
 
-  //   return order.update(updateOrderDto);
-  // }
   async deleteOrder(id: string): Promise<void> {
     const order = await this.orderRepository.findByPk(id);
     if (!order) {
