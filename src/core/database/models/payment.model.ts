@@ -4,11 +4,9 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  CreatedAt,
-  UpdatedAt,
 } from 'sequelize-typescript';
-import { BaseModel } from '../base-model';
 import Order from './order.model';
+import { BaseModel } from '../base-model';
 
 @Table({
   tableName: 'payments',
@@ -42,18 +40,4 @@ export default class Payment extends BaseModel {
     allowNull: false,
   })
   amount: number;
-
-  @CreatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  createdAt: Date;
-
-  @UpdatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  updatedAt: Date;
 }
