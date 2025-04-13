@@ -77,10 +77,29 @@ export class OrderService {
       totalAmount,
     );
 
+    // Save payment details in the database
+    await this.paymentService.createPayment({
+      orderId: order.id,
+      reference: payment.data.reference,
+      status: 'pending',
+      amount: totalAmount,
+    });
+
     return {
       ...order.get({ plain: true }),
-      payment: payment.data,
+      payment: payment.data, // Includes authorization_url, reference, etc.
     };
+
+    // // Initialize payment with Paystack
+    // const payment = await this.paymentService.initializePayment(
+    //   user.email,
+    //   totalAmount,
+    // );
+
+    // return {
+    //   ...order.get({ plain: true }),
+    //   payment: payment.data,
+    // };
   }
 
   async verifyOrderPayment(reference: string): Promise<any> {
@@ -99,9 +118,14 @@ export class OrderService {
 
       await order.update({ status: 'completed' });
 
+      // Update payment status to success
+      await this.paymentService.updatePayment(reference, 'success');
+
       return { message: 'Payment verified and order completed', order };
     }
 
+    // Update payment status to failed if verification fails
+    await this.paymentService.updatePayment(reference, 'failed');
     throw new NotFoundException('Payment verification failed');
   }
   private async calculateTotal(

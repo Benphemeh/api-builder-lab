@@ -1,9 +1,17 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import axios from 'axios';
+import { REPOSITORY } from 'src/core/constants';
+
+import Payment from 'src/core/database/models/payment.model';
 
 @Injectable()
 export class PaymentService {
   private readonly paystackBaseUrl = 'https://api.paystack.co';
+
+  constructor(
+    @Inject(REPOSITORY.PAYMENT)
+    private readonly paymentRepository: typeof Payment, // Inject PaymentRepository
+  ) {}
 
   async initializePayment(email: string, amount: number): Promise<any> {
     try {
@@ -47,5 +55,27 @@ export class PaymentService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  async createPayment(data: {
+    orderId: string;
+    reference: string;
+    status: 'pending' | 'success' | 'failed';
+    amount: number;
+  }): Promise<Payment> {
+    return this.paymentRepository.create(data); // Save payment record in the database
+  }
+
+  async updatePayment(
+    reference: string,
+    status: 'success' | 'failed',
+  ): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({
+      where: { reference },
+    });
+    if (!payment) {
+      throw new Error(`Payment with reference ${reference} not found`);
+    }
+    return payment.update({ status }); // Update payment status
   }
 }
