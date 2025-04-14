@@ -7,6 +7,7 @@ import {
 } from 'sequelize-typescript';
 import Order from './order.model';
 import { BaseModel } from '../base-model';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 @Table({
   tableName: 'payments',
@@ -30,10 +31,10 @@ export default class Payment extends BaseModel {
   reference: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM(...Object.values(PAYMENT_STATUS)),
     allowNull: false,
   })
-  status: 'pending' | 'success' | 'failed';
+  status: PAYMENT_STATUS;
 
   @Column({
     type: DataType.FLOAT,
