@@ -64,5 +64,5 @@ export default class Product extends BaseModel implements IPRODUCT {
     type: DataType.STRING,
     allowNull: false,
   })
-  type: string; // e.g., "pork", "fumigation", "other services"
+  type: string; // e.g, "pork", "fumigation", "other services"
 }

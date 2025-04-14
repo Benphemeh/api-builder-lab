@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'orders', // References the orders table
+          model: 'orders',
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -23,7 +23,7 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: 'pending', // Default status is 'pending'
+        defaultValue: 'pending',
       },
       amount: {
         type: Sequelize.FLOAT,
