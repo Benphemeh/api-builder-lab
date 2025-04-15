@@ -25,8 +25,38 @@ export class PaymentController {
   @Post('initialize')
   async initializePayment(@Body() dto: InitializePaymentDto, @Req() req: any) {
     const userId = req.user.id;
-    return this.paymentService.initializePayment(dto.email, dto.amount);
+
+    // Fetch the user's email from the request or DTO
+    const email = dto.email;
+
+    // Initialize payment with Paystack
+    const paymentResponse = await this.paymentService.initializePayment(
+      email,
+      dto.amount,
+    );
+
+    // Replace `null` with a valid orderId if available
+    const orderId = dto.orderId || null;
+
+    // Save the payment details in the database
+    await this.paymentService.createPayment({
+      orderId, // Ensure a valid orderId is passed
+      reference: paymentResponse.data.reference,
+      status: 'pending',
+      amount: dto.amount,
+    });
+
+    return {
+      message: 'Payment initialized successfully',
+      payment: paymentResponse.data, // Includes authorization_url, reference, etc.
+    };
   }
+  //   @UseGuards(JwtGuard)
+  //   @Post('initialize')
+  //   async initializePayment(@Body() dto: InitializePaymentDto, @Req() req: any) {
+  //     const userId = req.user.id;
+  //     return this.paymentService.initializePayment(dto.email, dto.amount);
+  //   }
 
   @UseGuards(JwtGuard)
   @Post('verify')

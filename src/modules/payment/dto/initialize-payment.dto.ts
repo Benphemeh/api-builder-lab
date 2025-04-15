@@ -1,4 +1,4 @@
-import { IsEmail, IsNumber } from 'class-validator';
+import { IsEmail, IsNumber, IsString } from 'class-validator';
 
 export class InitializePaymentDto {
   @IsEmail()
@@ -6,6 +6,9 @@ export class InitializePaymentDto {
 
   @IsNumber()
   amount: number;
+
+  @IsString()
+  orderId: string;
 }
 // src/modules/payments/dto/initialize-payment.dto.ts
 // import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
