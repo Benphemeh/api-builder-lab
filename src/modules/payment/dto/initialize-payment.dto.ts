@@ -7,7 +7,7 @@ export class InitializePaymentDto {
   @IsNumber()
   amount: number;
 }
-// // src/modules/payments/dto/initialize-payment.dto.ts
+// src/modules/payments/dto/initialize-payment.dto.ts
 // import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
 
 // export class InitializePaymentDto {

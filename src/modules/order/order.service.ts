@@ -57,7 +57,6 @@ export class OrderService {
       status: 'pending',
     });
 
-    // Fetch user info
     const user = await this.userRepository.findByPk(userId);
     if (!user) {
       throw new NotFoundException(`User with id ${userId} not found`);
@@ -89,17 +88,6 @@ export class OrderService {
       ...order.get({ plain: true }),
       payment: payment.data, // Includes authorization_url, reference, etc.
     };
-
-    // // Initialize payment with Paystack
-    // const payment = await this.paymentService.initializePayment(
-    //   user.email,
-    //   totalAmount,
-    // );
-
-    // return {
-    //   ...order.get({ plain: true }),
-    //   payment: payment.data,
-    // };
   }
 
   async verifyOrderPayment(reference: string): Promise<any> {
