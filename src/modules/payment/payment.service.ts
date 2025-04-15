@@ -4,6 +4,7 @@ import { REPOSITORY } from 'src/core/constants';
 import { Order } from 'src/core/database';
 
 import Payment from 'src/core/database/models/payment.model';
+import { MailService } from 'src/core/mail/mail.service';
 
 @Injectable()
 export class PaymentService {
@@ -14,6 +15,7 @@ export class PaymentService {
     private readonly paymentRepository: typeof Payment, // Inject PaymentRepository
     @Inject(REPOSITORY.ORDER)
     private readonly orderRepository: typeof Order,
+    private readonly mailService: MailService,
   ) {}
 
   async initializePayment(email: string, amount: number): Promise<any> {
@@ -104,8 +106,10 @@ export class PaymentService {
       // Update the payment status to success
       await payment.update({ status });
 
-      // Find the associated order
-      const order = await this.orderRepository.findByPk(payment.orderId);
+      // Find the associated order with user data
+      const order = await this.orderRepository.findByPk(payment.orderId, {
+        include: ['user'],
+      });
 
       if (!order) {
         throw new HttpException(
@@ -117,6 +121,15 @@ export class PaymentService {
       // Update the order status to completed
       await order.update({ status: 'completed' });
 
+      // Send payment confirmation email
+      const user = order.user;
+      await this.mailService.sendOrderPaymentEmail(
+        user.email,
+        user.firstName || 'Customer',
+        order.id,
+        amount,
+        reference,
+      );
       console.log(
         `Payment and order updated successfully for reference: ${reference}`,
       );

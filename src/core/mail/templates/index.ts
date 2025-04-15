@@ -140,15 +140,21 @@ export const sendUserConfirmation = (firstName: string) => {
 interface ProductListedParams {
   firstName: string;
   productName: string;
+  price: number;
+  stock: number;
 }
+
 export const productListedEmail = (params: ProductListedParams) => {
+  const formattedPrice = `₦${Number(params.price).toLocaleString()}`;
   const msg = `
-<p>Dear ${params.firstName},</p>
+  <p>Dear ${params.firstName},</p>
   <p>Your product <strong>${params.productName}</strong> has been listed successfully.</p>
+  <p><strong>Price:</strong> ${formattedPrice}</p>
+  <p><strong>Stock:</strong> ${params.stock}</p>
   <p>Thank you for using our service.</p>
   <p>Best regards,</p>
-  <p>O'Ben Brands</p>
-`;
+  <p><strong>O'Ben Brands</strong></p>
+  `;
   const subject = `Product Listed Successfully`;
   return { msg: emailTemplate(msg), subject };
 };
@@ -235,5 +241,31 @@ export const orderUpdatedEmail = (params: OrderUpdateParams) => {
   <p><strong>O'Ben brands</strong></p>`;
 
   const subject = `Order Update – Order ID: ${params.orderId}`;
+  return { msg: emailTemplate(msg), subject };
+};
+interface OrderPaymentParams {
+  userName: string;
+  orderId: string;
+  totalAmount: number;
+  paymentReference: string;
+}
+
+export const orderPaymentEmail = (params: OrderPaymentParams) => {
+  const formattedTotalAmount = `₦${Number(params.totalAmount).toLocaleString()}`;
+  const msg = `
+  <p>Dear ${params.userName},</p>
+
+  <p>We have successfully received your payment for the following order:</p>
+
+  <p><strong>Order ID:</strong> ${params.orderId}</p>
+  <p><strong>Total Amount:</strong> ${formattedTotalAmount}</p>
+  <p><strong>Payment Reference:</strong> ${params.paymentReference}</p>
+
+  <p>Thank you for your payment. We are processing your order and will notify you once it is ready for shipping.</p>
+
+  <p>Best regards,</p>
+  <p><strong>O'Ben Brands</strong></p>`;
+
+  const subject = `Payment Confirmation – Order ID: ${params.orderId}`;
   return { msg: emailTemplate(msg), subject };
 };
