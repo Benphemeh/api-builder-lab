@@ -117,7 +117,9 @@ export class PaymentService {
       // Update the order status to completed
       await order.update({ status: 'completed' });
 
-      console.log(`Payment and order updated successfully for reference: ${reference}`);
+      console.log(
+        `Payment and order updated successfully for reference: ${reference}`,
+      );
     } else {
       console.log(`Unhandled event type: ${event}`);
     }
