@@ -21,7 +21,6 @@ export class PaymentController {
     private readonly configService: ConfigService,
   ) {}
 
-  // Endpoint to initialize a payment
   @UseGuards(JwtGuard)
   @Post('initialize')
   async initializePayment(@Body() dto: InitializePaymentDto, @Req() req: any) {
@@ -29,14 +28,12 @@ export class PaymentController {
     return this.paymentService.initializePayment(dto.email, dto.amount);
   }
 
-  // Endpoint to verify a payment
   @UseGuards(JwtGuard)
   @Post('verify')
   async verifyPayment(@Body() dto: VerifyPaymentDto) {
     return this.paymentService.verifyPayment(dto.reference);
   }
 
-  // Endpoint to handle Paystack webhook
   @Post('webhook')
   @HttpCode(200)
   async webhook(
