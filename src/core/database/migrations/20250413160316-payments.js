@@ -1,4 +1,5 @@
 'use strict';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const baseModelMigration = require('../base-model/base-model.migration');
 
 /** @type {import('sequelize-cli').Migration} */
@@ -8,7 +9,7 @@ module.exports = {
       ...baseModelMigration(Sequelize),
       order_id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'orders',
           key: 'id',
@@ -21,13 +22,27 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM('pending', 'success', 'failed'),
         allowNull: false,
         defaultValue: 'pending',
       },
       amount: {
         type: Sequelize.FLOAT,
         allowNull: false,
+      },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+      deletedAt: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
     });
   },
