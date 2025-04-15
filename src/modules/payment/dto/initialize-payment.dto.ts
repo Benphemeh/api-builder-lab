@@ -1,12 +1,21 @@
-// src/modules/payments/dto/initialize-payment.dto.ts
-import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+import { IsEmail, IsNumber } from 'class-validator';
 
 export class InitializePaymentDto {
-  @IsNotEmpty()
-  @IsString()
-  orderId: string;
+  @IsEmail()
+  email: string;
 
-  @IsOptional()
-  @IsString()
-  callbackUrl?: string;
+  @IsNumber()
+  amount: number;
 }
+// // src/modules/payments/dto/initialize-payment.dto.ts
+// import { IsNotEmpty, IsString, IsOptional } from 'class-validator';
+
+// export class InitializePaymentDto {
+//   @IsNotEmpty()
+//   @IsString()
+//   orderId: string;
+
+//   @IsOptional()
+//   @IsString()
+//   callbackUrl?: string;
+// }
