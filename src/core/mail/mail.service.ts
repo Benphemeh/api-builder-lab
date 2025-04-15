@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   orderCreationEmail,
+  orderPaymentEmail,
   orderUpdatedEmail,
   productListedEmail,
   productUpdatedEmail,
@@ -59,20 +60,31 @@ export class MailService {
       html: msg.msg,
     });
   }
-  async sendProductListedEmail(email: string, user: User, productName: string) {
+  async sendProductListedEmail(
+    email: string,
+    user: User,
+    productName: string,
+    price: number,
+    stock: number,
+  ) {
     const html = productListedEmail({
       firstName: user.firstName,
       productName,
+      price,
+      stock,
     });
+
     await this.mailerService.sendMail({
       to: email,
       from: {
-        name: "O'Ben brands",
+        name: "O'Ben Brands",
         address: process.env.MAIL_FROM,
       },
       subject: html.subject,
       html: html.msg,
     });
+
+    console.log(`Product listing email successfully sent to ${email}`);
   }
   async sendProductUpdatedEmail(
     email: string,
@@ -146,5 +158,31 @@ export class MailService {
     });
 
     console.log(`Order updated email sent to ${email}`);
+  }
+  async sendOrderPaymentEmail(
+    email: string,
+    userName: string,
+    orderId: string,
+    totalAmount: number,
+    paymentReference: string,
+  ) {
+    const html = orderPaymentEmail({
+      userName,
+      orderId,
+      totalAmount,
+      paymentReference,
+    });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+      subject: html.subject,
+      html: html.msg,
+    });
+
+    console.log(`Payment confirmation email sent to ${email}`);
   }
 }

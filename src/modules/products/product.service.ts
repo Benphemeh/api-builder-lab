@@ -48,6 +48,8 @@ export class ProductService {
       user.email,
       user,
       createProductDto.name,
+      createProductDto.price,
+      createProductDto.stock,
     );
     console.log(`Product listing email successfully sent to ${user.email}`);
 
