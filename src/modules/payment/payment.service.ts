@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import axios from 'axios';
 import { REPOSITORY } from 'src/core/constants';
+import { Order } from 'src/core/database';
 
 import Payment from 'src/core/database/models/payment.model';
 
@@ -11,6 +12,8 @@ export class PaymentService {
   constructor(
     @Inject(REPOSITORY.PAYMENT)
     private readonly paymentRepository: typeof Payment, // Inject PaymentRepository
+    @Inject(REPOSITORY.ORDER)
+    private readonly orderRepository: typeof Order,
   ) {}
 
   async initializePayment(email: string, amount: number): Promise<any> {
@@ -76,6 +79,47 @@ export class PaymentService {
     if (!payment) {
       throw new Error(`Payment with reference ${reference} not found`);
     }
-    return payment.update({ status }); // Update payment status
+    return payment.update({ status });
+  }
+  async handleWebhook(body: any): Promise<void> {
+    const { event, data } = body;
+
+    if (event === 'charge.success') {
+      const reference = data.reference;
+      const status = data.status;
+      const amount = data.amount / 100; // Convert from kobo to naira
+
+      // Find the payment record by reference
+      const payment = await this.paymentRepository.findOne({
+        where: { reference },
+      });
+
+      if (!payment) {
+        throw new HttpException(
+          `Payment with reference ${reference} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // Update the payment status to success
+      await payment.update({ status });
+
+      // Find the associated order
+      const order = await this.orderRepository.findByPk(payment.orderId);
+
+      if (!order) {
+        throw new HttpException(
+          `Order with id ${payment.orderId} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      // Update the order status to completed
+      await order.update({ status: 'completed' });
+
+      console.log(`Payment and order updated successfully for reference: ${reference}`);
+    } else {
+      console.log(`Unhandled event type: ${event}`);
+    }
   }
 }
