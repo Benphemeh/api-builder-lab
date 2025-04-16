@@ -76,7 +76,6 @@ export class OrderService {
       totalAmount,
     );
 
-    // Save payment details in the database
     await this.paymentService.createPayment({
       orderId: order.id,
       reference: payment.data.reference,
@@ -86,7 +85,7 @@ export class OrderService {
 
     return {
       ...order.get({ plain: true }),
-      payment: payment.data, // Includes authorization_url, reference, etc.
+      payment: payment.data,
     };
   }
 
