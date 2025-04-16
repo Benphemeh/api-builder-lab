@@ -53,7 +53,6 @@ export class PaymentController {
   async verifyPayment(@Body() dto: VerifyPaymentDto) {
     return this.paymentService.verifyPayment(dto.reference);
   }
-
   @Post('webhook')
   @HttpCode(200)
   async webhook(
@@ -66,16 +65,43 @@ export class PaymentController {
 
     const secret = this.configService.get<string>('PAYSTACK_SECRET_KEY');
 
-    // Verify the webhook signature (uncomment in production)
-    // const hash = crypto
-    //   .createHmac('sha512', secret)
-    //   .update(JSON.stringify(body))
-    //   .digest('hex');
+    // Verify the webhook signature
+    const crypto = await import('crypto');
+    const hash = crypto
+      .createHmac('sha512', secret)
+      .update(JSON.stringify(body))
+      .digest('hex');
 
-    // if (hash !== signature) {
-    //   throw new BadRequestException('Invalid signature');
-    // }
+    if (hash !== signature) {
+      throw new BadRequestException('Invalid Paystack signature');
+    }
 
-    return this.paymentService.handleWebhook(body);
+    // Process the webhook event
+    await this.paymentService.handleWebhook(body);
   }
+
+  //   @Post('webhook')
+  //   @HttpCode(200)
+  //   async webhook(
+  //     @Body() body: any,
+  //     @Headers('x-paystack-signature') signature: string,
+  //   ) {
+  //     if (!signature) {
+  //       throw new BadRequestException('Missing Paystack signature');
+  //     }
+
+  //     const secret = this.configService.get<string>('PAYSTACK_SECRET_KEY');
+
+  //     // Verify the webhook signature (uncomment in production)
+  //     // const hash = crypto
+  //     //   .createHmac('sha512', secret)
+  //     //   .update(JSON.stringify(body))
+  //     //   .digest('hex');
+
+  //     // if (hash !== signature) {
+  //     //   throw new BadRequestException('Invalid signature');
+  //     // }
+
+  //     return this.paymentService.handleWebhook(body);
+  //   }
 }
