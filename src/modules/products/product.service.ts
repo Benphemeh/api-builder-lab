@@ -25,9 +25,7 @@ export class ProductService {
   async create(createProductDto: CreateProductDto, req: Request) {
     const user = (req as any).user;
 
-    // Add validation and debug logging
     if (!user) {
-      console.error('User not found in request');
       throw new BadRequestException('User not found');
     }
 
@@ -138,5 +136,17 @@ export class ProductService {
 
     console.log(`Product ${product.name} updated successfully`);
     return product;
+  }
+
+  async deleteProduct(id: string): Promise<{ message: string }> {
+    const product = await this.productRepository.findByPk(id);
+
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    await product.destroy();
+
+    return { message: `Product with ID ${id} has been deleted successfully` };
   }
 }
