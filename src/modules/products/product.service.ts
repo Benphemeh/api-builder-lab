@@ -130,7 +130,7 @@ export class ProductService {
           );
         }
       } catch (error) {
-        console.error(`Failed to send email update: ${error.message}`);
+        console.error(`Failed to send email update : ${error.message}`);
       }
     }
 
@@ -147,6 +147,6 @@ export class ProductService {
 
     await product.destroy();
 
-    return { message: `Product with ID ${id} has been deleted successfully` };
+    return { message: `Product with ID ${id} has been successfully deleted` };
   }
 }
