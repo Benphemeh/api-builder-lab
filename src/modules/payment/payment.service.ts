@@ -106,7 +106,6 @@ export class PaymentService {
       // Update the payment status to success
       await payment.update({ status });
 
-      // Find the associated order with user data
       const order = await this.orderRepository.findByPk(payment.orderId, {
         include: ['user'],
       });
