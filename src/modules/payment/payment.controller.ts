@@ -27,14 +27,13 @@ export class PaymentController {
     const userId = req.user.id;
 
     const email = dto.email;
-    // Initialize payment
+
     const paymentResponse = await this.paymentService.initializePayment(
       email,
       dto.amount,
     );
     const orderId = dto.orderId || null;
 
-    // Save the payment details in the database
     await this.paymentService.createPayment({
       orderId,
       reference: paymentResponse.data.reference,
@@ -44,7 +43,7 @@ export class PaymentController {
 
     return {
       message: 'Payment initialized successfully',
-      payment: paymentResponse.data, // Includes authorization_url, reference, etc.
+      payment: paymentResponse.data,
     };
   }
 
