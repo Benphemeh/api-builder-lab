@@ -91,7 +91,6 @@ export class PaymentService {
       const status = data.status;
       const amount = data.amount / 100; // Convert from kobo to naira
 
-      // Find the payment record by reference
       const payment = await this.paymentRepository.findOne({
         where: { reference },
       });
@@ -117,7 +116,6 @@ export class PaymentService {
         );
       }
 
-      // Update the order status to completed
       await order.update({ status: 'completed' });
 
       // Send payment confirmation email
