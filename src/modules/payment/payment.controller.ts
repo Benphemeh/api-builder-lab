@@ -57,8 +57,15 @@ export class PaymentController {
   async webhook(
     @Body() body: any,
     @Headers('x-paystack-signature') signature: string,
+    @Req() req: any, // Add @Req() to access the raw body
   ) {
+    // Log the incoming headers and body for debugging
+    console.log('Incoming Webhook Request:');
+    console.log('Headers:', req.headers);
+    console.log('Raw Body:', req.body.toString());
+
     if (!signature) {
+      console.error('Missing Paystack signature');
       throw new BadRequestException('Missing Paystack signature');
     }
 
@@ -68,13 +75,46 @@ export class PaymentController {
     const crypto = await import('crypto');
     const hash = crypto
       .createHmac('sha512', secret)
-      .update(JSON.stringify(body))
+      .update(req.body) // Use the raw body for signature verification
       .digest('hex');
 
+    console.log('Calculated Hash:', hash);
+    console.log('Paystack Signature:', signature);
+
     if (hash !== signature) {
+      console.error('Invalid Paystack signature');
       throw new BadRequestException('Invalid Paystack signature');
     }
 
+    console.log('Webhook signature verified successfully');
+
+    // Process the webhook event
     await this.paymentService.handleWebhook(body);
+    console.log('Webhook event processed successfully');
   }
+  // @Post('webhook')
+  // @HttpCode(200)
+  // async webhook(
+  //   @Body() body: any,
+  //   @Headers('x-paystack-signature') signature: string,
+  // ) {
+  //   if (!signature) {
+  //     throw new BadRequestException('Missing Paystack signature');
+  //   }
+
+  //   const secret = this.configService.get<string>('PAYSTACK_SECRET_KEY');
+
+  //   // Verify the webhook signature
+  //   const crypto = await import('crypto');
+  //   const hash = crypto
+  //     .createHmac('sha512', secret)
+  //     .update(JSON.stringify(body))
+  //     .digest('hex');
+
+  //   if (hash !== signature) {
+  //     throw new BadRequestException('Invalid Paystack signature');
+  //   }
+
+  //   await this.paymentService.handleWebhook(body);
+  // }
 }

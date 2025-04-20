@@ -9,6 +9,10 @@ export class LoggerMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const method = req.method;
     const url = req.originalUrl;
+    // Skip logging for the webhook route
+    if (url === '/api/payments/webhook') {
+      return next();
+    }
     const body = req.body;
     const headers = req.headers;
 
