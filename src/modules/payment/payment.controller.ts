@@ -92,29 +92,4 @@ export class PaymentController {
     await this.paymentService.handleWebhook(body);
     console.log('Webhook event processed successfully');
   }
-  // @Post('webhook')
-  // @HttpCode(200)
-  // async webhook(
-  //   @Body() body: any,
-  //   @Headers('x-paystack-signature') signature: string,
-  // ) {
-  //   if (!signature) {
-  //     throw new BadRequestException('Missing Paystack signature');
-  //   }
-
-  //   const secret = this.configService.get<string>('PAYSTACK_SECRET_KEY');
-
-  //   // Verify the webhook signature
-  //   const crypto = await import('crypto');
-  //   const hash = crypto
-  //     .createHmac('sha512', secret)
-  //     .update(JSON.stringify(body))
-  //     .digest('hex');
-
-  //   if (hash !== signature) {
-  //     throw new BadRequestException('Invalid Paystack signature');
-  //   }
-
-  //   await this.paymentService.handleWebhook(body);
-  // }
 }
