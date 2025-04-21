@@ -12,6 +12,7 @@ import { LoggerMiddleware } from './core/middleware/loggermiddleware';
 import { ApiLoggerModule } from './core/middleware/api-builder-logger/api-logger.module';
 import { InternalCacheModule } from './modules/cache/cache.module';
 import { OrdersModule } from './modules/order/order.module';
+import { DeliveryModule } from './modules/delivery/delivery.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { OrdersModule } from './modules/order/order.module';
     AuthModule,
     ProductsModule,
     OrdersModule,
+    DeliveryModule,
     ApiLoggerModule,
     InternalCacheModule,
     JwtModule.register({
