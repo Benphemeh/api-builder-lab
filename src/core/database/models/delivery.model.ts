@@ -4,9 +4,6 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
 } from 'sequelize-typescript';
 import Order from './order.model';
 import { BaseModel } from '../base-model';
