@@ -123,8 +123,8 @@ export class OrderService {
   private async createDelivery(order: Order): Promise<Delivery> {
     const delivery = await this.deliveryRepository.create({
       orderId: order.id,
-      deliveryAddress: order.deliveryAddress, // Assuming this field exists in the order model
-      logisticsProvider: 'DHL', // Example logistics provider
+      deliveryAddress: order.deliveryAddress,
+      logisticsProvider: 'DHL',
       status: 'pending',
     });
 

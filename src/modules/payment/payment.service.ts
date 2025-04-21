@@ -12,7 +12,7 @@ export class PaymentService {
 
   constructor(
     @Inject(REPOSITORY.PAYMENT)
-    private readonly paymentRepository: typeof Payment, // Inject PaymentRepository
+    private readonly paymentRepository: typeof Payment,
     @Inject(REPOSITORY.ORDER)
     private readonly orderRepository: typeof Order,
     private readonly mailService: MailService,
@@ -68,7 +68,7 @@ export class PaymentService {
     status: 'pending' | 'success' | 'failed';
     amount: number;
   }): Promise<Payment> {
-    return this.paymentRepository.create(data); // Save payment record in the database
+    return this.paymentRepository.create(data);
   }
 
   async updatePayment(
@@ -128,7 +128,7 @@ export class PaymentService {
         reference,
       );
       console.log(
-        `Payment and order updated successfully for reference: ${reference}`,
+        `Payment and order  successfully updated for reference: ${reference}`,
       );
     } else {
       console.log(`Unhandled event type: ${event}`);
