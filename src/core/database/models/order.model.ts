@@ -46,6 +46,12 @@ export default class Order extends BaseModel {
     field: 'status',
   })
   status: 'pending' | 'completed' | 'canceled';
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'delivery_address',
+  })
+  deliveryAddress: string;
 
   @CreatedAt
   @Column({

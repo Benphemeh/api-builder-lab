@@ -4,7 +4,7 @@ import Order from 'src/core/database/models/order.model';
 import Product from 'src/core/database/models/product.model';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { MailService } from 'src/core/mail/mail.service';
-import { User } from 'src/core/database';
+import { Delivery, User } from 'src/core/database';
 import { PaymentService } from '../payment/payment.service';
 
 @Injectable()
@@ -16,6 +16,8 @@ export class OrderService {
     private readonly orderRepository: typeof Order,
     @Inject(REPOSITORY.USER)
     private readonly userRepository: typeof User,
+    @Inject(REPOSITORY.DELIVERY)
+    private readonly deliveryRepository: typeof Delivery,
     private readonly mailService: MailService,
     private readonly paymentService: PaymentService,
   ) {}
@@ -108,12 +110,26 @@ export class OrderService {
       // Update payment status to success
       await this.paymentService.updatePayment(reference, 'success');
 
+      // Create a delivery record
+      await this.createDelivery(order);
+
       return { message: 'Payment verified and order completed', order };
     }
-
     // Update payment status to failed if verification fails
     await this.paymentService.updatePayment(reference, 'failed');
     throw new NotFoundException('Payment verification failed');
+  }
+
+  private async createDelivery(order: Order): Promise<Delivery> {
+    const delivery = await this.deliveryRepository.create({
+      orderId: order.id,
+      deliveryAddress: order.deliveryAddress, // Assuming this field exists in the order model
+      logisticsProvider: 'DHL', // Example logistics provider
+      status: 'pending',
+    });
+
+    console.log(`Delivery created for order ${order.id}`);
+    return delivery;
   }
   private async calculateTotal(
     products: { productId: string; quantity: number }[],

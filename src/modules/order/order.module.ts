@@ -7,12 +7,14 @@ import { orderProviders } from './order.provider';
 import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PaymentModule } from '../payment/payment.module';
+import { DeliveryModule } from '../delivery/delivery.module';
 
 @Module({
   imports: [
     DatabaseModule,
     PaymentModule,
     MailModule,
+    DeliveryModule,
     UsersModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
