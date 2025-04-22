@@ -89,7 +89,7 @@ export class PaymentService {
     if (event === 'charge.success') {
       const reference = data.reference;
       const status = data.status;
-      const amount = data.amount / 100; // Convert from kobo to naira
+      const amount = data.amount / 100; // Convert from kobo to naira.
 
       const payment = await this.paymentRepository.findOne({
         where: { reference },

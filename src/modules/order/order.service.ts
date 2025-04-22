@@ -28,7 +28,7 @@ export class OrderService {
   ): Promise<Order> {
     const totalAmount = await this.calculateTotal(products);
 
-    // Deduct stock for each product
+    // Deduct stock for each product.
     for (const product of products) {
       const productDetails = await this.productRepository.findByPk(
         product.productId,
@@ -46,7 +46,6 @@ export class OrderService {
         );
       }
 
-      // Deduct stock
       await productDetails.update({
         stock: productDetails.stock - product.quantity,
       });
@@ -110,7 +109,6 @@ export class OrderService {
       // Update payment status to success
       await this.paymentService.updatePayment(reference, 'success');
 
-      // Create a delivery record
       await this.createDelivery(order);
 
       return { message: 'Payment verified and order completed', order };
