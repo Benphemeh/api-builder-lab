@@ -1,5 +1,5 @@
 import { REPOSITORY } from 'src/core/constants';
-import { Order } from 'src/core/database';
+import Order from 'src/core/database/models/order.model';
 import Payment from 'src/core/database/models/payment.model';
 
 export const paymentProviders = [
