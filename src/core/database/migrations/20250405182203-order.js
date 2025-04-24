@@ -32,6 +32,10 @@ module.exports = {
         allowNull: false,
         defaultValue: 'pending',
       },
+      // delivery_address: {
+      //   type: Sequelize.STRING,
+      //   allowNull: false,
+      // },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
