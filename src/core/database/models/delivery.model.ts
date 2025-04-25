@@ -4,6 +4,9 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  CreatedAt,
+  UpdatedAt,
+  DeletedAt,
 } from 'sequelize-typescript';
 import Order from './order.model';
 import { BaseModel } from '../base-model';
@@ -45,24 +48,24 @@ export default class Delivery extends BaseModel {
   })
   status: 'pending' | 'in-transit' | 'delivered';
 
-  //   @CreatedAt
-  //   @Column({
-  //     type: DataType.DATE,
-  //     allowNull: false,
-  //   })
-  //   createdAt: Date;
+  @CreatedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  createdAt: Date;
 
-  //   @UpdatedAt
-  //   @Column({
-  //     type: DataType.DATE,
-  //     allowNull: false,
-  //   })
-  //   updatedAt: Date;
+  @UpdatedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  updatedAt: Date;
 
-  //   @DeletedAt
-  //   @Column({
-  //     type: DataType.DATE,
-  //     allowNull: true,
-  //   })
-  //   deletedAt: Date;
+  @DeletedAt
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  deletedAt: Date;
 }

@@ -19,11 +19,19 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  @UseGuards(JwtGuard)
-  async createOrder(@Req() req: any, @Body() createOrderDto: CreateOrderDto) {
-    const user = req.user;
-    return this.orderService.createOrder(user.id, createOrderDto.products);
+  async createOrder(
+    @Body('userId') userId: string,
+    @Body('products') products: { productId: string; quantity: number }[],
+    @Body('deliveryAddress') deliveryAddress: string, // Accept deliveryAddress from the request body
+  ) {
+    return this.orderService.createOrder(userId, products, deliveryAddress);
   }
+  // @Post()
+  // @UseGuards(JwtGuard)
+  // async createOrder(@Req() req: any, @Body() createOrderDto: CreateOrderDto) {
+  //   const user = req.user;
+  //   return this.orderService.createOrder(user.id, createOrderDto.products);
+  // }
   @Post('verify/:reference')
   async verifyPayment(@Param('reference') reference: string) {
     return this.orderService.verifyOrderPayment(reference);
