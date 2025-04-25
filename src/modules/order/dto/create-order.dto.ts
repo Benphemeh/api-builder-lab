@@ -1,4 +1,11 @@
-import { IsUUID, IsInt, Min, ValidateNested, IsString } from 'class-validator';
+import {
+  IsUUID,
+  IsInt,
+  Min,
+  ValidateNested,
+  IsString,
+  IsNotEmpty,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class ProductDto {
@@ -8,13 +15,18 @@ class ProductDto {
   @IsInt()
   @Min(1)
   quantity: number;
-
-  @IsString()
-  deliveryAddress: string;
 }
 
 export class CreateOrderDto {
+  @IsUUID()
+  @IsNotEmpty()
+  userId: string;
+
   @ValidateNested({ each: true })
   @Type(() => ProductDto)
   products: ProductDto[];
+
+  @IsString()
+  @IsNotEmpty()
+  deliveryAddress: string;
 }
