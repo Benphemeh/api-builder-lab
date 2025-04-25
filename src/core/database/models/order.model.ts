@@ -7,9 +7,11 @@ import {
   CreatedAt,
   UpdatedAt,
   DeletedAt,
+  HasOne,
 } from 'sequelize-typescript';
 import User from './user.model';
 import { BaseModel } from '../base-model';
+import Delivery from './delivery.model';
 
 @Table({
   tableName: 'orders',
@@ -46,13 +48,16 @@ export default class Order extends BaseModel {
     field: 'status',
   })
   status: 'pending' | 'completed' | 'canceled';
-  // @Column({
-  //   type: DataType.STRING,
-  //   allowNull: false,
-  //   field: 'delivery_address',
-  // })
-  // deliveryAddress: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'delivery_address',
+  })
+  deliveryAddress: string;
+
+  @HasOne(() => Delivery, { foreignKey: 'orderId' }) // Link to Delivery model
+  delivery: Delivery;
   @CreatedAt
   @Column({
     type: DataType.DATE,

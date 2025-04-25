@@ -25,6 +25,7 @@ export class OrderService {
   async createOrder(
     userId: string,
     products: { productId: string; quantity: number }[],
+    deliveryAddress: string,
   ): Promise<Order> {
     const totalAmount = await this.calculateTotal(products);
 
@@ -55,6 +56,7 @@ export class OrderService {
       userId,
       products,
       totalAmount,
+      deliveryAddress,
       status: 'pending',
     });
 
