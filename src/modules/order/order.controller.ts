@@ -23,12 +23,7 @@ export class OrderController {
     const { userId, products, deliveryAddress } = createOrderDto;
     return this.orderService.createOrder(userId, products, deliveryAddress);
   }
-  // @Post()
-  // @UseGuards(JwtGuard)
-  // async createOrder(@Req() req: any, @Body() createOrderDto: CreateOrderDto) {
-  //   const user = req.user;
-  //   return this.orderService.createOrder(user.id, createOrderDto.products);
-  // }
+
   @Post('verify/:reference')
   async verifyPayment(@Param('reference') reference: string) {
     return this.orderService.verifyOrderPayment(reference);
