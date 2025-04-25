@@ -19,11 +19,8 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  async createOrder(
-    @Body('userId') userId: string,
-    @Body('products') products: { productId: string; quantity: number }[],
-    @Body('deliveryAddress') deliveryAddress: string, // Accept deliveryAddress from the request body
-  ) {
+  async createOrder(@Body() createOrderDto: CreateOrderDto) {
+    const { userId, products, deliveryAddress } = createOrderDto;
     return this.orderService.createOrder(userId, products, deliveryAddress);
   }
   // @Post()
