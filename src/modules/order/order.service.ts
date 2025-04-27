@@ -159,14 +159,16 @@ export class OrderService {
     }
     return order;
   }
-  async getAllOrders(userId?: string): Promise<Order[]> {
-    const whereClause = userId ? { userId } : undefined; // Define the filter condition
-    return this.orderRepository.findAll({ where: whereClause }); // Fetch orders based on the condition
-  }
-
-  // async getAllOrders(userId: string): Promise<Order[]> {
-  //   return this.orderRepository.findAll({ where: { userId } });
+  // async getAllOrders(userId?: string): Promise<Order[]> {
+  //   if (userId) {
+  //     const orders = await this.orderRepository.findAll({ where: { userId } });
+  //   }
+  //   return this.orderRepository.findAll();
   // }
+
+  async getAllOrders(userId: string): Promise<Order[]> {
+    return this.orderRepository.findAll({ where: { userId } });
+  }
 
   async updateOrder(
     id: string,
