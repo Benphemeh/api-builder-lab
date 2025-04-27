@@ -23,10 +23,10 @@ export class AdminController {
   ) {}
 
   // --- Orders Management ---
-  //   @Get('orders')
-  //   async getAllOrders() {
-  //     return this.orderService.getAllOrders();
-  //   }
+  @Get('orders')
+  async getAllOrders() {
+    return this.orderService.getAllOrders();
+  }
 
   @Get('orders/:id')
   async getOrderById(@Param('id') id: string) {
