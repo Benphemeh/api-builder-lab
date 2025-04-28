@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrderService } from '../order/order.service';
 import { ProductService } from '../products/product.service';
 import { UsersService } from '../users/users.service';
-import { UpdateOrderDto } from '../order/dto/update-order.dto';
+import { Product } from 'src/core/database';
 
 @Injectable()
 export class AdminService {
@@ -37,10 +37,29 @@ export class AdminService {
   }
 
   // --- Products Management ---
-  //   async getAllProducts(): Promise<any> {
-  //     return this.productService.getAllProducts();
-  //   }
-
+  async getAllProducts(
+    page: number,
+    limit: number,
+    search: string,
+    sortBy: string,
+    sortOrder: 'ASC' | 'DESC',
+    category: string,
+    size?: string,
+    breed?: string,
+    type?: string,
+  ): Promise<{ data: Product[]; total: number }> {
+    return this.productService.findAll(
+      page,
+      limit,
+      search,
+      sortBy,
+      sortOrder,
+      category,
+      size,
+      breed,
+      type,
+    );
+  }
   //   async getProductById(id: string): Promise<any> {
   //     const product = await this.productService.getProductById(id);
   //     if (!product) {
