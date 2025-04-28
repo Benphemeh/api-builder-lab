@@ -24,7 +24,7 @@ export class ProductController {
     @Body() createProductDto: CreateProductDto,
     @Req() req: Request,
   ) {
-    console.log('User from request:', (req as any).user);
+    console.log('user from request:', (req as any).user);
     return this.productService.create(createProductDto, req);
   }
 
