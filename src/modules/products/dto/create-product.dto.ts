@@ -22,6 +22,7 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   category: string;
+
   @IsOptional()
   @IsString()
   size: string;
@@ -30,7 +31,7 @@ export class CreateProductDto {
   @IsString()
   breed: string;
 
-  // @IsNotEmpty()
+  @IsOptional()
   @IsString()
   type: string;
 }
