@@ -6,6 +6,7 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminService } from './admin.service';
@@ -16,10 +17,10 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   // --- Orders Management ---
-  //   @Get('orders')
-  //   async getAllOrders() {
-  //     return this.adminService.getAllOrders();
-  //   }
+  // @Get('orders')
+  // async getAllOrders() {
+  //   return this.adminService.getAllOrders();
+  // }
 
   @Get('orders/:id')
   async getOrderById(@Param('id') id: string) {
@@ -39,11 +40,31 @@ export class AdminController {
     return this.adminService.deleteOrder(id);
   }
 
-  // --- Products Management ---
-  //   @Get('products')
-  //   async getAllProducts() {
-  //     return this.adminService.getAllProducts();
-  //   }
+  // -- Products Management --
+  @Get('products')
+  async getAllProducts(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('search') search = '',
+    @Query('sortBy') sortBy = 'createdAt',
+    @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
+    @Query('category') category = '',
+    @Query('size') size?: string,
+    @Query('breed') breed?: string,
+    @Query('type') type?: string,
+  ) {
+    return this.adminService.getAllProducts(
+      +page,
+      +limit,
+      search,
+      sortBy,
+      sortOrder,
+      category,
+      size,
+      breed,
+      type,
+    );
+  }
 
   //   @Get('products/:id')
   //   async getProductById(@Param('id') id: string) {
