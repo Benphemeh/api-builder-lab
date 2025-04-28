@@ -2,18 +2,18 @@ import { IsUUID, IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class CreatePaymentDto {
   @IsUUID()
-  @IsNotEmpty({ message: 'Order ID is required' })
+  @IsNotEmpty()
   orderId: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Reference is required' })
+  @IsNotEmpty()
   reference: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Status is required' })
+  @IsNotEmpty()
   status: 'pending' | 'success' | 'failed';
 
   @IsNumber()
-  @IsNotEmpty({ message: 'Amount is required' })
+  @IsNotEmpty()
   amount: number;
 }

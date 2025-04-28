@@ -2,14 +2,14 @@ import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class InitializePaymentDto {
   @IsEmail()
-  @IsNotEmpty({ message: 'Email is required' })
+  @IsNotEmpty()
   email: string;
 
   @IsNumber()
-  @IsNotEmpty({ message: 'Amount is required' })
+  @IsNotEmpty()
   amount: number;
 
   @IsString()
-  @IsNotEmpty({ message: 'Order ID is required' })
+  @IsNotEmpty()
   orderId: string;
 }
