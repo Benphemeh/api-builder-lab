@@ -40,7 +40,7 @@ export class AdminController {
     return this.adminService.deleteOrder(id);
   }
 
-  // --- Products Management ---
+  // -- Products Management --
   @Get('products')
   async getAllProducts(
     @Query('page') page = 1,
