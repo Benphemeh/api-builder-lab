@@ -159,13 +159,6 @@ export class OrderService {
     }
     return order;
   }
-  // async getAllOrders(userId?: string): Promise<Order[]> {
-  //   if (userId) {
-  //     const orders = await this.orderRepository.findAll({ where: { userId } });
-  //   }
-  //   return this.orderRepository.findAll();
-  // }
-
   async getAllOrders(userId: string): Promise<Order[]> {
     return this.orderRepository.findAll({ where: { userId } });
   }

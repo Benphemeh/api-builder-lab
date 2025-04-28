@@ -14,7 +14,7 @@ export class AdminService {
 
   // --- Orders Management ---
   //   async getAllOrders(): Promise<any> {
-  //     return this.orderService.getAllOrders(); // Fetch all orders
+  //     return this.orderService.getAllOrders();
   //   }
 
   async getOrderById(id: string): Promise<any> {
