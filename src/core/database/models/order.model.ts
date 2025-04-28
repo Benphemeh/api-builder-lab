@@ -56,7 +56,7 @@ export default class Order extends BaseModel {
   })
   deliveryAddress: string;
 
-  @HasOne(() => Delivery, { foreignKey: 'orderId' }) // Link to Delivery model
+  @HasOne(() => Delivery, { foreignKey: 'orderId' })
   delivery: Delivery;
   @CreatedAt
   @Column({
