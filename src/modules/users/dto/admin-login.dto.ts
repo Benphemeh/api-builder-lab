@@ -7,6 +7,6 @@ export class AdminDTO {
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(6, { message: 'Password must be at least 6 characters long' })
+  @MinLength(6)
   password: string;
 }

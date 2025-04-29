@@ -1,4 +1,12 @@
-import { IsUUID, IsString, IsNumber, IsNotEmpty } from 'class-validator';
+import {
+  IsUUID,
+  IsString,
+  IsNumber,
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 export class CreatePaymentDto {
   @IsUUID()
@@ -9,9 +17,9 @@ export class CreatePaymentDto {
   @IsNotEmpty()
   reference: string;
 
-  @IsString()
-  @IsNotEmpty()
-  status: 'pending' | 'success' | 'failed';
+  @IsOptional()
+  @IsEnum(PAYMENT_STATUS)
+  status?: PAYMENT_STATUS;
 
   @IsNumber()
   @IsNotEmpty()
