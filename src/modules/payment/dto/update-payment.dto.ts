@@ -1,7 +1,8 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsEnum } from 'class-validator';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 export class UpdatePaymentDto {
   @IsOptional()
-  @IsString()
-  status?: 'pending' | 'success' | 'failed';
+  @IsEnum(PAYMENT_STATUS)
+  status?: PAYMENT_STATUS;
 }
