@@ -5,11 +5,11 @@ export class CreateDeliveryDto {
   @IsNotEmpty()
   orderId: string;
 
-  @IsString({ message: 'Delivery address must be a string' })
+  @IsString()
   @IsNotEmpty()
   deliveryAddress: string;
 
-  @IsString({ message: 'Logistics provider must be a string' })
+  @IsString()
   @IsNotEmpty()
   logisticsProvider: string;
 }
