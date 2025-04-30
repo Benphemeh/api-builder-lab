@@ -4,6 +4,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import {
   orderCreationEmail,
   orderPaymentEmail,
+  orderReadyForDeliveryEmail,
   orderUpdatedEmail,
   productListedEmail,
   productUpdatedEmail,
@@ -184,5 +185,31 @@ export class MailService {
     });
 
     console.log(`Payment confirmation email sent to ${email}`);
+  }
+  async sendOrderReadyForDeliveryEmail(
+    email: string,
+    userName: string,
+    orderId: string,
+    deliveryAddress: string,
+    logisticsProvider: string,
+  ) {
+    const html = orderReadyForDeliveryEmail({
+      userName,
+      orderId,
+      deliveryAddress,
+      logisticsProvider,
+    });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+      subject: html.subject,
+      html: html.msg,
+    });
+
+    console.log(`Order ready for delivery email sent to ${email}`);
   }
 }

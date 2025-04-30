@@ -269,3 +269,28 @@ export const orderPaymentEmail = (params: OrderPaymentParams) => {
   const subject = `Payment Confirmation – Order ID: ${params.orderId}`;
   return { msg: emailTemplate(msg), subject };
 };
+interface OrderReadyForDeliveryParams {
+  userName: string;
+  orderId: string;
+  deliveryAddress: string;
+  logisticsProvider: string;
+}
+
+export const orderReadyForDeliveryEmail = (params: OrderReadyForDeliveryParams) => {
+  const msg = `
+  <p>Dear ${params.userName},</p>
+
+  <p>Your order is now ready for delivery!</p>
+
+  <p><strong>Order ID:</strong> ${params.orderId}</p>
+  <p><strong>Delivery Address:</strong> ${params.deliveryAddress}</p>
+  <p><strong>Logistics Provider:</strong> ${params.logisticsProvider}</p>
+
+  <p>Our logistics team will contact you shortly to arrange the delivery. Thank you for choosing O'Ben Brands!</p>
+
+  <p>Best regards,</p>
+  <p><strong>O'Ben Brands</strong></p>`;
+
+  const subject = `Order Ready for Delivery – Order ID: ${params.orderId}`;
+  return { msg: emailTemplate(msg), subject };
+};
