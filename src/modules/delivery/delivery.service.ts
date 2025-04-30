@@ -35,8 +35,8 @@ export class DeliveryService {
     const updatedDelivery = await delivery.update({ status: dto.status });
 
     // Fetch related order and user details
-    const order = delivery.order; // Access the included Order
-    const user = await order?.user; // Assuming a relation exists to fetch the user
+    const order = delivery.order;
+    const user = await order?.user;
 
     // Send appropriate email based on status
     if (dto.status === 'in-transit') {

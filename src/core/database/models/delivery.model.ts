@@ -43,7 +43,7 @@ export default class Delivery extends BaseModel {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'pending', // pending, in-transit, delivered
+    defaultValue: 'pending',
     field: 'status',
   })
   status: 'pending' | 'in-transit' | 'delivered';
