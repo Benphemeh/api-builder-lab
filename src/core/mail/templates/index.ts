@@ -276,7 +276,9 @@ interface OrderReadyForDeliveryParams {
   logisticsProvider: string;
 }
 
-export const orderReadyForDeliveryEmail = (params: OrderReadyForDeliveryParams) => {
+export const orderReadyForDeliveryEmail = (
+  params: OrderReadyForDeliveryParams,
+) => {
   const msg = `
   <p>Dear ${params.userName},</p>
 
@@ -292,5 +294,30 @@ export const orderReadyForDeliveryEmail = (params: OrderReadyForDeliveryParams) 
   <p><strong>O'Ben Brands</strong></p>`;
 
   const subject = `Order Ready for Delivery – Order ID: ${params.orderId}`;
+  return { msg: emailTemplate(msg), subject };
+};
+interface OrderDeliveredParams {
+  userName: string;
+  orderId: string;
+  deliveryAddress: string;
+  logisticsProvider: string;
+}
+
+export const orderDeliveredEmail = (params: OrderDeliveredParams) => {
+  const msg = `
+  <p>Dear ${params.userName},</p>
+
+  <p>We are pleased to inform you that your order has been successfully delivered!</p>
+
+  <p><strong>Order ID:</strong> ${params.orderId}</p>
+  <p><strong>Delivery Address:</strong> ${params.deliveryAddress}</p>
+  <p><strong>Logistics Provider:</strong> ${params.logisticsProvider}</p>
+
+  <p>Thank you for shopping with O'Ben Brands. We hope to serve you again soon!</p>
+
+  <p>Best regards,</p>
+  <p><strong>O'Ben Brands</strong></p>`;
+
+  const subject = `Order Delivered – Order ID: ${params.orderId}`;
   return { msg: emailTemplate(msg), subject };
 };

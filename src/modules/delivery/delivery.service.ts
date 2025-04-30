@@ -60,21 +60,6 @@ export class DeliveryService {
     return updatedDelivery;
   }
 
-  // async updateDeliveryStatus(
-  //   orderId: string,
-  //   dto: UpdateDeliveryStatusDto,
-  // ): Promise<Delivery> {
-  //   const delivery = await this.deliveryRepository.findOne({
-  //     where: { orderId },
-  //   });
-
-  //   if (!delivery) {
-  //     throw new NotFoundException(`Delivery for order ${orderId} not found`);
-  //   }
-
-  //   return delivery.update({ status: dto.status });
-  // }
-
   async getDeliveryByOrderId(orderId: string): Promise<Delivery> {
     const delivery = await this.deliveryRepository.findOne({
       where: { orderId },
