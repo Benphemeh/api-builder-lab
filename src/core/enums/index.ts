@@ -25,3 +25,9 @@ export enum DELIVERY_STATUS {
   IN_TRANSIT = 'in-transit',
   DELIVERED = 'delivered',
 }
+
+export enum ORDER_STATUS {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled',
+}

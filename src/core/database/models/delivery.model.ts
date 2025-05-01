@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import Order from './order.model';
 import { BaseModel } from '../base-model';
+import { DELIVERY_STATUS } from 'src/core/enums';
 
 @Table({
   tableName: 'deliveries',
@@ -43,10 +44,10 @@ export default class Delivery extends BaseModel {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'pending',
+    defaultValue: DELIVERY_STATUS.PENDING,
     field: 'status',
   })
-  status: 'pending' | 'in-transit' | 'delivered';
+  status: DELIVERY_STATUS;
 
   @CreatedAt
   @Column({
