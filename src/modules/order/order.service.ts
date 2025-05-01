@@ -160,7 +160,7 @@ export class OrderService {
     return order;
   }
   async getAllOrders(): Promise<Order[]> {
-    return this.orderRepository.findAll(); // Fetch all orders without filtering by userId
+    return this.orderRepository.findAll();
   }
 
   async updateOrder(
