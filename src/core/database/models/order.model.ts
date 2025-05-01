@@ -12,6 +12,7 @@ import {
 import User from './user.model';
 import { BaseModel } from '../base-model';
 import Delivery from './delivery.model';
+import { ORDER_STATUS } from 'src/core/enums';
 
 @Table({
   tableName: 'orders',
@@ -44,10 +45,10 @@ export default class Order extends BaseModel {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: 'pending',
+    defaultValue: ORDER_STATUS.PENDING,
     field: 'status',
   })
-  status: 'pending' | 'completed' | 'canceled';
+  status: ORDER_STATUS;
 
   @Column({
     type: DataType.STRING,

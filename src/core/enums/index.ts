@@ -14,6 +14,7 @@ export enum Gender {
   FEMALE = 'female',
   OTHER = 'other',
 }
+
 export enum PAYMENT_STATUS {
   PENDING = 'pending',
   SUCCESS = 'success',
@@ -24,4 +25,10 @@ export enum DELIVERY_STATUS {
   PENDING = 'pending',
   IN_TRANSIT = 'in-transit',
   DELIVERED = 'delivered',
+}
+
+export enum ORDER_STATUS {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  CANCELED = 'canceled',
 }
