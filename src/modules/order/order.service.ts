@@ -159,8 +159,8 @@ export class OrderService {
     }
     return order;
   }
-  async getAllOrders(userId: string): Promise<Order[]> {
-    return this.orderRepository.findAll({ where: { userId } });
+  async getAllOrders(): Promise<Order[]> {
+    return this.orderRepository.findAll();
   }
 
   async updateOrder(

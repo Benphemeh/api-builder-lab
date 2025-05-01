@@ -19,3 +19,9 @@ export enum PAYMENT_STATUS {
   SUCCESS = 'success',
   FAILED = 'failed',
 }
+
+export enum DELIVERY_STATUS {
+  PENDING = 'pending',
+  IN_TRANSIT = 'in-transit',
+  DELIVERED = 'delivered',
+}
