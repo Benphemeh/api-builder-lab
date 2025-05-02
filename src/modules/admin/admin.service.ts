@@ -6,9 +6,12 @@ import {
 import { OrderService } from '../order/order.service';
 import { ProductService } from '../products/product.service';
 import { UsersService } from '../users/users.service';
-import { Product } from 'src/core/database';
+import { Delivery, Product } from 'src/core/database';
 import { CreateProductDto } from '../products/dto/create-product.dto';
 import { ORDER_STATUS } from 'src/core/enums';
+import { DeliveryService } from '../delivery/delivery.service';
+import { CreateDeliveryDto } from '../delivery/dto/create-delivery.dto';
+import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
 
 @Injectable()
 export class AdminService {
@@ -16,6 +19,7 @@ export class AdminService {
     private readonly orderService: OrderService,
     private readonly productService: ProductService,
     private readonly usersService: UsersService,
+    private readonly deliveryService: DeliveryService,
   ) {}
 
   // --- Orders Management ---
@@ -96,6 +100,21 @@ export class AdminService {
 
   async deleteProduct(id: string): Promise<any> {
     return this.productService.deleteProduct(id);
+  }
+
+  async getDeliveryByOrderId(orderId: string): Promise<Delivery> {
+    return this.deliveryService.getDeliveryByOrderId(orderId);
+  }
+
+  async createDelivery(dto: CreateDeliveryDto): Promise<Delivery> {
+    return this.deliveryService.createDelivery(dto);
+  }
+
+  async updateDeliveryStatus(
+    orderId: string,
+    dto: UpdateDeliveryStatusDto,
+  ): Promise<Delivery> {
+    return this.deliveryService.updateDeliveryStatus(orderId, dto);
   }
 
   //   // --- Customers Management ---

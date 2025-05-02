@@ -14,6 +14,9 @@ import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminService } from './admin.service';
 import { CreateProductDto } from '../products/dto/create-product.dto';
 import { ORDER_STATUS } from 'src/core/enums';
+import { Delivery } from 'src/core/database';
+import { CreateDeliveryDto } from '../delivery/dto/create-delivery.dto';
+import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -91,6 +94,28 @@ export class AdminController {
   @Delete('products/:id')
   async deleteProduct(@Param('id') id: string) {
     return this.adminService.deleteProduct(id);
+  }
+
+  // --- Deliveries Management ---
+
+  @Get('deliveries/:orderId')
+  async getDeliveryByOrderId(
+    @Param('orderId') orderId: string,
+  ): Promise<Delivery> {
+    return this.adminService.getDeliveryByOrderId(orderId);
+  }
+
+  @Post('deliveries')
+  async createDelivery(@Body() dto: CreateDeliveryDto): Promise<Delivery> {
+    return this.adminService.createDelivery(dto);
+  }
+
+  @Patch('deliveries/:orderId/status')
+  async updateDeliveryStatus(
+    @Param('orderId') orderId: string,
+    @Body() dto: UpdateDeliveryStatusDto,
+  ): Promise<Delivery> {
+    return this.adminService.updateDeliveryStatus(orderId, dto);
   }
 
   //   // --- Customers Management ---
