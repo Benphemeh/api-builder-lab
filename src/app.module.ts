@@ -13,11 +13,13 @@ import { ApiLoggerModule } from './core/middleware/api-builder-logger/api-logger
 import { InternalCacheModule } from './modules/cache/cache.module';
 import { OrdersModule } from './modules/order/order.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    AdminModule,
     MailModule,
     UsersModule,
     AuthModule,
