@@ -117,20 +117,4 @@ export class AdminController {
   ): Promise<Delivery> {
     return this.adminService.updateDeliveryStatus(orderId, dto);
   }
-
-  //   // --- Customers Management ---
-  //   @Get('customers')
-  //   async getAllCustomers() {
-  //     return this.adminService.getAllCustomers();
-  //   }
-
-  //   @Get('customers/:id')
-  //   async getCustomerById(@Param('id') id: string) {
-  //     return this.adminService.getCustomerById(id);
-  //   }
-
-  //   @Delete('customers/:id')
-  //   async deleteCustomer(@Param('id') id: string) {
-  //     return this.adminService.deleteCustomer(id);
-  //   }
 }

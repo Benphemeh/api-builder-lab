@@ -116,21 +116,4 @@ export class AdminService {
   ): Promise<Delivery> {
     return this.deliveryService.updateDeliveryStatus(orderId, dto);
   }
-
-  //   // --- Customers Management ---
-  //   async getAllCustomers(): Promise<any> {
-  //     return this.usersService.getAllUsers();
-  //   }
-
-  //   async getCustomerById(id: string): Promise<any> {
-  //     const user = await this.usersService.getUserById(id);
-  //     if (!user) {
-  //       throw new NotFoundException(`Customer with id ${id} not found`);
-  //     }
-  //     return user;
-  //   }
-
-  //   async deleteCustomer(id: string): Promise<any> {
-  //     return this.usersService.deleteUser(id);
-  //   }
 }
