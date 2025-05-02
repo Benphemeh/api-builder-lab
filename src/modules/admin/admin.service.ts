@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { OrderService } from '../order/order.service';
 import { ProductService } from '../products/product.service';
 import { UsersService } from '../users/users.service';
 import { Product } from 'src/core/database';
+import { CreateProductDto } from '../products/dto/create-product.dto';
 
 @Injectable()
 export class AdminService {
@@ -60,25 +65,40 @@ export class AdminService {
       type,
     );
   }
-  //   async getProductById(id: string): Promise<any> {
-  //     const product = await this.productService.getProductById(id);
-  //     if (!product) {
-  //       throw new NotFoundException(`Product with id ${id} not found`);
-  //     }
-  //     return product;
-  //   }
+  async getProductById(id: string): Promise<Product> {
+    const product = await this.productService.findOne(id);
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+    return product;
+  }
+  async createProduct(
+    createProductDto: CreateProductDto,
+    req: any,
+  ): Promise<Product> {
+    const user = req.user;
 
-  //   async createProduct(createProductDto: any): Promise<any> {
-  //     return this.productService.createProduct(createProductDto);
-  //   }
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
 
-  //   async updateProduct(id: string, updateProductDto: any): Promise<any> {
-  //     return this.productService.updateProduct(id, updateProductDto);
-  //   }
+    if (!user.id) {
+      throw new BadRequestException('User ID is required');
+    }
 
-  //   async deleteProduct(id: string): Promise<any> {
-  //     return this.productService.deleteProduct(id);
-  //   }
+    const product = await this.productService.create(createProductDto, req);
+
+    console.log(`Product created successfully for user ID: ${user.id}`);
+    return product;
+  }
+
+  async updateProduct(id: string, updateProductDto: any): Promise<any> {
+    return this.productService.updateProduct(id, updateProductDto);
+  }
+
+  async deleteProduct(id: string): Promise<any> {
+    return this.productService.deleteProduct(id);
+  }
 
   //   // --- Customers Management ---
   //   async getAllCustomers(): Promise<any> {

@@ -7,9 +7,12 @@ import {
   Body,
   UseGuards,
   Query,
+  Post,
+  Req,
 } from '@nestjs/common';
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminService } from './admin.service';
+import { CreateProductDto } from '../products/dto/create-product.dto';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -66,25 +69,28 @@ export class AdminController {
     );
   }
 
-  //   @Get('products/:id')
-  //   async getProductById(@Param('id') id: string) {
-  //     return this.adminService.getProductById(id);
-  //   }
+  @Get('products/:id')
+  async getProductById(@Param('id') id: string) {
+    return this.adminService.getProductById(id);
+  }
 
-  //   @Post('products')
-  //   async createProduct(@Body() createProductDto: any) {
-  //     return this.adminService.createProduct(createProductDto);
-  //   }
+  @Post('products')
+  async createProduct(
+    @Body() createProductDto: CreateProductDto,
+    @Req() req: any,
+  ) {
+    return this.adminService.createProduct(createProductDto, req);
+  }
 
-  //   @Patch('products/:id')
-  //   async updateProduct(@Param('id') id: string, @Body() updateProductDto: any) {
-  //     return this.adminService.updateProduct(id, updateProductDto);
-  //   }
+  @Patch('products/:id')
+  async updateProduct(@Param('id') id: string, @Body() updateProductDto: any) {
+    return this.adminService.updateProduct(id, updateProductDto);
+  }
 
-  //   @Delete('products/:id')
-  //   async deleteProduct(@Param('id') id: string) {
-  //     return this.adminService.deleteProduct(id);
-  //   }
+  @Delete('products/:id')
+  async deleteProduct(@Param('id') id: string) {
+    return this.adminService.deleteProduct(id);
+  }
 
   //   // --- Customers Management ---
   //   @Get('customers')
