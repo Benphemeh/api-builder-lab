@@ -8,6 +8,7 @@ import { ProductService } from '../products/product.service';
 import { UsersService } from '../users/users.service';
 import { Product } from 'src/core/database';
 import { CreateProductDto } from '../products/dto/create-product.dto';
+import { ORDER_STATUS } from 'src/core/enums';
 
 @Injectable()
 export class AdminService {
@@ -30,10 +31,7 @@ export class AdminService {
     return order;
   }
 
-  async updateOrderStatus(
-    id: string,
-    status: 'pending' | 'completed' | 'canceled',
-  ): Promise<any> {
+  async updateOrderStatus(id: string, status: ORDER_STATUS): Promise<any> {
     return this.orderService.updateOrder(id, { status });
   }
 

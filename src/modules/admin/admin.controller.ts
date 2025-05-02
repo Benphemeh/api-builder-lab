@@ -13,6 +13,7 @@ import {
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminService } from './admin.service';
 import { CreateProductDto } from '../products/dto/create-product.dto';
+import { ORDER_STATUS } from 'src/core/enums';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -33,7 +34,7 @@ export class AdminController {
   @Patch('orders/:id')
   async updateOrderStatus(
     @Param('id') id: string,
-    @Body('status') status: 'pending' | 'completed' | 'canceled',
+    @Body('status') status: ORDER_STATUS,
   ) {
     return this.adminService.updateOrderStatus(id, status);
   }
