@@ -4,6 +4,6 @@ import { adminProviders } from './admin.provider';
 
 @Module({
   controllers: [AdminController],
-  providers: [...adminProviders], // Use the adminProviders array
+  providers: [...adminProviders],
 })
 export class AdminModule {}
