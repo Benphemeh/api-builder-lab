@@ -5,7 +5,10 @@ import { ProductService } from '../products/product.service';
 import { UsersService } from '../users/users.service';
 import { DeliveryService } from '../delivery/delivery.service';
 import { MailService } from 'src/core/mail/mail.service';
-import { Delivery, Order, Product, User } from 'src/core/database';
+import { Delivery, Order, Payment, Product, User } from 'src/core/database';
+import { PaymentService } from '../payment/payment.service';
+import { AuthService } from '../auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 export const adminProviders = [
   AdminService,
@@ -14,6 +17,9 @@ export const adminProviders = [
   UsersService,
   DeliveryService,
   MailService,
+  PaymentService,
+  AuthService,
+  JwtService,
   {
     provide: REPOSITORY.ORDER,
     useValue: Order,
@@ -29,5 +35,9 @@ export const adminProviders = [
   {
     provide: REPOSITORY.USER,
     useValue: User,
+  },
+  {
+    provide: REPOSITORY.PAYMENT,
+    useValue: Payment,
   },
 ];
