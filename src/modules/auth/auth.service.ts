@@ -108,13 +108,33 @@ export class AuthService implements OnModuleInit {
         secret ? 'Secret is defined' : 'Secret is undefined',
       );
 
-      const payload = { sub: user.id, email: user.email };
+      const payload = {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+      };
+
       return this.jwtService.sign(payload, { secret });
     } catch (error) {
       console.error('Error generating token:', error.message);
       throw error;
     }
   }
+  // private async generateToken(user) {
+  //   try {
+  //     const secret = process.env.JWT_SECRET;
+  //     console.log(
+  //       'Using JWT secret:',
+  //       secret ? 'Secret is defined' : 'Secret is undefined',
+  //     );
+
+  //     const payload = { sub: user.id, email: user.email };
+  //     return this.jwtService.sign(payload, { secret });
+  //   } catch (error) {
+  //     console.error('Error generating token:', error.message);
+  //     throw error;
+  //   }
+  // }
 
   private async hashPassword(password) {
     const hash = await bcrypt.hash(password, 10);
