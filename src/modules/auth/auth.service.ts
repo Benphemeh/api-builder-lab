@@ -111,7 +111,7 @@ export class AuthService implements OnModuleInit {
       const payload = {
         sub: user.id,
         email: user.email,
-        role: user.role, // Include the role field
+        role: user.role,
       };
 
       return this.jwtService.sign(payload, { secret });
