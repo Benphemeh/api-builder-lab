@@ -23,9 +23,9 @@ export class AdminService {
   ) {}
 
   // --- Orders Management ---
-  //   async getAllOrders(): Promise<any> {
-  //     return this.orderService.getAllOrders();
-  //   }
+  async getAllOrders(): Promise<any> {
+    return this.orderService.getAllOrders();
+  }
 
   async getOrderById(id: string): Promise<any> {
     const order = await this.orderService.getOrderById(id);
