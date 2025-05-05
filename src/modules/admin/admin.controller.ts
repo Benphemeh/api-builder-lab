@@ -24,10 +24,10 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   // --- Orders Management ---
-  // @Get('orders')
-  // async getAllOrders() {
-  //   return this.adminService.getAllOrders();
-  // }
+  @Get('orders')
+  async getAllOrders() {
+    return this.adminService.getAllOrders();
+  }
 
   @Get('orders/:id')
   async getOrderById(@Param('id') id: string) {
