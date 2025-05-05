@@ -68,6 +68,8 @@ export class AuthService implements OnModuleInit {
     if (!match) {
       return null;
     }
+    console.log(user);
+
     const { ...result } = user['dataValues'];
     return result;
   }
@@ -107,6 +109,7 @@ export class AuthService implements OnModuleInit {
         'Using JWT secret:',
         secret ? 'Secret is defined' : 'Secret is undefined',
       );
+      console.log(user);
 
       const payload = {
         sub: user.id,
