@@ -8,7 +8,7 @@ import { USER_ROLE } from '../enums';
 
 export class AdminGuard implements CanActivate {
   private readonly jwtService = new JwtService({
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET, // Use the correct secret
   });
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
