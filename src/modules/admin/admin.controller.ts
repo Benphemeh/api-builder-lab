@@ -24,6 +24,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   // --- Orders Management ---
+
   @Get('orders')
   async getAllOrders() {
     return this.adminService.getAllOrders();
@@ -48,6 +49,7 @@ export class AdminController {
   }
 
   // -- Products Management --
+
   @Get('products')
   async getAllProducts(
     @Query('page') page = 1,
