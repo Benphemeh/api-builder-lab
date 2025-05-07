@@ -48,7 +48,6 @@ export class AdminController {
     return this.adminService.deleteOrder(id);
   }
 
-  // -- Products Management --
 
   @Get('products')
   async getAllProducts(
@@ -97,8 +96,6 @@ export class AdminController {
   async deleteProduct(@Param('id') id: string) {
     return this.adminService.deleteProduct(id);
   }
-
-  // --- Deliveries Management ---
 
   @Get('deliveries/:orderId')
   async getDeliveryByOrderId(
