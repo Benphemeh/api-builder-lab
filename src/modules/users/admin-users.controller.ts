@@ -37,6 +37,7 @@ export class AdminUsersController {
         id: admin.id,
         email: admin.email,
         name: admin.name,
+        role: admin.role,
       },
       access_token: token,
     };

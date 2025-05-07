@@ -28,7 +28,7 @@ export class UsersService {
   async findOneByEmail(email: string): Promise<User> {
     return await this.userRepository.findOne<User>({
       where: { email },
-      attributes: ['id', 'firstName', 'lastName', 'email', 'password'],
+      attributes: ['id', 'firstName', 'lastName', 'email', 'password', 'role'],
     });
   }
   async findOneById(id: string): Promise<User> {
@@ -94,7 +94,7 @@ export class UsersService {
     const payload = {
       email: user.email,
       sub: user.id,
-      role: user.isAdmin ? 'admin' : 'user',
+      role: user.role,
     };
 
     return this.jwtService.sign(payload);
