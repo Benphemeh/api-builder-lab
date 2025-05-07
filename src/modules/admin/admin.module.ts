@@ -6,8 +6,8 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     JwtModule.register({
-      secret: process.env.JWTKEY,
-      signOptions: { expiresIn: '1d' },
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     }),
   ],
   controllers: [AdminController],
