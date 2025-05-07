@@ -35,10 +35,10 @@ export class AdminGuard implements CanActivate {
       }
 
       if (
-        user.role === USER_ROLE.SUPER_ADMIN || // Match 'super admin'
-        user.role === USER_ROLE.ADMIN // Match 'admin'
+        user.role === USER_ROLE.SUPER_ADMIN ||
+        user.role === USER_ROLE.ADMIN
       ) {
-        request.user = user; // Attach the user to the request for further use
+        request.user = user;
         return true;
       } else {
         console.error('User does not have admin privileges:', user.role);
