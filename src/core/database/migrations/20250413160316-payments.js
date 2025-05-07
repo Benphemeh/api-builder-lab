@@ -1,6 +1,7 @@
 'use strict';
 const baseModelMigration = require('../base-model/base-model.migration');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
