@@ -18,6 +18,6 @@ export class AdminDTO {
   password: string;
 
   @IsNotEmpty()
-  @IsEnum(USER_ROLE, { message: 'Role must be one of the valid user roles' })
+  @IsEnum(USER_ROLE)
   role: USER_ROLE;
 }
