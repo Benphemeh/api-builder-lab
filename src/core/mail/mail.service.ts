@@ -7,6 +7,7 @@ import {
   orderPaymentEmail,
   orderReadyForDeliveryEmail,
   orderUpdatedEmail,
+  orderVerificationEmail,
   productListedEmail,
   productUpdatedEmail,
   userOnBoardEmail,
@@ -238,5 +239,29 @@ export class MailService {
     });
 
     console.log(`Order delivered email sent to ${email}`);
+  }
+  async sendOrderVerificationEmail(
+    email: string,
+    userName: string,
+    orderId: string,
+    verificationCode: string,
+  ) {
+    const html = orderVerificationEmail({
+      userName,
+      orderId,
+      verificationCode,
+    });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+      subject: html.subject,
+      html: html.msg,
+    });
+
+    console.log(`Order verification email sent to ${email}`);
   }
 }

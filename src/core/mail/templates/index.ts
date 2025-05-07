@@ -321,3 +321,27 @@ export const orderDeliveredEmail = (params: OrderDeliveredParams) => {
   const subject = `Order Delivered – Order ID: ${params.orderId}`;
   return { msg: emailTemplate(msg), subject };
 };
+
+interface OrderVerificationParams {
+  userName: string;
+  orderId: string;
+  verificationCode: string;
+}
+
+export const orderVerificationEmail = (params: OrderVerificationParams) => {
+  const msg = `
+    <p>Dear ${params.userName},</p>
+  
+    <p>Your order requires verification before processing.</p>
+  
+    <p><strong>Order ID:</strong> ${params.orderId}</p>
+    <p><strong>Verification Code:</strong> ${params.verificationCode}</p>
+  
+    <p>Please use the above verification code to confirm your order. Thank you for choosing O'Ben Brands!</p>
+  
+    <p>Best regards,</p>
+    <p><strong>O'Ben Brands</strong></p>`;
+
+  const subject = `Order Verification Required – Order ID: ${params.orderId}`;
+  return { msg: emailTemplate(msg), subject };
+};
