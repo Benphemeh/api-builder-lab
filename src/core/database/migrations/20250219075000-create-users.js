@@ -6,7 +6,7 @@ const baseModelMigration = require('../base-model/base-model.migration');
 module.exports = {
   async up(queryInterface, Sequelize) {
     const Gender = ['male', 'female', 'other'];
-    const USER_ROLE = ['ADMIN', 'user', 'author', 'super admin'];
+    const USER_ROLE = ['admin', 'user', 'author', 'super admin'];
 
     await queryInterface.createTable('users', {
       ...baseModelMigration(Sequelize),

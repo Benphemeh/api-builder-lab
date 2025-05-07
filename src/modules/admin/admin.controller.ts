@@ -48,7 +48,6 @@ export class AdminController {
     return this.adminService.deleteOrder(id);
   }
 
-
   @Get('products')
   async getAllProducts(
     @Query('page') page = 1,
