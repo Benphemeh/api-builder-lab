@@ -13,10 +13,10 @@ import {
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminService } from './admin.service';
 import { CreateProductDto } from '../products/dto/create-product.dto';
-import { ORDER_STATUS } from 'src/core/enums';
 import { Delivery } from 'src/core/database';
 import { CreateDeliveryDto } from '../delivery/dto/create-delivery.dto';
 import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
+import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -38,9 +38,9 @@ export class AdminController {
   @Patch('orders/:id')
   async updateOrderStatus(
     @Param('id') id: string,
-    @Body('status') status: ORDER_STATUS,
+    @Body() updateOrderStatusDto: UpdateOrderStatusDto,
   ) {
-    return this.adminService.updateOrderStatus(id, status);
+    return this.adminService.updateOrderStatus(id, updateOrderStatusDto.status);
   }
 
   @Delete('orders/:id')

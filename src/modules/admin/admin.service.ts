@@ -40,7 +40,13 @@ export class AdminService {
   }
 
   async deleteOrder(id: string): Promise<any> {
-    return this.orderService.deleteOrder(id);
+    const order = await this.orderService.getOrderById(id);
+    if (!order) {
+      throw new NotFoundException(`Order with id ${id} not found`);
+    }
+
+    await this.orderService.deleteOrder(id);
+    return { message: `Order with id ${id} deleted successfully` };
   }
 
   // --- Products Management ---
