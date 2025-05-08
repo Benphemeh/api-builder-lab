@@ -39,7 +39,6 @@ export class MailService {
       },
     });
     await transporter.sendMail({
-      // from: process.env.MAIL_FROM,
       to: email,
       from: {
         name: "O'Ben brands",
