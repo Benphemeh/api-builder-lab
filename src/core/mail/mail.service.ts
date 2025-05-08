@@ -132,7 +132,7 @@ export class MailService {
       html: html.msg,
     });
 
-    console.log(`Order creation email sent to ${email}`);
+    console.log(`create order email sent to ${email}`);
   }
   async sendOrderUpdateEmail(
     email: string,
