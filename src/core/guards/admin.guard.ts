@@ -8,7 +8,7 @@ import { USER_ROLE } from '../enums';
 
 export class AdminGuard implements CanActivate {
   private readonly jwtService = new JwtService({
-    secret: process.env.JWT_SECRET, // Use the correct secret
+    secret: process.env.JWT_SECRET,
   });
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -26,8 +26,8 @@ export class AdminGuard implements CanActivate {
 
     try {
       const user = await this.jwtService.verifyAsync(token);
-      console.log('Decoded token:', user); // Log the decoded token
-      console.log('User role:', user.role); // Log the role field
+      console.log('Decoded token:', user);
+      console.log('User role:', user.role);
 
       if (!user.role) {
         console.error('Role is missing in the token payload');
