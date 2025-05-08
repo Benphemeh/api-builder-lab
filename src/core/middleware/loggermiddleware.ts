@@ -1,6 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
+import { ActivityModel } from '../database';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -39,9 +40,9 @@ export class LoggerMiddleware implements NestMiddleware {
       apiCall.body = { ...body, password: null };
     }
 
-    // ActivityModel.create(apiCall).catch((err: any) => {
-    //   console.error('Error recording API call:>>> ', err.message);
-    // });
+    ActivityModel.create(apiCall).catch((err: any) => {
+      console.error('Error recording API call:>>> ', err.message);
+    });
   }
 
   private async jwtAuth(token: string) {

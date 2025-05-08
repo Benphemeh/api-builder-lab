@@ -39,7 +39,6 @@ export class MailService {
       },
     });
     await transporter.sendMail({
-      // from: process.env.MAIL_FROM,
       to: email,
       from: {
         name: "O'Ben brands",
@@ -132,7 +131,7 @@ export class MailService {
       html: html.msg,
     });
 
-    console.log(`Order creation email sent to ${email}`);
+    console.log(`create order email sent to ${email}`);
   }
   async sendOrderUpdateEmail(
     email: string,
