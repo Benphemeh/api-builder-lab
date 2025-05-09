@@ -89,7 +89,6 @@ export class AdminService {
   ): Promise<Product> {
     const user = (req as any).user;
 
-    // Allow admin to specify userId in the body
     const userId = createProductDto.userId || user?.id;
 
     if (!userId) {
