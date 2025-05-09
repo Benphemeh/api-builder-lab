@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsString, IsNumber, IsOptional, IsPositive } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
@@ -34,4 +40,8 @@ export class CreateProductDto {
   @IsOptional()
   @IsString()
   type: string;
+
+  @IsOptional()
+  @IsUUID()
+  userId?: string; // Allow userId to be optional for admin use
 }

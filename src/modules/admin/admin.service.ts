@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,17 +13,20 @@ import { ORDER_STATUS } from 'src/core/enums';
 import { DeliveryService } from '../delivery/delivery.service';
 import { CreateDeliveryDto } from '../delivery/dto/create-delivery.dto';
 import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
+import { REPOSITORY } from 'src/core/constants';
+import { Repository } from 'sequelize-typescript';
 
 @Injectable()
 export class AdminService {
   constructor(
+    @Inject(REPOSITORY.PRODUCT)
+    private readonly productRepository: Repository<Product>,
     private readonly orderService: OrderService,
     private readonly productService: ProductService,
     private readonly usersService: UsersService,
     private readonly deliveryService: DeliveryService,
   ) {}
 
-  // --- Orders Management ---
   async getAllOrders(): Promise<any> {
     return this.orderService.getAllOrders();
   }
@@ -49,7 +53,6 @@ export class AdminService {
     return { message: `Order with id ${id} deleted successfully` };
   }
 
-  // --- Products Management ---
   async getAllProducts(
     page: number,
     limit: number,
@@ -80,25 +83,48 @@ export class AdminService {
     }
     return product;
   }
-  async createProduct(
+  async create(
     createProductDto: CreateProductDto,
-    req: any,
+    req: Request,
   ): Promise<Product> {
-    const user = req.user;
+    const user = (req as any).user;
 
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
+    // Allow admin to specify userId in the body
+    const userId = createProductDto.userId || user?.id;
 
-    if (!user.id) {
+    if (!userId) {
       throw new BadRequestException('User ID is required');
     }
 
-    const product = await this.productService.create(createProductDto, req);
+    console.log(`Creating product for user ID: ${userId}`);
 
-    console.log(`Product created successfully for user ID: ${user.id}`);
+    const product = await this.productRepository.create({
+      ...createProductDto,
+      userId,
+    });
+
     return product;
   }
+
+  // async createProduct(
+  //   createProductDto: CreateProductDto,
+  //   req: any,
+  // ): Promise<Product> {
+  //   const user = req.user;
+
+  //   if (!user) {
+  //     throw new BadRequestException('User not found');
+  //   }
+
+  //   if (!user.id) {
+  //     throw new BadRequestException('User ID is required');
+  //   }
+
+  //   const product = await this.productService.create(createProductDto, req);
+
+  //   console.log(`Product created successfully for user ID: ${user.id}`);
+  //   return product;
+  // }
 
   async updateProduct(id: string, updateProductDto: any): Promise<any> {
     return this.productService.updateProduct(id, updateProductDto);
