@@ -23,8 +23,6 @@ import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
-  // --- Orders Management ---
-
   @Get('orders')
   async getAllOrders() {
     return this.adminService.getAllOrders();

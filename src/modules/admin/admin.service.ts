@@ -22,7 +22,6 @@ export class AdminService {
     private readonly deliveryService: DeliveryService,
   ) {}
 
-  // --- Orders Management ---
   async getAllOrders(): Promise<any> {
     return this.orderService.getAllOrders();
   }
@@ -49,7 +48,6 @@ export class AdminService {
     return { message: `Order with id ${id} deleted successfully` };
   }
 
-  // --- Products Management ---
   async getAllProducts(
     page: number,
     limit: number,
