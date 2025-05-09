@@ -87,8 +87,6 @@ export class AdminController {
     @Req() req: any,
   ) {
     const user = req.user;
-
-    // If the user is an admin, allow userId to be passed in the request body
     if (user && user.role === 'admin' && createProductDto.userId) {
       console.log(
         `Admin creating product for user ID: ${createProductDto.userId}`,
@@ -96,7 +94,6 @@ export class AdminController {
       return this.adminService.create(createProductDto, req);
     }
 
-    // For regular users, ensure userId is extracted from req.user
     if (!user) {
       throw new BadRequestException('User not found');
     }

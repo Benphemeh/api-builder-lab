@@ -43,5 +43,5 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsUUID()
-  userId?: string; // Allow userId to be optional for admin use
+  userId?: string;
 }
