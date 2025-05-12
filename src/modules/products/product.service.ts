@@ -49,7 +49,6 @@ export class ProductService {
       createProductDto.price,
       createProductDto.stock,
     );
-    console.log(`Product listing email successfully sent to ${user.email}`);
 
     return product;
   }

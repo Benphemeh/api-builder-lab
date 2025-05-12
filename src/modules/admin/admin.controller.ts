@@ -51,6 +51,32 @@ export class AdminController {
     return this.adminService.deleteOrder(id);
   }
 
+  @Post('products')
+  async createProduct(
+    @Body() createProductDto: CreateProductDto,
+    @Req() req: any,
+  ) {
+    const user = req.user;
+    if (user && user.role === 'admin' && createProductDto.userId) {
+      console.log(
+        `Admin creating product for user ID: ${createProductDto.userId}`,
+      );
+      return this.adminService.create(createProductDto, req);
+    }
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (!user.id) {
+      throw new BadRequestException('User ID is required');
+    }
+
+    createProductDto.userId = user.id;
+    console.log(`Creating product for user ID: ${user.id}`);
+    return this.adminService.create(createProductDto, req);
+  }
+
   @Get('products')
   async getAllProducts(
     @Query('page') page = 1,
@@ -79,32 +105,6 @@ export class AdminController {
   @Get('products/:id')
   async getProductById(@Param('id') id: string) {
     return this.adminService.getProductById(id);
-  }
-
-  @Post('products')
-  async createProduct(
-    @Body() createProductDto: CreateProductDto,
-    @Req() req: any,
-  ) {
-    const user = req.user;
-    if (user && user.role === 'admin' && createProductDto.userId) {
-      console.log(
-        `Admin creating product for user ID: ${createProductDto.userId}`,
-      );
-      return this.adminService.create(createProductDto, req);
-    }
-
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    if (!user.id) {
-      throw new BadRequestException('User ID is required');
-    }
-
-    createProductDto.userId = user.id;
-    console.log(`Creating product for user ID: ${user.id}`);
-    return this.adminService.create(createProductDto, req);
   }
 
   @Patch('products/:id')
