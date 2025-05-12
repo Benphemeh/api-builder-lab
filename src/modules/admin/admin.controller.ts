@@ -106,33 +106,6 @@ export class AdminController {
     console.log(`Creating product for user ID: ${user.id}`);
     return this.adminService.create(createProductDto, req);
   }
-  // async createProduct(
-  //   @Body() createProductDto: CreateProductDto,
-  //   @Req() req: any,
-  // ) {
-  //   const user = req.user;
-
-  //   // If the user is an admin, allow userId to be passed in the request body
-  //   if (user && user.role === 'admin' && createProductDto.userId) {
-  //     console.log(
-  //       `Admin creating product for user ID: ${createProductDto.userId}`,
-  //     );
-  //     return this.adminService.createProduct(createProductDto, req);
-  //   }
-
-  // For regular users, ensure userId is extracted from req.user
-  //   if (!user) {
-  //     throw new BadRequestException('User not found');
-  //   }
-
-  //   if (!user.id) {
-  //     throw new BadRequestException('User ID is required');
-  //   }
-
-  //   createProductDto.userId = user.id; // Attach userId from req.user
-  //   console.log(`Creating product for user ID: ${user.id}`);
-  //   return this.adminService.createProduct(createProductDto, req);
-  // }
 
   @Patch('products/:id')
   async updateProduct(@Param('id') id: string, @Body() updateProductDto: any) {
