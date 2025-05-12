@@ -105,26 +105,6 @@ export class AdminService {
     return product;
   }
 
-  // async createProduct(
-  //   createProductDto: CreateProductDto,
-  //   req: any,
-  // ): Promise<Product> {
-  //   const user = req.user;
-
-  //   if (!user) {
-  //     throw new BadRequestException('User not found');
-  //   }
-
-  //   if (!user.id) {
-  //     throw new BadRequestException('User ID is required');
-  //   }
-
-  //   const product = await this.productService.create(createProductDto, req);
-
-  //   console.log(`Product created successfully for user ID: ${user.id}`);
-  //   return product;
-  // }
-
   async updateProduct(id: string, updateProductDto: any): Promise<any> {
     return this.productService.updateProduct(id, updateProductDto);
   }
