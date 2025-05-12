@@ -102,7 +102,7 @@ export class AdminController {
       throw new BadRequestException('User ID is required');
     }
 
-    createProductDto.userId = user.id; // Attach userId from req.user
+    createProductDto.userId = user.id;
     console.log(`Creating product for user ID: ${user.id}`);
     return this.adminService.create(createProductDto, req);
   }
