@@ -19,6 +19,7 @@ import { CreateDeliveryDto } from '../delivery/dto/create-delivery.dto';
 import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ProductService } from '../products/product.service';
+import { UpdateProductDto } from '../products/dto/update-product.dto';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -51,6 +52,32 @@ export class AdminController {
     return this.adminService.deleteOrder(id);
   }
 
+  @Post('products')
+  async createProduct(
+    @Body() createProductDto: CreateProductDto,
+    @Req() req: any,
+  ) {
+    const user = req.user;
+    if (user && user.role === 'admin' && createProductDto.userId) {
+      console.log(
+        `Admin creating product for user ID: ${createProductDto.userId}`,
+      );
+      return this.adminService.create(createProductDto, req);
+    }
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    if (!user.id) {
+      throw new BadRequestException('User ID is required');
+    }
+
+    createProductDto.userId = user.id;
+    console.log(`Creating product for user ID: ${user.id}`);
+    return this.adminService.create(createProductDto, req);
+  }
+
   @Get('products')
   async getAllProducts(
     @Query('page') page = 1,
@@ -81,34 +108,11 @@ export class AdminController {
     return this.adminService.getProductById(id);
   }
 
-  @Post('products')
-  async createProduct(
-    @Body() createProductDto: CreateProductDto,
-    @Req() req: any,
-  ) {
-    const user = req.user;
-    if (user && user.role === 'admin' && createProductDto.userId) {
-      console.log(
-        `Admin creating product for user ID: ${createProductDto.userId}`,
-      );
-      return this.adminService.create(createProductDto, req);
-    }
-
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    if (!user.id) {
-      throw new BadRequestException('User ID is required');
-    }
-
-    createProductDto.userId = user.id;
-    console.log(`Creating product for user ID: ${user.id}`);
-    return this.adminService.create(createProductDto, req);
-  }
-
   @Patch('products/:id')
-  async updateProduct(@Param('id') id: string, @Body() updateProductDto: any) {
+  async updateProduct(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
     return this.adminService.updateProduct(id, updateProductDto);
   }
 

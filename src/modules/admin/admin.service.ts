@@ -15,6 +15,7 @@ import { CreateDeliveryDto } from '../delivery/dto/create-delivery.dto';
 import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
 import { REPOSITORY } from 'src/core/constants';
 import { Repository } from 'sequelize-typescript';
+import { UpdateProductDto } from '../products/dto/update-product.dto';
 
 @Injectable()
 export class AdminService {
@@ -105,8 +106,19 @@ export class AdminService {
     return product;
   }
 
-  async updateProduct(id: string, updateProductDto: any): Promise<any> {
-    return this.productService.updateProduct(id, updateProductDto);
+  async updateProduct(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    const product = await this.productRepository.findByPk(id);
+
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    console.log(`Updating product with ID: ${id}`);
+    await product.update(updateProductDto);
+    return product;
   }
 
   async deleteProduct(id: string): Promise<any> {
