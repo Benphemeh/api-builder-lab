@@ -19,6 +19,7 @@ import { CreateDeliveryDto } from '../delivery/dto/create-delivery.dto';
 import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ProductService } from '../products/product.service';
+import { UpdateProductDto } from '../products/dto/update-product.dto';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -108,7 +109,10 @@ export class AdminController {
   }
 
   @Patch('products/:id')
-  async updateProduct(@Param('id') id: string, @Body() updateProductDto: any) {
+  async updateProduct(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
     return this.adminService.updateProduct(id, updateProductDto);
   }
 
