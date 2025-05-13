@@ -121,16 +121,16 @@ export class AdminController {
     return this.adminService.deleteProduct(id);
   }
 
+  @Post('deliveries')
+  async createDelivery(@Body() dto: CreateDeliveryDto): Promise<Delivery> {
+    return this.adminService.createDelivery(dto);
+  }
+
   @Get('deliveries/:orderId')
   async getDeliveryByOrderId(
     @Param('orderId') orderId: string,
   ): Promise<Delivery> {
     return this.adminService.getDeliveryByOrderId(orderId);
-  }
-
-  @Post('deliveries')
-  async createDelivery(@Body() dto: CreateDeliveryDto): Promise<Delivery> {
-    return this.adminService.createDelivery(dto);
   }
 
   @Patch('deliveries/:orderId/status')
