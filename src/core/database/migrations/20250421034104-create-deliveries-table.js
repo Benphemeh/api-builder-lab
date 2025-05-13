@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'orders', // Name of the referenced table
+          model: 'orders',
           key: 'id',
         },
         onUpdate: 'CASCADE',
