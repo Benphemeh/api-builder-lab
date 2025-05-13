@@ -34,10 +34,9 @@ export class DeliveryService {
     orderId: string,
     dto: UpdateDeliveryStatusDto,
   ): Promise<Delivery> {
-    // Include the related Order when querying the Delivery
     const delivery = await this.deliveryRepository.findOne({
       where: { orderId },
-      include: [{ model: Delivery.associations.order.target }], // Include the Order relationship
+      include: [{ model: Delivery.associations.order.target }],
     });
 
     if (!delivery) {
