@@ -67,6 +67,14 @@ export class ProductController {
   ) {
     return await this.productService.updateProduct(id, updateProductDto);
   }
+  @Patch('products/:id/restock')
+  async restockProduct(
+    @Param('id') id: string,
+    @Body('quantity') quantity: number,
+  ) {
+    return this.productService.restockProduct(id, quantity);
+  }
+
   @UseGuards(JwtGuard)
   @Delete(':id')
   async deleteProduct(@Param('id') id: string) {
