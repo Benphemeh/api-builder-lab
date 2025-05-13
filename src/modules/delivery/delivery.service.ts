@@ -5,15 +5,27 @@ import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { REPOSITORY } from 'src/core/constants';
 import { UpdateDeliveryStatusDto } from './dto/update-delivery.dto';
 import { MailService } from 'src/core/mail/mail.service';
+import { Order } from 'src/core/database';
 
 @Injectable()
 export class DeliveryService {
   constructor(
     @Inject(REPOSITORY.DELIVERY)
     private readonly deliveryRepository: typeof Delivery,
+    @Inject(REPOSITORY.ORDER)
+    private readonly orderRepository: typeof Order,
     private readonly mailService: MailService,
   ) {}
 
+  // async createDelivery(dto: CreateDeliveryDto): Promise<Delivery> {
+  //   console.log(`Creating delivery for order ID: ${dto.orderId}`);
+  //   const order = await this.orderRepository.findByPk(dto.orderId);
+  //   if (!order) {
+  //     throw new NotFoundException(`Order with ID ${dto.orderId} not found`);
+  //   }
+
+  //   return this.deliveryRepository.create({ ...dto });
+  // }
   async createDelivery(dto: CreateDeliveryDto): Promise<Delivery> {
     const delivery = await this.deliveryRepository.create({ ...dto });
     return delivery;
