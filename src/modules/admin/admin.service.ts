@@ -153,4 +153,14 @@ export class AdminService {
     }
     return coupon;
   }
+  async getAllCoupons(): Promise<Coupon[]> {
+    return this.couponRepository.findAll();
+  }
+  async deleteCoupon(id: string): Promise<void> {
+    const coupon = await this.couponRepository.findByPk(id);
+    if (!coupon) {
+      throw new NotFoundException(`Coupon with ID ${id} not found`);
+    }
+    await coupon.destroy();
+  }
 }

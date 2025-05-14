@@ -1,10 +1,15 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { REPOSITORY } from 'src/core/constants';
 import Order from 'src/core/database/models/order.model';
 import Product from 'src/core/database/models/product.model';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { MailService } from 'src/core/mail/mail.service';
-import { Delivery, User } from 'src/core/database';
+import { Coupon, Delivery, User } from 'src/core/database';
 import { PaymentService } from '../payment/payment.service';
 
 @Injectable()
@@ -18,6 +23,8 @@ export class OrderService {
     private readonly userRepository: typeof User,
     @Inject(REPOSITORY.DELIVERY)
     private readonly deliveryRepository: typeof Delivery,
+    @Inject(REPOSITORY.COUPON)
+    private readonly couponRepository: typeof Coupon,
     private readonly mailService: MailService,
     private readonly paymentService: PaymentService,
   ) {}
@@ -118,6 +125,23 @@ export class OrderService {
     // Update payment status to failed if verification fails
     await this.paymentService.updatePayment(reference, 'failed');
     throw new NotFoundException('Payment verification failed');
+  }
+  async applyCoupon(orderId: string, code: string): Promise<Order> {
+    const coupon = await this.couponRepository.findOne({ where: { code } });
+    if (!coupon || coupon.expiresAt < new Date()) {
+      throw new BadRequestException('Invalid or expired coupon');
+    }
+
+    const order = await this.orderRepository.findByPk(orderId);
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
+    }
+
+    order.totalAmount =
+      order.totalAmount * (1 - coupon.discountPercentage / 100);
+    await order.save();
+
+    return order;
   }
 
   private async createDelivery(order: Order): Promise<Delivery> {
