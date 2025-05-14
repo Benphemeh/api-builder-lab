@@ -153,4 +153,7 @@ export class AdminService {
     }
     return coupon;
   }
+  async getAllCoupons(): Promise<Coupon[]> {
+    return this.couponRepository.findAll();
+  }
 }

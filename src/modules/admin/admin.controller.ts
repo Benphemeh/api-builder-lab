@@ -141,6 +141,9 @@ export class AdminController {
   ): Promise<Delivery> {
     return this.adminService.updateDeliveryStatus(orderId, dto);
   }
+
+  // -- coupon management --
+
   @Post('coupons')
   async createCoupon(@Body() createCouponDto: CreateCouponDto) {
     return this.adminService.createCoupon(createCouponDto);
@@ -148,5 +151,9 @@ export class AdminController {
   @Get('coupons/:code')
   async getCouponByCode(@Param('code') code: string) {
     return this.adminService.getCouponByCode(code);
+  }
+  @Get('coupons')
+  async getAllCoupons() {
+    return this.adminService.getAllCoupons();
   }
 }
