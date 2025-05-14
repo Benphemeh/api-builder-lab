@@ -6,6 +6,7 @@ import { OrderService } from './order.service';
 import { ProductService } from '../products/product.service';
 import Delivery from 'src/core/database/models/delivery.model';
 import { DeliveryService } from '../delivery/delivery.service';
+import { Coupon } from 'src/core/database';
 
 export const orderProviders = [
   {
@@ -23,6 +24,10 @@ export const orderProviders = [
   {
     provide: REPOSITORY.DELIVERY,
     useValue: Delivery,
+  },
+  {
+    provide: REPOSITORY.COUPON,
+    useValue: Coupon,
   },
   OrderService,
   ProductService,

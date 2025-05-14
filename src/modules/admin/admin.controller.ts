@@ -144,16 +144,20 @@ export class AdminController {
 
   // -- coupon management --
 
-  @Post('coupons')
+  @Post('coupon')
   async createCoupon(@Body() createCouponDto: CreateCouponDto) {
     return this.adminService.createCoupon(createCouponDto);
   }
-  @Get('coupons/:code')
+  @Get('coupon/:code')
   async getCouponByCode(@Param('code') code: string) {
     return this.adminService.getCouponByCode(code);
   }
   @Get('coupons')
   async getAllCoupons() {
     return this.adminService.getAllCoupons();
+  }
+  @Delete('coupons/:id')
+  async deleteCoupon(@Param('id') id: string) {
+    return this.adminService.deleteCoupon(id);
   }
 }

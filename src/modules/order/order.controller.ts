@@ -29,6 +29,10 @@ export class OrderController {
   async verifyPayment(@Param('reference') reference: string) {
     return this.orderService.verifyOrderPayment(reference);
   }
+  @Post(':id/apply-coupon')
+  async applyCoupon(@Param('id') orderId: string, @Body('code') code: string) {
+    return this.orderService.applyCoupon(orderId, code);
+  }
 
   @Get(':id')
   @UseGuards(JwtGuard)
