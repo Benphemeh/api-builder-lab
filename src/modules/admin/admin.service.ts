@@ -156,11 +156,14 @@ export class AdminService {
   async getAllCoupons(): Promise<Coupon[]> {
     return this.couponRepository.findAll();
   }
-  async deleteCoupon(id: string): Promise<void> {
+  async deleteCoupon(id: string): Promise<{ message: string }> {
     const coupon = await this.couponRepository.findByPk(id);
     if (!coupon) {
       throw new NotFoundException(`Coupon with ID ${id} not found`);
     }
+
     await coupon.destroy();
+
+    return { message: `Coupon with ID ${id} has been successfully deleted` };
   }
 }
