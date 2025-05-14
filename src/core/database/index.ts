@@ -5,3 +5,4 @@ export { default as ActivityModel } from './models/activity-log.model';
 export { default as Order } from './models/order.model';
 export { default as Payment } from './models/payment.model';
 export { default as Delivery } from './models/delivery.model';
+export { default as Coupon } from './models/coupon.model';

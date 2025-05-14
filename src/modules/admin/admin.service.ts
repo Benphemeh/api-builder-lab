@@ -139,4 +139,7 @@ export class AdminService {
   ): Promise<Delivery> {
     return this.deliveryService.updateDeliveryStatus(orderId, dto);
   }
+  async createCoupon(dto: CreateCouponDto): Promise<Coupon> {
+    return this.couponRepository.create(dto);
+  }
 }

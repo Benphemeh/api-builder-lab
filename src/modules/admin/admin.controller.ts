@@ -140,4 +140,8 @@ export class AdminController {
   ): Promise<Delivery> {
     return this.adminService.updateDeliveryStatus(orderId, dto);
   }
+  @Post('coupons')
+  async createCoupon(@Body() createCouponDto: CreateCouponDto) {
+    return this.adminService.createCoupon(createCouponDto);
+  }
 }
