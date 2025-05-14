@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  Req,
   UseGuards,
   Patch,
   Param,

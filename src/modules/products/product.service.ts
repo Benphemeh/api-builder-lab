@@ -136,18 +136,20 @@ export class ProductService {
     console.log(`Product ${product.name} updated successfully`);
     return product;
   }
-  async restockProduct(productId: string, quantity: number): Promise<void> {
+  async restockProduct(productId: string, quantity: number): Promise<Product> {
     const product = await this.productRepository.findByPk(productId);
     if (!product) {
       throw new NotFoundException('Product not found');
     }
 
-    if (product.stock < quantity) {
-      throw new BadRequestException('Insufficient stock');
-    }
-
-    product.stock -= quantity;
+    // Add the quantity to the current stock
+    product.stock += quantity;
     await product.save();
+
+    console.log(
+      `Product ${product.name} restocked successfully. New stock: ${product.stock}`,
+    );
+    return product;
   }
 
   async deleteProduct(id: string): Promise<{ message: string }> {

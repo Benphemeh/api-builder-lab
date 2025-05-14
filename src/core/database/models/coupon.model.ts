@@ -7,18 +7,21 @@ export default class Coupon extends BaseModel {
     type: DataType.STRING,
     allowNull: false,
     unique: true,
+    field: 'code',
   })
   code: string;
 
   @Column({
     type: DataType.FLOAT,
     allowNull: false,
+    field: 'discount_percentage',
   })
   discountPercentage: number;
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
+    field: 'expires_at',
   })
   expiresAt: Date;
 }
