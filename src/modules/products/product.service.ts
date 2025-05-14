@@ -141,8 +141,6 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('Product not found');
     }
-
-    // Add the quantity to the current stock
     product.stock += quantity;
     await product.save();
 
