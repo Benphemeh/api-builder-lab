@@ -20,6 +20,7 @@ import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ProductService } from '../products/product.service';
 import { UpdateProductDto } from '../products/dto/update-product.dto';
+import { CreateCouponDto } from './dto/coupon.dto';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -143,5 +144,9 @@ export class AdminController {
   @Post('coupons')
   async createCoupon(@Body() createCouponDto: CreateCouponDto) {
     return this.adminService.createCoupon(createCouponDto);
+  }
+  @Get('coupons/:code')
+  async getCouponByCode(@Param('code') code: string) {
+    return this.adminService.getCouponByCode(code);
   }
 }

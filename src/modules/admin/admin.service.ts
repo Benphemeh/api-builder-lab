@@ -7,7 +7,7 @@ import {
 import { OrderService } from '../order/order.service';
 import { ProductService } from '../products/product.service';
 import { UsersService } from '../users/users.service';
-import { Delivery, Product } from 'src/core/database';
+import { Coupon, Delivery, Product } from 'src/core/database';
 import { CreateProductDto } from '../products/dto/create-product.dto';
 import { ORDER_STATUS } from 'src/core/enums';
 import { DeliveryService } from '../delivery/delivery.service';
@@ -16,12 +16,15 @@ import { UpdateDeliveryStatusDto } from '../delivery/dto/update-delivery.dto';
 import { REPOSITORY } from 'src/core/constants';
 import { Repository } from 'sequelize-typescript';
 import { UpdateProductDto } from '../products/dto/update-product.dto';
+import { CreateCouponDto } from './dto/coupon.dto';
 
 @Injectable()
 export class AdminService {
   constructor(
     @Inject(REPOSITORY.PRODUCT)
     private readonly productRepository: Repository<Product>,
+    @Inject(REPOSITORY.COUPON)
+    private readonly couponRepository: Repository<Coupon>,
     private readonly orderService: OrderService,
     private readonly productService: ProductService,
     private readonly usersService: UsersService,
@@ -140,6 +143,14 @@ export class AdminService {
     return this.deliveryService.updateDeliveryStatus(orderId, dto);
   }
   async createCoupon(dto: CreateCouponDto): Promise<Coupon> {
-    return this.couponRepository.create(dto);
+    return this.couponRepository.create({ ...dto });
+  }
+
+  async getCouponByCode(code: string): Promise<Coupon> {
+    const coupon = await this.couponRepository.findOne({ where: { code } });
+    if (!coupon) {
+      throw new NotFoundException(`Coupon with code ${code} not found`);
+    }
+    return coupon;
   }
 }
