@@ -67,7 +67,7 @@ export class ProductController {
   ) {
     return await this.productService.updateProduct(id, updateProductDto);
   }
-  @Patch('products/:id/restock')
+  @Patch(':id/restock')
   async restockProduct(
     @Param('id') id: string,
     @Body('quantity') quantity: number,
