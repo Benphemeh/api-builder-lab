@@ -87,7 +87,6 @@ export class PaymentController {
 
     console.log('Webhook signature verified successfully');
 
-    // Process the webhook event
     await this.paymentService.handleWebhook(body);
     console.log('Webhook event processed successfully');
   }
