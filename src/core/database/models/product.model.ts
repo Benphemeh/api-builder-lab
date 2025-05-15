@@ -65,4 +65,10 @@ export default class Product extends BaseModel implements IPRODUCT {
     allowNull: false,
   })
   type: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  imageUrl: string;
 }
