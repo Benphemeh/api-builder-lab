@@ -8,25 +8,38 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
 import { JwtGuard } from '../guards/jwt-guard';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
   @UseGuards(JwtGuard)
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   async createProduct(
     @Body() createProductDto: CreateProductDto,
     @Req() req: Request,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    console.log('user from request:', (req as any).user);
-    return this.productService.create(createProductDto, req);
+    return this.productService.create(createProductDto, req, file);
   }
+  // @UseGuards(JwtGuard)
+  // @Post()
+  // async createProduct(
+  //   @Body() createProductDto: CreateProductDto,
+  //   @Req() req: Request,
+  // ) {
+  //   console.log('user from request:', (req as any).user);
+  //   return this.productService.create(createProductDto, req);
+  // }
 
   @UseGuards(JwtGuard)
   @Get(':id')
