@@ -12,6 +12,8 @@ import { MailService } from 'src/core/mail/mail.service';
 import { Op } from 'sequelize';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UsersService } from '../users/users.service';
+import * as fs from 'fs';
+import cloudinary from 'src/core/cloudinary/cloudinary.config';
 
 @Injectable()
 export class ProductService {
@@ -22,23 +24,35 @@ export class ProductService {
     private readonly userService: UsersService,
   ) {}
 
-  async create(createProductDto: CreateProductDto, req: Request) {
+  async create(
+    createProductDto: CreateProductDto,
+    req: Request,
+    file?: Express.Multer.File,
+  ) {
     const user = (req as any).user;
 
-    if (!user) {
+    if (!user?.id) {
       throw new BadRequestException('User not found');
     }
 
-    if (!user.id) {
-      console.error('User ID is undefined', user);
-      throw new BadRequestException('User ID is required');
-    }
+    let imageUrl = null;
 
-    console.log(`Creating product for user ID: ${user.id}`);
+    if (file) {
+      const uploadResult = await cloudinary.uploader.upload(file.path, {
+        folder: 'products',
+        public_id: createProductDto.name,
+      });
+
+      imageUrl = uploadResult.secure_url;
+
+      // Remove uploaded file from disk
+      fs.unlinkSync(file.path);
+    }
 
     const product = await this.productRepository.create({
       ...createProductDto,
       userId: user.id,
+      imageUrl,
     });
 
     // Send email notification
@@ -52,6 +66,36 @@ export class ProductService {
 
     return product;
   }
+  // async create(createProductDto: CreateProductDto, req: Request) {
+  //   const user = (req as any).user;
+
+  //   if (!user) {
+  //     throw new BadRequestException('User not found');
+  //   }
+
+  //   if (!user.id) {
+  //     console.error('User ID is undefined', user);
+  //     throw new BadRequestException('User ID is required');
+  //   }
+
+  //   console.log(`Creating product for user ID: ${user.id}`);
+
+  //   const product = await this.productRepository.create({
+  //     ...createProductDto,
+  //     userId: user.id,
+  //   });
+
+  //   // Send email notification
+  //   await this.mailService.sendProductListedEmail(
+  //     user.email,
+  //     user,
+  //     createProductDto.name,
+  //     createProductDto.price,
+  //     createProductDto.stock,
+  //   );
+
+  //   return product;
+  // }
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findByPk(id);
     if (!product) {
