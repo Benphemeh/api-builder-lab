@@ -44,4 +44,8 @@ export class CreateProductDto {
   @IsOptional()
   @IsUUID()
   userId?: string;
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
 }

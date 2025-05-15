@@ -116,7 +116,7 @@ export class PaymentService {
         );
       }
 
-      await order.update({ status: 'completed' });
+      await order.update({ status: 'success' });
 
       // Send payment confirmation email
       const user = order.user;
