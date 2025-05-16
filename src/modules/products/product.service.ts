@@ -35,7 +35,8 @@ export class ProductService {
       throw new BadRequestException('User not found');
     }
 
-    let imageUrl = null;
+    // Default to imageUrl from DTO if provided
+    let imageUrl = createProductDto.imageUrl ?? null;
 
     if (file) {
       const uploadResult = await cloudinary.uploader.upload(file.path, {

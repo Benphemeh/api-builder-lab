@@ -9,6 +9,6 @@ export const paymentProviders = [
   },
   {
     provide: REPOSITORY.ORDER,
-    useClass: Order,
+    useValue: Order,
   },
 ];

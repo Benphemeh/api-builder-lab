@@ -14,6 +14,7 @@ import { InternalCacheModule } from './modules/cache/cache.module';
 import { OrdersModule } from './modules/order/order.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AdminModule } from './modules/admin/admin.module';
     AuthModule,
     ProductsModule,
     OrdersModule,
+    PaymentModule,
     DeliveryModule,
     ApiLoggerModule,
     InternalCacheModule,
