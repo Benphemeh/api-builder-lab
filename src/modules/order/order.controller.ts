@@ -44,14 +44,14 @@ export class OrderController {
     return this.orderService.getAllOrders(); // Fetch all orders
   }
 
-  @Patch(':id')
-  @UseGuards(JwtGuard)
-  async updateOrder(
-    @Param('id') id: string,
-    @Body() updateOrderDto: UpdateOrderDto,
-  ) {
-    return this.orderService.updateOrder(id, updateOrderDto);
-  }
+  // @Patch(':id')
+  // @UseGuards(JwtGuard)
+  // async updateOrder(
+  //   @Param('id') id: string,
+  //   @Body() updateOrderDto: UpdateOrderDto,
+  // ) {
+  //   return this.orderService.updateOrder(id, updateOrderDto);
+  // }
   @Delete(':id')
   @UseGuards(JwtGuard)
   async deleteOrder(@Param('id') id: string) {

@@ -35,7 +35,6 @@ export class ProductService {
       throw new BadRequestException('User not found');
     }
 
-    // Default to imageUrl from DTO if provided
     let imageUrl = createProductDto.imageUrl ?? null;
 
     if (file) {
@@ -46,7 +45,6 @@ export class ProductService {
 
       imageUrl = uploadResult.secure_url;
 
-      // Remove uploaded file from disk
       fs.unlinkSync(file.path);
     }
 
@@ -67,36 +65,6 @@ export class ProductService {
 
     return product;
   }
-  // async create(createProductDto: CreateProductDto, req: Request) {
-  //   const user = (req as any).user;
-
-  //   if (!user) {
-  //     throw new BadRequestException('User not found');
-  //   }
-
-  //   if (!user.id) {
-  //     console.error('User ID is undefined', user);
-  //     throw new BadRequestException('User ID is required');
-  //   }
-
-  //   console.log(`Creating product for user ID: ${user.id}`);
-
-  //   const product = await this.productRepository.create({
-  //     ...createProductDto,
-  //     userId: user.id,
-  //   });
-
-  //   // Send email notification
-  //   await this.mailService.sendProductListedEmail(
-  //     user.email,
-  //     user,
-  //     createProductDto.name,
-  //     createProductDto.price,
-  //     createProductDto.stock,
-  //   );
-
-  //   return product;
-  // }
   async findOne(id: string): Promise<Product> {
     const product = await this.productRepository.findByPk(id);
     if (!product) {
@@ -188,6 +156,23 @@ export class ProductService {
     }
     product.stock += quantity;
     await product.save();
+
+    // Send restock notification email
+    if (product.userId) {
+      try {
+        const user = await this.userService.findOneById(product.userId);
+        if (user && user.email) {
+          await this.mailService.sendProductRestockedEmail(
+            user.email,
+            user,
+            product.name,
+            product.stock,
+          );
+        }
+      } catch (error) {
+        console.error(`Failed to send restock email: ${error.message}`);
+      }
+    }
 
     console.log(
       `Product ${product.name} restocked successfully. New stock: ${product.stock}`,

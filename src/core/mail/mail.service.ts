@@ -9,6 +9,7 @@ import {
   orderUpdatedEmail,
   orderVerificationEmail,
   productListedEmail,
+  productRestockedEmail,
   productUpdatedEmail,
   userOnBoardEmail,
 } from './templates';
@@ -262,5 +263,30 @@ export class MailService {
     });
 
     console.log(`Order verification email sent to ${email}`);
+  }
+
+  async sendProductRestockedEmail(
+    email: string,
+    user: User,
+    productName: string,
+    newStock: number,
+  ) {
+    const html = productRestockedEmail({
+      firstName: user.firstName,
+      productName,
+      newStock,
+    });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+      subject: html.subject,
+      html: html.msg,
+    });
+
+    console.log(`Product restock email sent to ${email}`);
   }
 }

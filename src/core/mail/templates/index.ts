@@ -345,3 +345,22 @@ export const orderVerificationEmail = (params: OrderVerificationParams) => {
   const subject = `Order Verification Required – Order ID: ${params.orderId}`;
   return { msg: emailTemplate(msg), subject };
 };
+
+interface ProductRestockedParams {
+  firstName: string;
+  productName: string;
+  newStock: number;
+}
+
+export const productRestockedEmail = (params: ProductRestockedParams) => {
+  const msg = `
+    <p>Dear ${params.firstName},</p>
+    <p>Your product <strong>${params.productName}</strong> has been restocked.</p>
+    <p><strong>New Stock:</strong> ${params.newStock} units</p>
+    <p>Thank you for keeping your inventory up to date.</p>
+    <p>Best regards,</p>
+    <p><strong>O'Ben Brands</strong></p>
+  `;
+  const subject = `Product Restocked Successfully`;
+  return { msg: emailTemplate(msg), subject };
+};
