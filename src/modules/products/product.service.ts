@@ -29,9 +29,14 @@ export class ProductService {
     req: Request,
     file?: Express.Multer.File,
   ) {
-    const user = (req as any).user;
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      throw new BadRequestException('User not found');
+    }
 
-    if (!user?.id) {
+    const user = await this.userService.findOneById(userId); // <-- fetch full user
+
+    if (!user) {
       throw new BadRequestException('User not found');
     }
 

@@ -21,7 +21,6 @@ export enum PAYMENT_STATUS {
 }
 
 export enum DELIVERY_STATUS {
-  PENDING = 'pending',
   IN_TRANSIT = 'in-transit',
   DELIVERED = 'delivered',
 }

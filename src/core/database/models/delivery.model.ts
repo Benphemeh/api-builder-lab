@@ -44,7 +44,7 @@ export default class Delivery extends BaseModel {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: DELIVERY_STATUS.PENDING,
+    defaultValue: DELIVERY_STATUS.IN_TRANSIT,
     field: 'status',
   })
   status: DELIVERY_STATUS;
