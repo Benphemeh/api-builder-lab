@@ -157,6 +157,23 @@ export class ProductService {
     product.stock += quantity;
     await product.save();
 
+    // Send restock notification email
+    if (product.userId) {
+      try {
+        const user = await this.userService.findOneById(product.userId);
+        if (user && user.email) {
+          await this.mailService.sendProductRestockedEmail(
+            user.email,
+            user,
+            product.name,
+            product.stock,
+          );
+        }
+      } catch (error) {
+        console.error(`Failed to send restock email: ${error.message}`);
+      }
+    }
+
     console.log(
       `Product ${product.name} restocked successfully. New stock: ${product.stock}`,
     );
