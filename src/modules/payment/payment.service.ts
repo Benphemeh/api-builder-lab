@@ -81,8 +81,44 @@ export class PaymentService {
     if (!payment) {
       throw new Error(`Payment with reference ${reference} not found`);
     }
-    return payment.update({ status });
+
+    // Update payment status
+    await payment.update({ status });
+
+    // If status is 'success', update order and send confirmation email
+    if (status === 'success') {
+      const order = await this.orderRepository.findByPk(payment.orderId, {
+        include: ['user'],
+      });
+
+      if (order) {
+        await order.update({ status: 'success' });
+
+        const user = order.user;
+        await this.mailService.sendOrderPaymentEmail(
+          user.email,
+          user.firstName || 'Customer',
+          order.id,
+          payment.amount,
+          reference,
+        );
+      }
+    }
+
+    return payment;
   }
+  // async updatePayment(
+  //   reference: string,
+  //   status: 'success' | 'failed',
+  // ): Promise<Payment> {
+  //   const payment = await this.paymentRepository.findOne({
+  //     where: { reference },
+  //   });
+  //   if (!payment) {
+  //     throw new Error(`Payment with reference ${reference} not found`);
+  //   }
+  //   return payment.update({ status });
+  // }
   async handleWebhook(body: any): Promise<void> {
     const { event, data } = body;
 

@@ -7,12 +7,15 @@ import {
   HttpCode,
   Headers,
   BadRequestException,
+  Patch,
+  Param,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { JwtGuard } from 'src/modules/guards/jwt-guard';
 import { InitializePaymentDto } from './dto/initialize-payment.dto';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
 import { ConfigService } from '@nestjs/config';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
 
 @Controller('payments')
 export class PaymentController {
@@ -89,5 +92,13 @@ export class PaymentController {
 
     await this.paymentService.handleWebhook(body);
     console.log('Webhook event processed successfully');
+  }
+  @UseGuards(JwtGuard)
+  @Patch(':reference')
+  async updatePaymentStatus(
+    @Param('reference') reference: string,
+    @Body() dto: UpdatePaymentDto,
+  ) {
+    return this.paymentService.updatePayment(reference, dto.status);
   }
 }
