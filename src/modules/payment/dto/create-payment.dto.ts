@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsEnum,
+  IsInt,
 } from 'class-validator';
 import { PAYMENT_STATUS } from 'src/core/enums';
 
@@ -21,7 +22,8 @@ export class CreatePaymentDto {
   @IsEnum(PAYMENT_STATUS)
   status?: PAYMENT_STATUS;
 
-  @IsNumber()
+  // @IsNumber()
+  @IsInt()
   @IsNotEmpty()
   amount: number;
 }
