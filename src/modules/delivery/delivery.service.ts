@@ -12,9 +12,9 @@ export class DeliveryService {
   constructor(
     @Inject(REPOSITORY.DELIVERY)
     private readonly deliveryRepository: typeof Delivery,
-        @Inject(REPOSITORY.ORDER)
+    @Inject(REPOSITORY.ORDER)
     private readonly orderRepository: typeof Order,
-        @Inject(REPOSITORY.USER)
+    @Inject(REPOSITORY.USER)
     private readonly userRepository: typeof User,
     private readonly mailService: MailService,
   ) {}
@@ -55,13 +55,14 @@ export class DeliveryService {
     await this.mailService.sendOrderDeliveredEmail(
       user.email,
       user.firstName,
-      delivery.status,
+      order.id,
       delivery.deliveryAddress,
       delivery.logisticsProvider,
     );
 
     return delivery;
   }
+
   // async updateDeliveryStatus(
   //   orderId: string,
   //   dto: UpdateDeliveryStatusDto,

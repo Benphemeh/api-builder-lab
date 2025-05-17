@@ -11,7 +11,6 @@ import {
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
 import { JwtGuard } from '../guards/jwt-guard';
-import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('order')
 export class OrderController {
