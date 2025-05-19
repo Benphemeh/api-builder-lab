@@ -1,4 +1,5 @@
 import { IsString, IsNotEmpty, IsIn } from 'class-validator';
+import { DELIVERY_STATUS } from 'src/core/enums';
 
 export class UpdateDeliveryStatusDto {
   @IsString()
@@ -6,5 +7,5 @@ export class UpdateDeliveryStatusDto {
     message: 'status must be one of: pending, in-transit, or delivered',
   })
   @IsNotEmpty({ message: 'status is required' })
-  status: 'pending' | 'in-transit' | 'delivered';
+  status: DELIVERY_STATUS;
 }

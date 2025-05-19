@@ -1,7 +1,6 @@
 import {
   IsUUID,
   IsString,
-  IsNumber,
   IsNotEmpty,
   IsOptional,
   IsEnum,
@@ -22,7 +21,6 @@ export class CreatePaymentDto {
   @IsEnum(PAYMENT_STATUS)
   status?: PAYMENT_STATUS;
 
-  // @IsNumber()
   @IsInt()
   @IsNotEmpty()
   amount: number;
