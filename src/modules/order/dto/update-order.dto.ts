@@ -3,8 +3,6 @@ import { ORDER_STATUS } from 'src/core/enums';
 
 export class UpdateOrderDto {
   @IsOptional()
-  @IsEnum(ORDER_STATUS, {
-    message: 'Status must be one of: pending, completed, or canceled',
-  })
+  @IsEnum(ORDER_STATUS)
   status?: ORDER_STATUS;
 }
