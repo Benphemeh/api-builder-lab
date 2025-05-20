@@ -60,46 +60,6 @@ export class DeliveryService {
     return delivery;
   }
 
-  // async updateDeliveryStatus(
-  //   orderId: string,
-  //   dto: UpdateDeliveryStatusDto,
-  // ): Promise<Delivery> {
-  //   const delivery = await this.deliveryRepository.findOne({
-  //     where: { orderId },
-  //     include: [{ model: Delivery.associations.order.target }],
-  //   });
-
-  //   if (!delivery) {
-  //     throw new NotFoundException(`Delivery for order ${orderId} not found`);
-  //   }
-
-  //   const updatedDelivery = await delivery.update({ status: dto.status });
-
-  //   const order = delivery.order;
-  //   const user = await order?.user;
-
-  //   // Send appropriate email based on status
-  //   if (dto.status === 'in-transit') {
-  //     await this.mailService.sendOrderReadyForDeliveryEmail(
-  //       user.email,
-  //       user.firstName,
-  //       order.id,
-  //       delivery.deliveryAddress,
-  //       delivery.logisticsProvider,
-  //     );
-  //   } else if (dto.status === 'delivered') {
-  //     await this.mailService.sendOrderDeliveredEmail(
-  //       user.email,
-  //       user.firstName,
-  //       order.id,
-  //       delivery.deliveryAddress,
-  //       delivery.logisticsProvider,
-  //     );
-  //   }
-
-  //   return updatedDelivery;
-  // }
-
   async getDeliveryByOrderId(orderId: string): Promise<Delivery> {
     const delivery = await this.deliveryRepository.findOne({
       where: { orderId },
