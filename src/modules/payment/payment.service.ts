@@ -107,18 +107,7 @@ export class PaymentService {
 
     return payment;
   }
-  // async updatePayment(
-  //   reference: string,
-  //   status: 'success' | 'failed',
-  // ): Promise<Payment> {
-  //   const payment = await this.paymentRepository.findOne({
-  //     where: { reference },
-  //   });
-  //   if (!payment) {
-  //     throw new Error(`Payment with reference ${reference} not found`);
-  //   }
-  //   return payment.update({ status });
-  // }
+
   async handleWebhook(body: any): Promise<void> {
     const { event, data } = body;
 
