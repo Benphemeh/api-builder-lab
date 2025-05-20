@@ -35,7 +35,6 @@ export class DeliveryService {
     delivery.status = dto.status;
     await delivery.save();
 
-    // Fetch the order to get the userId
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
     });
@@ -43,15 +42,13 @@ export class DeliveryService {
       throw new NotFoundException('Order not found');
     }
 
-    // Fetch the user
     const user = await this.userRepository.findOne({
       where: { id: order.userId },
     });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
-    // Now you can safely use user.email
+    // Send email based on status
     await this.mailService.sendOrderDeliveredEmail(
       user.email,
       user.firstName,
