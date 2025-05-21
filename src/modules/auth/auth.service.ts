@@ -1,11 +1,15 @@
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { Op } from 'sequelize';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { REPOSITORY } from 'src/core/constants';
@@ -159,5 +163,69 @@ export class AuthService implements OnModuleInit {
     } catch (error) {
       console.error(`Failed to send onboarding email to ${email}:`, error);
     }
+  }
+  async requestEmailVerification(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.isEmailVerified) return { message: 'Email already verified' };
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.emailVerificationToken = token;
+    await user.save();
+
+    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    await this.mailService.sendEmailVerification(
+      user.email,
+      user.firstName,
+      verificationUrl,
+    );
+
+    return { message: 'Verification email sent' };
+  }
+  async verifyEmail(token: string) {
+    const user = await this.userRepository.findOne({
+      where: { emailVerificationToken: token },
+    });
+    if (!user) throw new BadRequestException('Invalid or expired token');
+    user.isEmailVerified = true;
+    user.emailVerificationToken = null;
+    await user.save();
+    return { message: 'Email verified successfully' };
+  }
+  async forgotPassword(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = expires;
+    await user.save();
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    await this.mailService.sendPasswordReset(
+      user.email,
+      user.firstName,
+      resetUrl,
+    );
+
+    return { message: 'Password reset email sent' };
+  }
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: { [Op.gt]: new Date() },
+      },
+    });
+    if (!user) throw new BadRequestException('Invalid or expired token');
+
+    user.password = await this.hashPassword(newPassword);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    return { message: 'Password has been reset successfully' };
   }
 }

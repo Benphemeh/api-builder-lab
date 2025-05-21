@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
+  emailVerificationEmail,
   orderCreationEmail,
   orderDeliveredEmail,
   orderPaymentEmail,
   orderReadyForDeliveryEmail,
   orderUpdatedEmail,
   orderVerificationEmail,
+  passwordResetEmail,
   productListedEmail,
   productRestockedEmail,
   productUpdatedEmail,
@@ -288,5 +290,33 @@ export class MailService {
     });
 
     console.log(`Product restock email sent to ${email}`);
+  }
+  async sendEmailVerification(
+    email: string,
+    firstName: string,
+    verificationUrl: string,
+  ) {
+    const { subject, msg } = emailVerificationEmail(firstName, verificationUrl);
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      html: msg,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+    });
+  }
+  async sendPasswordReset(email: string, firstName: string, resetUrl: string) {
+    const { subject, msg } = passwordResetEmail(firstName, resetUrl);
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      html: msg,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+    });
   }
 }
