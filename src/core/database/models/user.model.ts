@@ -43,4 +43,16 @@ export default class User extends BaseModel implements IUSER {
     defaultValue: USER_ROLE.AUTHOR,
   })
   role: USER_ROLE;
+
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  isEmailVerified: boolean;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  emailVerificationToken: string;
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  resetPasswordToken: string;
+
+  @Column({ type: DataType.DATE, allowNull: true })
+  resetPasswordExpires: Date;
 }
