@@ -17,6 +17,8 @@ import { REPOSITORY } from 'src/core/constants';
 import { Repository } from 'sequelize-typescript';
 import { UpdateProductDto } from '../products/dto/update-product.dto';
 import { CreateCouponDto } from './dto/coupon.dto';
+import * as csvParse from 'csv-parse/sync';
+import * as XLSX from 'xlsx';
 
 @Injectable()
 export class AdminService {
@@ -135,7 +137,50 @@ export class AdminService {
   async createDelivery(dto: CreateDeliveryDto): Promise<Delivery> {
     return this.deliveryService.createDelivery(dto);
   }
+  async bulkUploadProducts(file: Express.Multer.File, req: any) {
+    const ext = file.originalname.split('.').pop().toLowerCase();
+    let products: any[] = [];
 
+    if (ext === 'csv') {
+      const csvString = file.buffer.toString();
+      products = csvParse.parse(csvString, {
+        columns: true,
+        skip_empty_lines: true,
+      });
+    } else if (ext === 'xlsx' || ext === 'xls') {
+      const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      products = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    } else {
+      throw new BadRequestException('Unsupported file type');
+    }
+
+    // Optionally, validate and map fields here
+    const user = req.user;
+    const createdProducts = [];
+    for (const prod of products) {
+      // Map CSV/Excel fields to your DTO/model fields as needed
+      const createProductDto = {
+        name: prod.name,
+        description: prod.description,
+        price: Number(prod.price),
+        stock: Number(prod.stock),
+        category: prod.category,
+        size: prod.size,
+        breed: prod.breed,
+        type: prod.type,
+        imageUrl: prod.imageUrl,
+        userId: user.id,
+      };
+      const product = await this.productRepository.create(createProductDto);
+      createdProducts.push(product);
+    }
+
+    return {
+      message: `${createdProducts.length} products uploaded successfully`,
+      products: createdProducts,
+    };
+  }
   async updateDeliveryStatus(
     orderId: string,
     dto: UpdateDeliveryStatusDto,

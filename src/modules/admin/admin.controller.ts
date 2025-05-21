@@ -10,6 +10,8 @@ import {
   Post,
   Req,
   BadRequestException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminService } from './admin.service';
@@ -21,6 +23,7 @@ import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ProductService } from '../products/product.service';
 import { UpdateProductDto } from '../products/dto/update-product.dto';
 import { CreateCouponDto } from './dto/coupon.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -120,6 +123,18 @@ export class AdminController {
   @Delete('products/:id')
   async deleteProduct(@Param('id') id: string) {
     return this.adminService.deleteProduct(id);
+  }
+
+  @Post('products/bulk-upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async bulkUploadProducts(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: any,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+    return this.adminService.bulkUploadProducts(file, req);
   }
 
   @Post('deliveries')
