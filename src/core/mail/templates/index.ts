@@ -364,3 +364,29 @@ export const productRestockedEmail = (params: ProductRestockedParams) => {
   const subject = `Product Restocked Successfully`;
   return { msg: emailTemplate(msg), subject };
 };
+export const emailVerificationEmail = (
+  firstName: string,
+  verificationUrl: string,
+) => {
+  const subject = 'Verify Your Email Address';
+  const msg = `
+    <p>Hi ${firstName},</p>
+    <p>Thank you for registering. Please verify your email by clicking the link below:</p>
+    <a href="${verificationUrl}">Verify Email</a>
+    <p>If you did not request this, please ignore this email.</p>
+    <p>Best regards,<br/>O'Ben Brands</p>
+  `;
+  return { subject, msg };
+};
+
+export const passwordResetEmail = (firstName: string, resetUrl: string) => {
+  const subject = 'Reset Your Password';
+  const msg = `
+    <p>Hi ${firstName},</p>
+    <p>You requested a password reset. Click the link below to set a new password:</p>
+    <a href="${resetUrl}">Reset Password</a>
+    <p>If you did not request this, please ignore this email.</p>
+    <p>Best regards,<br/>O'Ben Brands</p>
+  `;
+  return { subject, msg };
+};

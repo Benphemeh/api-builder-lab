@@ -35,6 +35,22 @@ module.exports = {
         type: Sequelize.ENUM(...USER_ROLE),
         defaultValue: 'author',
       },
+      is_email_verified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      email_verification_token: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      reset_password_token: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      reset_password_expires: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
     });
   },
 
