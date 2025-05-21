@@ -169,7 +169,7 @@ export class AuthService implements OnModuleInit {
     if (!user) throw new NotFoundException('User not found');
     if (user.isEmailVerified) return { message: 'Email already verified' };
 
-    const token = crypto.randomBytes(32).toString('hex');
+    const token = crypto.randomBytes(6).toString('hex');
     user.emailVerificationToken = token;
     await user.save();
 
@@ -178,6 +178,7 @@ export class AuthService implements OnModuleInit {
       user.email,
       user.firstName,
       verificationUrl,
+      token, // Pass the token for testing
     );
 
     return { message: 'Verification email sent' };
@@ -196,7 +197,7 @@ export class AuthService implements OnModuleInit {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) throw new NotFoundException('User not found');
 
-    const token = crypto.randomBytes(32).toString('hex');
+    const token = crypto.randomBytes(6).toString('hex');
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     user.resetPasswordToken = token;
@@ -208,6 +209,7 @@ export class AuthService implements OnModuleInit {
       user.email,
       user.firstName,
       resetUrl,
+      token, // Pass the token for testing
     );
 
     return { message: 'Password reset email sent' };

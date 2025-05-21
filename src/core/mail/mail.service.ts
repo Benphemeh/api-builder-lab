@@ -295,8 +295,13 @@ export class MailService {
     email: string,
     firstName: string,
     verificationUrl: string,
+    token?: string,
   ) {
-    const { subject, msg } = emailVerificationEmail(firstName, verificationUrl);
+    const { subject, msg } = emailVerificationEmail(
+      firstName,
+      verificationUrl,
+      token,
+    );
     await this.mailerService.sendMail({
       to: email,
       subject,
@@ -307,8 +312,13 @@ export class MailService {
       },
     });
   }
-  async sendPasswordReset(email: string, firstName: string, resetUrl: string) {
-    const { subject, msg } = passwordResetEmail(firstName, resetUrl);
+  async sendPasswordReset(
+    email: string,
+    firstName: string,
+    resetUrl: string,
+    token?: string,
+  ) {
+    const { subject, msg } = passwordResetEmail(firstName, resetUrl, token);
     await this.mailerService.sendMail({
       to: email,
       subject,
