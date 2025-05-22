@@ -12,6 +12,7 @@ import {
   BadRequestException,
   UseInterceptors,
   UploadedFile,
+  NotFoundException,
 } from '@nestjs/common';
 import { AdminGuard } from 'src/core/guards/admin.guard';
 import { AdminService } from './admin.service';
@@ -40,7 +41,11 @@ export class AdminController {
 
   @Get('orders/:id')
   async getOrderById(@Param('id') id: string) {
-    return this.adminService.getOrderById(id);
+    const order = await this.adminService.getOrderById(id);
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${id} not found`);
+    }
+    return order;
   }
 
   @Patch('orders/:id')
@@ -109,7 +114,11 @@ export class AdminController {
 
   @Get('products/:id')
   async getProductById(@Param('id') id: string) {
-    return this.adminService.getProductById(id);
+    const product = await this.adminService.getProductById(id);
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+    return product;
   }
 
   @Patch('products/:id')
@@ -165,8 +174,13 @@ export class AdminController {
   }
   @Get('coupon/:code')
   async getCouponByCode(@Param('code') code: string) {
-    return this.adminService.getCouponByCode(code);
+    const coupon = await this.adminService.getCouponByCode(code);
+    if (!coupon) {
+      throw new NotFoundException(`Coupon with code ${code} not found`);
+    }
+    return coupon;
   }
+
   @Get('coupons')
   async getAllCoupons() {
     return this.adminService.getAllCoupons();

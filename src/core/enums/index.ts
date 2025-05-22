@@ -27,6 +27,6 @@ export enum DELIVERY_STATUS {
 
 export enum ORDER_STATUS {
   PENDING = 'pending',
-  COMPLETED = 'completed',
+  DELIVERED = 'delivered',
   CANCELED = 'canceled',
 }
