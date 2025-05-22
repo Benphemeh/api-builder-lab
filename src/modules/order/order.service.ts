@@ -84,6 +84,7 @@ export class OrderService {
     const payment = await this.paymentService.initializePayment(
       user.email,
       totalAmount,
+      order.id,
     );
 
     await this.paymentService.createPayment({
@@ -101,6 +102,8 @@ export class OrderService {
   async verifyOrderPayment(reference: string): Promise<any> {
     try {
       const payment = await this.paymentService.verifyPayment(reference);
+
+      console.log('Payment Data:', payment);
 
       if (payment.data.status === 'success') {
         const order = await this.orderRepository.findOne({
@@ -140,13 +143,19 @@ export class OrderService {
           message: 'Payment verified, order completed, and invoice sent',
           order,
         };
+      } else if (payment.data.status === 'abandoned') {
+        // Handle abandoned payment
+        await this.paymentService.updatePayment(reference, 'failed');
+        throw new BadRequestException(
+          'The payment was abandoned. Please try again or contact support if the issue persists.',
+        );
+      } else {
+        // Handle other payment statuses
+        await this.paymentService.updatePayment(reference, 'failed');
+        throw new BadRequestException(
+          `Payment verification failed with status: ${payment.data.status}. Please try again.`,
+        );
       }
-
-      // Update payment status to failed if verification fails
-      await this.paymentService.updatePayment(reference, 'failed');
-      throw new BadRequestException(
-        'Payment verification failed. Please try again.',
-      );
     } catch (error) {
       console.error('Error during payment verification:', error);
 
