@@ -32,8 +32,6 @@ export class UsersService {
     });
   }
   async findOneById(id: string): Promise<User> {
-    console.log(`findOneById called with ID: "${id}", type: ${typeof id}`);
-
     if (!id) {
       console.warn('Undefined or empty ID detected');
       throw new BadRequestException('User ID is required');
@@ -46,7 +44,6 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      console.error(`Error finding user with ID ${id}:`, error.message);
       throw error;
     }
   }
