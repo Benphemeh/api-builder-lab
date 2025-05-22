@@ -14,8 +14,8 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
-        { provide: AuthService, useValue: {} }, // Mock AuthService
-        { provide: UsersService, useValue: usersServiceMock }, // Mock UsersService
+        { provide: AuthService, useValue: {} },
+        { provide: UsersService, useValue: usersServiceMock },
       ],
     }).compile();
 
