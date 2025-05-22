@@ -18,13 +18,18 @@ export class PaymentService {
     private readonly mailService: MailService,
   ) {}
 
-  async initializePayment(email: string, amount: number): Promise<any> {
+  async initializePayment(
+    email: string,
+    amount: number,
+    orderId: string,
+  ): Promise<any> {
     try {
       const response = await axios.post(
         `${this.paystackBaseUrl}/transaction/initialize`,
         {
           email,
-          amount: amount * 100, // Converting to kobo
+          amount: amount * 100,
+          metadata: { orderId }, // Converting to kobo
         },
         {
           headers: {
@@ -52,6 +57,7 @@ export class PaymentService {
           },
         },
       );
+      console.log('Paystack Response:', response.data);
 
       return response.data;
     } catch (error) {

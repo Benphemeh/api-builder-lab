@@ -34,6 +34,7 @@ export class PaymentController {
     const paymentResponse = await this.paymentService.initializePayment(
       email,
       dto.amount,
+      dto.orderId,
     );
     const orderId = dto.orderId || null;
 

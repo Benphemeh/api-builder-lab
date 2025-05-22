@@ -84,6 +84,7 @@ export class OrderService {
     const payment = await this.paymentService.initializePayment(
       user.email,
       totalAmount,
+      order.id,
     );
 
     await this.paymentService.createPayment({
@@ -98,34 +99,122 @@ export class OrderService {
       payment: payment.data,
     };
   }
-
   async verifyOrderPayment(reference: string): Promise<any> {
-    const payment = await this.paymentService.verifyPayment(reference);
+    try {
+      const payment = await this.paymentService.verifyPayment(reference);
 
-    if (payment.data.status === 'success') {
-      const order = await this.orderRepository.findOne({
-        where: { id: payment.data.metadata.orderId },
-      });
+      console.log('Payment Data:', payment);
 
-      if (!order) {
-        throw new NotFoundException(
-          `Order with id ${payment.data.metadata.orderId} not found`,
+      if (payment.data.status === 'success') {
+        const order = await this.orderRepository.findOne({
+          where: { id: payment.data.metadata.orderId },
+        });
+
+        if (!order) {
+          throw new NotFoundException(
+            `Order with id ${payment.data.metadata.orderId} not found`,
+          );
+        }
+
+        await order.update({ status: 'completed' });
+
+        // Update payment status to success
+        await this.paymentService.updatePayment(reference, 'success');
+
+        // Create delivery for the order
+        await this.createDelivery(order);
+
+        // Fetch user details
+        const user = await this.userRepository.findByPk(order.userId);
+        if (!user) {
+          throw new NotFoundException(`User with id ${order.userId} not found`);
+        }
+
+        // Send invoice email
+        await this.mailService.sendInvoiceEmail(
+          user.email,
+          user.firstName || 'Customer',
+          order.id,
+          order.totalAmount,
+          order.products,
+        );
+
+        return {
+          message: 'Payment verified, order completed, and invoice sent',
+          order,
+        };
+      } else if (payment.data.status === 'abandoned') {
+        // Handle abandoned payment
+        await this.paymentService.updatePayment(reference, 'failed');
+        throw new BadRequestException(
+          'The payment was abandoned. Please try again or contact support if the issue persists.',
+        );
+      } else {
+        // Handle other payment statuses
+        await this.paymentService.updatePayment(reference, 'failed');
+        throw new BadRequestException(
+          `Payment verification failed with status: ${payment.data.status}. Please try again.`,
         );
       }
+    } catch (error) {
+      console.error('Error during payment verification:', error);
 
-      await order.update({ status: 'completed' });
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
 
-      // Update payment status to success
-      await this.paymentService.updatePayment(reference, 'success');
-
-      await this.createDelivery(order);
-
-      return { message: 'Payment verified and order completed', order };
+      throw new BadRequestException(
+        'An error occurred during payment verification. Please contact support if the issue persists.',
+      );
     }
-    // Update payment status to failed if verification fails
-    await this.paymentService.updatePayment(reference, 'failed');
-    throw new NotFoundException('Payment verification failed');
   }
+  // async verifyOrderPayment(reference: string): Promise<any> {
+  //   const payment = await this.paymentService.verifyPayment(reference);
+
+  //   if (payment.data.status === 'success') {
+  //     const order = await this.orderRepository.findOne({
+  //       where: { id: payment.data.metadata.orderId },
+  //     });
+
+  //     if (!order) {
+  //       throw new NotFoundException(
+  //         `Order with id ${payment.data.metadata.orderId} not found`,
+  //       );
+  //     }
+
+  //     await order.update({ status: 'completed' });
+
+  //     // Update payment status to success
+  //     await this.paymentService.updatePayment(reference, 'success');
+
+  //     // Create delivery for the order
+  //     await this.createDelivery(order);
+
+  //     // Fetch user details
+  //     const user = await this.userRepository.findByPk(order.userId);
+  //     if (!user) {
+  //       throw new NotFoundException(`User with id ${order.userId} not found`);
+  //     }
+
+  //     // Send invoice email
+  //     await this.mailService.sendInvoiceEmail(
+  //       user.email,
+  //       user.firstName || 'Customer',
+  //       order.id,
+  //       order.totalAmount,
+  //       order.products,
+  //     );
+
+  //     return {
+  //       message: 'Payment verified, order completed, and invoice sent',
+  //       order,
+  //     };
+  //   }
+
+  //   // Update payment status to failed if verification fails
+  //   await this.paymentService.updatePayment(reference, 'failed');
+  //   throw new NotFoundException('Payment verification failed');
+  // }
   async applyCoupon(orderId: string, code: string): Promise<Order> {
     const coupon = await this.couponRepository.findOne({ where: { code } });
     if (!coupon || coupon.expiresAt < new Date()) {

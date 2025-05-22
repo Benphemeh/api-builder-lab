@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   emailVerificationEmail,
+  invoiceEmailTemplate,
   orderCreationEmail,
   orderDeliveredEmail,
   orderPaymentEmail,
@@ -328,5 +329,31 @@ export class MailService {
         address: process.env.MAIL_FROM,
       },
     });
+  }
+  async sendInvoiceEmail(
+    email: string,
+    userName: string,
+    orderId: string,
+    totalAmount: number,
+    products: { productId: string; quantity: number }[],
+  ): Promise<void> {
+    const html = invoiceEmailTemplate({
+      userName,
+      orderId,
+      totalAmount,
+      products,
+    });
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+      subject: `Invoice for Order ID: ${orderId}`,
+      html: html,
+    });
+
+    console.log(`Invoice email sent to ${email}`);
   }
 }
