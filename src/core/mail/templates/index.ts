@@ -404,3 +404,39 @@ export const passwordResetEmail = (
   `;
   return { subject, msg };
 };
+
+interface InvoiceEmailParams {
+  userName: string;
+  orderId: string;
+  totalAmount: number;
+  products: { productId: string; quantity: number }[];
+}
+
+export const invoiceEmailTemplate = (params: InvoiceEmailParams): string => {
+  const formattedTotalAmount = `₦${Number(params.totalAmount).toLocaleString()}`;
+  const productDetails = params.products
+    .map(
+      (product) =>
+        `<li>Product ID: ${product.productId}, Quantity: ${product.quantity}</li>`,
+    )
+    .join('');
+
+  const msg = `
+    <p>Dear ${params.userName},</p>
+
+    <p>Thank you for your order! Here is your invoice:</p>
+
+    <p><strong>Order ID:</strong> ${params.orderId}</p>
+    <p><strong>Total Amount:</strong> ${formattedTotalAmount}</p>
+
+    <p><strong>Products:</strong></p>
+    <ul>${productDetails}</ul>
+
+    <p>We appreciate your business and look forward to serving you again!</p>
+
+    <p>Best regards,</p>
+    <p><strong>O'Ben Brands</strong></p>
+  `;
+
+  return emailTemplate(msg);
+};
