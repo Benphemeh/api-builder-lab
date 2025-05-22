@@ -32,7 +32,7 @@ export class UsersService {
     });
   }
   async findOneById(id: string): Promise<User> {
-    console.log(`findOneById called with ID: "${id}", type: ${typeof id}`);
+    // console.log(`findOneById called with ID: "${id}", type: ${typeof id}`);
 
     if (!id) {
       console.warn('Undefined or empty ID detected');
@@ -46,7 +46,7 @@ export class UsersService {
       }
       return user;
     } catch (error) {
-      console.error(`Error finding user with ID ${id}:`, error.message);
+      // console.error(`Error finding user with ID ${id}:`, error.message);
       throw error;
     }
   }
