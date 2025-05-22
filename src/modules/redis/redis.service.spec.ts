@@ -1,4 +1,4 @@
-// ✅ Mock ioredis BEFORE importing RedisService
+// Mock ioredis BEFORE importing RedisService
 jest.mock('ioredis', () => {
   const mockRedis = jest.fn().mockImplementation(() => ({
     on: jest.fn(),
@@ -25,13 +25,10 @@ describe('RedisService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllTimers(); // ✅ Clears any pending timers after each test
+    jest.clearAllTimers();
   });
 
-  afterAll(async () => {
-    jest.restoreAllMocks(); // ✅ Restore mocks globally
-    // No real redisClient exists here — already mocked above
-  });
+  afterAll(async () => {});
 
   it('should be defined', () => {
     expect(service).toBeDefined();
