@@ -154,12 +154,10 @@ export class AdminService {
     } else {
       throw new BadRequestException('Unsupported file type');
     }
-
-    // Optionally, validate and map fields here
     const user = req.user;
     const createdProducts = [];
     for (const prod of products) {
-      // Map CSV/Excel fields to your DTO/model fields as needed
+      // Map CSV/Excel fields to dto
       const createProductDto = {
         name: prod.name,
         description: prod.description,

@@ -178,7 +178,7 @@ export class AuthService implements OnModuleInit {
       user.email,
       user.firstName,
       verificationUrl,
-      token, // Pass the token for testing
+      token,
     );
 
     return { message: 'Verification email sent' };
@@ -209,7 +209,7 @@ export class AuthService implements OnModuleInit {
       user.email,
       user.firstName,
       resetUrl,
-      token, // Pass the token for testing
+      token,
     );
 
     return { message: 'Password reset email sent' };
