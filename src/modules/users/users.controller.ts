@@ -23,10 +23,10 @@ export class UsersController {
       if (!id) {
         throw new BadRequestException('User ID is required');
       }
-      console.log(`Processing request for user ID: ${id}`);
+      // console.log(`Processing request for user ID: ${id}`);
       return this.usersService.getUserById(id);
     } catch (error) {
-      console.error(`Error in getUser controller: ${error.message}`);
+      // console.error(`Error in getUser controller: ${error.message}`);
       throw error;
     }
   }
