@@ -34,7 +34,7 @@ export class ProductService {
       throw new BadRequestException('User not found');
     }
 
-    const user = await this.userService.findOneById(userId); // <-- fetch full user
+    const user = await this.userService.findOneById(userId);
 
     if (!user) {
       throw new BadRequestException('User not found');
@@ -130,8 +130,6 @@ export class ProductService {
     }
 
     await product.update(updateProductDto);
-
-    console.log(`Product ${product.name} updated successfully`);
 
     if (product.userId) {
       try {
