@@ -29,7 +29,7 @@ export class PaymentService {
         {
           email,
           amount: amount * 100,
-          metadata: { orderId }, // Converting to kobo
+          metadata: { orderId },
         },
         {
           headers: {

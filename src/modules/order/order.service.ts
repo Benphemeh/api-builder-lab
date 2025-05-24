@@ -121,10 +121,8 @@ export class OrderService {
         // Update payment status to success
         await this.paymentService.updatePayment(reference, 'success');
 
-        // Create delivery for the order
         await this.createDelivery(order);
 
-        // Fetch user details
         const user = await this.userRepository.findByPk(order.userId);
         if (!user) {
           throw new NotFoundException(`User with id ${order.userId} not found`);
