@@ -67,7 +67,6 @@ describe('ProductService', () => {
   };
 
   const mockUpdateProductDto: UpdateProductDto = {
-    // name: 'Updated Product',
     price: 150,
     stock: 15,
   };
