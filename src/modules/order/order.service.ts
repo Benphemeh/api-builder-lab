@@ -166,53 +166,6 @@ export class OrderService {
       );
     }
   }
-  // async verifyOrderPayment(reference: string): Promise<any> {
-  //   const payment = await this.paymentService.verifyPayment(reference);
-
-  //   if (payment.data.status === 'success') {
-  //     const order = await this.orderRepository.findOne({
-  //       where: { id: payment.data.metadata.orderId },
-  //     });
-
-  //     if (!order) {
-  //       throw new NotFoundException(
-  //         `Order with id ${payment.data.metadata.orderId} not found`,
-  //       );
-  //     }
-
-  //     await order.update({ status: 'completed' });
-
-  //     // Update payment status to success
-  //     await this.paymentService.updatePayment(reference, 'success');
-
-  //     // Create delivery for the order
-  //     await this.createDelivery(order);
-
-  //     // Fetch user details
-  //     const user = await this.userRepository.findByPk(order.userId);
-  //     if (!user) {
-  //       throw new NotFoundException(`User with id ${order.userId} not found`);
-  //     }
-
-  //     // Send invoice email
-  //     await this.mailService.sendInvoiceEmail(
-  //       user.email,
-  //       user.firstName || 'Customer',
-  //       order.id,
-  //       order.totalAmount,
-  //       order.products,
-  //     );
-
-  //     return {
-  //       message: 'Payment verified, order completed, and invoice sent',
-  //       order,
-  //     };
-  //   }
-
-  //   // Update payment status to failed if verification fails
-  //   await this.paymentService.updatePayment(reference, 'failed');
-  //   throw new NotFoundException('Payment verification failed');
-  // }
   async applyCoupon(orderId: string, code: string): Promise<Order> {
     const coupon = await this.couponRepository.findOne({ where: { code } });
     if (!coupon || coupon.expiresAt < new Date()) {

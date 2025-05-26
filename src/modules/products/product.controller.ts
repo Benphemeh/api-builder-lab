@@ -31,15 +31,6 @@ export class ProductController {
   ) {
     return this.productService.create(createProductDto, req, file);
   }
-  // @UseGuards(JwtGuard)
-  // @Post()
-  // async createProduct(
-  //   @Body() createProductDto: CreateProductDto,
-  //   @Req() req: Request,
-  // ) {
-  //   console.log('user from request:', (req as any).user);
-  //   return this.productService.create(createProductDto, req);
-  // }
 
   @UseGuards(JwtGuard)
   @Get(':id')
