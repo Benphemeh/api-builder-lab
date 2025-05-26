@@ -1,9 +1,9 @@
 // import { Test, TestingModule } from '@nestjs/testing';
 // import { OrderService } from './order.service';
 // import { REPOSITORY } from 'src/core/constants';
-// import { NotFoundException, BadRequestException } from '@nestjs/common';
 // import { MailService } from 'src/core/mail/mail.service';
 // import { PaymentService } from '../payment/payment.service';
+// import { BadRequestException, NotFoundException } from '@nestjs/common';
 // import Order from 'src/core/database/models/order.model';
 // import Product from 'src/core/database/models/product.model';
 // import User from 'src/core/database/models/user.model';
@@ -101,7 +101,9 @@
 //       };
 //       const mockPayment = { data: { reference: 'payment123' } };
 
-//       jest.spyOn(service, 'calculateTotal').mockResolvedValue(totalAmount);
+//       jest
+//         .spyOn(service as any, 'calculateTotal')
+//         .mockResolvedValue(totalAmount);
 //       mockProductRepository.findByPk.mockResolvedValue(mockProduct);
 //       mockUserRepository.findByPk.mockResolvedValue(mockUser);
 //       mockOrderRepository.create.mockResolvedValue(mockOrder);
