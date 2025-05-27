@@ -35,8 +35,6 @@
 //   });
 // });
 
-//
-
 import { Test, TestingModule } from '@nestjs/testing';
 import Redis from 'ioredis';
 import { RedisService } from './redis.service';
