@@ -58,6 +58,7 @@ export class OrderService {
         stock: productDetails.stock - product.quantity,
       });
     }
+
     // Create the order
     const order = await this.orderRepository.create({
       userId,
