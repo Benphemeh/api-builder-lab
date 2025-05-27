@@ -5,4 +5,5 @@ export class UpdateOrderDto {
   @IsOptional()
   @IsEnum(ORDER_STATUS)
   status?: ORDER_STATUS;
+  deliveryAddress?: string;
 }
