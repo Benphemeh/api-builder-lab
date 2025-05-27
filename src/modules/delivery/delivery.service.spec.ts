@@ -3,7 +3,7 @@ import { DeliveryService } from './delivery.service';
 import { NotFoundException } from '@nestjs/common';
 import { REPOSITORY } from 'src/core/constants';
 import { MailService } from 'src/core/mail/mail.service';
-import { DELIVERY_STATUS } from 'src/core/enums'; // ✅ Import enum
+import { DELIVERY_STATUS } from 'src/core/enums';
 
 const mockDelivery = {
   id: '1',
@@ -31,7 +31,6 @@ const mockCreateDto = {
   logisticsProvider: 'SwiftLog',
 };
 
-// ✅ Use enum type in test
 const mockUpdateDto = {
   status: DELIVERY_STATUS.DELIVERED,
 };
