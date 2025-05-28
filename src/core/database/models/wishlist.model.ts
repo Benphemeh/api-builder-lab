@@ -1,4 +1,4 @@
-import { Column, ForeignKey } from 'sequelize-typescript';
+import { BelongsTo, Column, ForeignKey } from 'sequelize-typescript';
 import User from './user.model';
 import Product from './product.model';
 import { BaseModel } from '../base-model';
@@ -12,7 +12,13 @@ export default class Wishlist extends BaseModel {
   @Column
   userId: string;
 
+  @BelongsTo(() => User)
+  user: User;
+
   @ForeignKey(() => Product)
   @Column
   productId: string;
+
+  @BelongsTo(() => Product)
+  product: Product;
 }

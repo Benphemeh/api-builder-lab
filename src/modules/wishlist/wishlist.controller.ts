@@ -22,12 +22,14 @@ export class WishlistController {
   }
 
   @Get()
+  @UseGuards(JwtGuard)
   async getWishlist(@Req() req) {
     const userId = req.user.id; // Assuming user is authenticated
     return this.wishlistService.getWishlist(userId);
   }
 
   @Delete(':productId')
+  @UseGuards(JwtGuard)
   async removeFromWishlist(@Req() req, @Param('productId') productId: string) {
     const userId = req.user.id; // Assuming user is authenticated
     return this.wishlistService.removeFromWishlist(userId, productId);

@@ -3,9 +3,6 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
   HasOne,
 } from 'sequelize-typescript';
 import User from './user.model';
@@ -59,24 +56,24 @@ export default class Order extends BaseModel {
 
   @HasOne(() => Delivery, { foreignKey: 'orderId' })
   delivery: Delivery;
-  @CreatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  createdAt: Date;
+  // @CreatedAt
+  // @Column({
+  //   type: DataType.DATE,
+  //   allowNull: false,
+  // })
+  // createdAt: Date;
 
-  @UpdatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  updatedAt: Date;
+  // @UpdatedAt
+  // @Column({
+  //   type: DataType.DATE,
+  //   allowNull: false,
+  // })
+  // updatedAt: Date;
 
-  @DeletedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  deletedAt: Date;
+  // @DeletedAt
+  // @Column({
+  //   type: DataType.DATE,
+  //   allowNull: true,
+  // })
+  // deletedAt: Date;
 }

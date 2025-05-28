@@ -1,6 +1,6 @@
 'use strict';
-const baseModelMigration = require('../base-model/base-model.migration');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+const baseModelMigration = require('../base-model/base-model.migration');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -29,20 +29,6 @@ module.exports = {
       amount: {
         type: Sequelize.FLOAT,
         allowNull: false,
-      },
-      createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW,
-      },
-      deletedAt: {
-        type: Sequelize.DATE,
-        allowNull: true,
       },
     });
   },
