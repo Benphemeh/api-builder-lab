@@ -1,15 +1,10 @@
-import {
-  Table,
-  Column,
-  DataType,
-  ForeignKey,
-  BelongsTo,
-} from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import Order from './order.model';
 import { BaseModel } from '../base-model';
 import { PAYMENT_STATUS } from 'src/core/enums';
+import { ApiBuilderTable } from '../base-model/table-decorators';
 
-@Table({
+@ApiBuilderTable({
   tableName: 'payments',
 })
 export default class Payment extends BaseModel {

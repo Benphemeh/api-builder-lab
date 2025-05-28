@@ -1,5 +1,4 @@
 import {
-  Table,
   Column,
   DataType,
   ForeignKey,
@@ -11,8 +10,9 @@ import {
 import Order from './order.model';
 import { BaseModel } from '../base-model';
 import { DELIVERY_STATUS } from 'src/core/enums';
+import { ApiBuilderTable } from '../base-model/table-decorators';
 
-@Table({
+@ApiBuilderTable({
   tableName: 'deliveries',
 })
 export default class Delivery extends BaseModel {

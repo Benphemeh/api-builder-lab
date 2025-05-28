@@ -1,20 +1,17 @@
 import {
-  Table,
   Column,
   DataType,
   ForeignKey,
   BelongsTo,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
   HasOne,
 } from 'sequelize-typescript';
 import User from './user.model';
 import { BaseModel } from '../base-model';
 import Delivery from './delivery.model';
 import { ORDER_STATUS } from 'src/core/enums';
+import { ApiBuilderTable } from '../base-model/table-decorators';
 
-@Table({
+@ApiBuilderTable({
   tableName: 'orders',
 })
 export default class Order extends BaseModel {
@@ -59,24 +56,24 @@ export default class Order extends BaseModel {
 
   @HasOne(() => Delivery, { foreignKey: 'orderId' })
   delivery: Delivery;
-  @CreatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  createdAt: Date;
+  // @CreatedAt
+  // @Column({
+  //   type: DataType.DATE,
+  //   allowNull: false,
+  // })
+  // createdAt: Date;
 
-  @UpdatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  updatedAt: Date;
+  // @UpdatedAt
+  // @Column({
+  //   type: DataType.DATE,
+  //   allowNull: false,
+  // })
+  // updatedAt: Date;
 
-  @DeletedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  deletedAt: Date;
+  // @DeletedAt
+  // @Column({
+  //   type: DataType.DATE,
+  //   allowNull: true,
+  // })
+  // deletedAt: Date;
 }
