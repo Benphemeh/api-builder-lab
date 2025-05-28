@@ -15,6 +15,7 @@ import { OrdersModule } from './modules/order/order.module';
 import { DeliveryModule } from './modules/delivery/delivery.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { PaymentModule } from './modules/payment/payment.module';
+import { WishlistModule } from './modules/wishlist/wishlist.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PaymentModule } from './modules/payment/payment.module';
     ProductsModule,
     OrdersModule,
     PaymentModule,
+    WishlistModule,
     DeliveryModule,
     ApiLoggerModule,
     InternalCacheModule,
