@@ -16,6 +16,7 @@ import { DeliveryModule } from './modules/delivery/delivery.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
+import { ReviewModule } from './modules/review/review.module';
 
 @Module({
   imports: [
@@ -29,8 +30,10 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
     OrdersModule,
     PaymentModule,
     WishlistModule,
+    ReviewModule,
     DeliveryModule,
     ApiLoggerModule,
+    WishlistModule,
     InternalCacheModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

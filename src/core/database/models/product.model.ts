@@ -1,8 +1,15 @@
-import { BelongsTo, Column, DataType, ForeignKey } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+} from 'sequelize-typescript';
 import { BaseModel } from '../base-model';
 import { ApiBuilderTable } from '../base-model/table-decorators';
 import { IPRODUCT } from 'src/core/interfaces/products.interface';
 import User from './user.model';
+import Review from './review.model';
 
 @ApiBuilderTable({
   tableName: 'products',
@@ -72,4 +79,6 @@ export default class Product extends BaseModel implements IPRODUCT {
     field: 'image_url',
   })
   imageUrl: string;
+  @HasMany(() => Review)
+  reviews: Review[];
 }
