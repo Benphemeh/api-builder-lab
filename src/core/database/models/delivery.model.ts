@@ -1,12 +1,4 @@
-import {
-  Column,
-  DataType,
-  ForeignKey,
-  BelongsTo,
-  CreatedAt,
-  UpdatedAt,
-  DeletedAt,
-} from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import Order from './order.model';
 import { BaseModel } from '../base-model';
 import { DELIVERY_STATUS } from 'src/core/enums';
@@ -48,25 +40,4 @@ export default class Delivery extends BaseModel {
     field: 'status',
   })
   status: DELIVERY_STATUS;
-
-  @CreatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  createdAt: Date;
-
-  @UpdatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  updatedAt: Date;
-
-  @DeletedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  deletedAt: Date;
 }

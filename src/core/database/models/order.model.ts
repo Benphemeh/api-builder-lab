@@ -56,24 +56,4 @@ export default class Order extends BaseModel {
 
   @HasOne(() => Delivery, { foreignKey: 'orderId' })
   delivery: Delivery;
-  // @CreatedAt
-  // @Column({
-  //   type: DataType.DATE,
-  //   allowNull: false,
-  // })
-  // createdAt: Date;
-
-  // @UpdatedAt
-  // @Column({
-  //   type: DataType.DATE,
-  //   allowNull: false,
-  // })
-  // updatedAt: Date;
-
-  // @DeletedAt
-  // @Column({
-  //   type: DataType.DATE,
-  //   allowNull: true,
-  // })
-  // deletedAt: Date;
 }
