@@ -1,4 +1,4 @@
-import { Column, ForeignKey, DataType } from 'sequelize-typescript';
+import { Column, ForeignKey, DataType, BelongsTo } from 'sequelize-typescript';
 import User from './user.model';
 import Product from './product.model';
 import { ApiBuilderTable } from '../base-model/table-decorators';
@@ -9,12 +9,19 @@ import { BaseModel } from '../base-model';
 })
 export default class Review extends BaseModel {
   @ForeignKey(() => User)
-  @Column
+  @Column({
+    field: 'user_id', // Map to the actual database column name
+  })
   userId: string;
 
   @ForeignKey(() => Product)
-  @Column
+  @Column({
+    field: 'product_id', // Map to the actual database column name
+  })
   productId: string;
+
+  @BelongsTo(() => Product)
+  product: Product;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   rating: number;

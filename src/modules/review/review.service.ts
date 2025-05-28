@@ -1,5 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { REPOSITORY } from 'src/core/constants';
+import { Product } from 'src/core/database';
 import Review from 'src/core/database/models/review.model';
 
 @Injectable()
@@ -7,6 +8,8 @@ export class ReviewService {
   constructor(
     @Inject(REPOSITORY.REVIEW)
     private readonly reviewRepository: typeof Review,
+    @Inject(REPOSITORY.PRODUCT)
+    private readonly productRepository: typeof Product,
   ) {}
 
   async addReview(
@@ -15,7 +18,17 @@ export class ReviewService {
     rating: number,
     comment?: string,
   ): Promise<Review> {
-    return this.reviewRepository.create({ userId, productId, rating, comment });
+    const product = await this.productRepository.findByPk(productId);
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return this.reviewRepository.create({
+      userId,
+      productId,
+      rating,
+      comment,
+    });
   }
 
   async getReviews(productId: string): Promise<Review[]> {
