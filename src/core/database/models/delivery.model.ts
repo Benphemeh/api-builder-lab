@@ -48,25 +48,4 @@ export default class Delivery extends BaseModel {
     field: 'status',
   })
   status: DELIVERY_STATUS;
-
-  @CreatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  createdAt: Date;
-
-  @UpdatedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
-  })
-  updatedAt: Date;
-
-  @DeletedAt
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  deletedAt: Date;
 }
