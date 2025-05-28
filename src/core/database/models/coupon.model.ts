@@ -1,7 +1,8 @@
-import { Table, Column, DataType } from 'sequelize-typescript';
+import { Column, DataType } from 'sequelize-typescript';
 import { BaseModel } from '../base-model';
+import { ApiBuilderTable } from '../base-model/table-decorators';
 
-@Table({ tableName: 'coupons', timestamps: true })
+@ApiBuilderTable({ tableName: 'coupons', timestamps: true })
 export default class Coupon extends BaseModel {
   @Column({
     type: DataType.STRING,

@@ -1,5 +1,4 @@
 import {
-  Table,
   Column,
   DataType,
   ForeignKey,
@@ -13,8 +12,9 @@ import User from './user.model';
 import { BaseModel } from '../base-model';
 import Delivery from './delivery.model';
 import { ORDER_STATUS } from 'src/core/enums';
+import { ApiBuilderTable } from '../base-model/table-decorators';
 
-@Table({
+@ApiBuilderTable({
   tableName: 'orders',
 })
 export default class Order extends BaseModel {
