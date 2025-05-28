@@ -122,7 +122,6 @@ describe('OrderService', () => {
     mailService = module.get(MailService);
     paymentService = module.get(PaymentService);
 
-    // Mock the createPayment method here
     paymentService.createPayment.mockResolvedValue(mockPayment as any);
   });
 
