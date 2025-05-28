@@ -31,6 +31,7 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
     WishlistModule,
     DeliveryModule,
     ApiLoggerModule,
+    WishlistModule,
     InternalCacheModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
