@@ -8,3 +8,5 @@ export { default as Delivery } from './models/delivery.model';
 export { default as Coupon } from './models/coupon.model';
 export { default as Wishlist } from './models/wishlist.model';
 export { default as Review } from './models/review.model';
+export { default as Cart } from './models/cart.model';
+export { default as CartItem } from './models/cart-item.model';

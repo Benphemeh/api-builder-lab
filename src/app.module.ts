@@ -17,6 +17,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { ReviewModule } from './modules/review/review.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ReviewModule } from './modules/review/review.module';
     PaymentModule,
     WishlistModule,
     ReviewModule,
+    CartModule,
     DeliveryModule,
     ApiLoggerModule,
     WishlistModule,
