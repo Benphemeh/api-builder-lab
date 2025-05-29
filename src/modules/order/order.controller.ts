@@ -66,6 +66,7 @@ export class OrderController {
   // ) {
   //   return this.orderService.updateOrder(id, updateOrderDto);
   // }
+
   @Delete(':id')
   @UseGuards(JwtGuard)
   async deleteOrder(@Param('id') id: string) {

@@ -18,7 +18,7 @@ import { AddToCartDto, UpdateCartItemDto } from './dto/card.dto';
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Post('add')
+  @Post()
   async addToCart(@Req() req, @Body() addToCartDto: AddToCartDto) {
     const userId = req.user.id;
     return this.cartService.addToCart(userId, addToCartDto);
@@ -53,6 +53,13 @@ export class CartController {
   @Delete('clear')
   async clearCart(@Req() req) {
     const userId = req.user.id;
-    return this.cartService.clearCart(userId);
+    const result = await this.cartService.clearCart(userId);
+    return {
+      success: true,
+      message: result.message,
+      data: {
+        itemsRemoved: result.itemsRemoved,
+      },
+    };
   }
 }
