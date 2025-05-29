@@ -11,6 +11,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { MailService } from 'src/core/mail/mail.service';
 import { Coupon, Delivery, User } from 'src/core/database';
 import { PaymentService } from '../payment/payment.service';
+import { CartService } from '../cart/cart.service'; // Add this import
 
 @Injectable()
 export class OrderService {
@@ -27,6 +28,7 @@ export class OrderService {
     private readonly couponRepository: typeof Coupon,
     private readonly mailService: MailService,
     private readonly paymentService: PaymentService,
+    private readonly cartService: CartService, // Add this line
   ) {}
 
   async createOrder(
@@ -34,7 +36,39 @@ export class OrderService {
     products: { productId: string; quantity: number }[],
     deliveryAddress: string,
   ): Promise<Order> {
-    const totalAmount = await this.calculateTotal(products);
+    return this.createOrderWithProducts(userId, products, deliveryAddress);
+  }
+
+  // Add this new method to create order from cart
+  async createOrderFromCart(
+    userId: string,
+    deliveryAddress: string,
+    cartId?: string,
+  ): Promise<Order> {
+    // Convert cart to order format
+    const { products, totalAmount } = await this.cartService.convertCartToOrder(
+      userId,
+      cartId,
+    );
+
+    // Use existing createOrder logic but skip total calculation since we have it
+    return this.createOrderWithProducts(
+      userId,
+      products,
+      deliveryAddress,
+      totalAmount,
+    );
+  }
+
+  // Refactor existing createOrder to use this helper
+  private async createOrderWithProducts(
+    userId: string,
+    products: { productId: string; quantity: number }[],
+    deliveryAddress: string,
+    totalAmount?: number,
+  ): Promise<Order> {
+    const calculatedTotal =
+      totalAmount || (await this.calculateTotal(products));
 
     // Deduct stock for each product.
     for (const product of products) {
@@ -63,7 +97,7 @@ export class OrderService {
     const order = await this.orderRepository.create({
       userId,
       products,
-      totalAmount,
+      totalAmount: calculatedTotal,
       deliveryAddress,
       status: 'pending',
     });
@@ -78,13 +112,13 @@ export class OrderService {
       user.email,
       user.firstName || 'Customer',
       order.id,
-      totalAmount,
+      calculatedTotal,
     );
 
     // Initialize payment with Paystack
     const payment = await this.paymentService.initializePayment(
       user.email,
-      totalAmount,
+      calculatedTotal,
       order.id,
     );
 
@@ -92,7 +126,7 @@ export class OrderService {
       orderId: order.id,
       reference: payment.data.reference,
       status: 'pending',
-      amount: totalAmount,
+      amount: calculatedTotal,
     });
 
     return {
@@ -100,6 +134,7 @@ export class OrderService {
       payment: payment.data,
     };
   }
+
   async verifyOrderPayment(reference: string): Promise<any> {
     try {
       const payment = await this.paymentService.verifyPayment(reference);
@@ -167,6 +202,7 @@ export class OrderService {
       );
     }
   }
+
   async applyCoupon(orderId: string, code: string): Promise<Order> {
     const coupon = await this.couponRepository.findOne({ where: { code } });
     if (!coupon || coupon.expiresAt < new Date()) {
@@ -196,6 +232,7 @@ export class OrderService {
     console.log(`Delivery created for order ${order.id}`);
     return delivery;
   }
+
   private async calculateTotal(
     products: { productId: string; quantity: number }[],
   ): Promise<number> {
@@ -217,6 +254,7 @@ export class OrderService {
 
     return total;
   }
+
   async getOrderById(id: string): Promise<Order> {
     const order = await this.orderRepository.findByPk(id);
     if (!order) {
@@ -224,6 +262,7 @@ export class OrderService {
     }
     return order;
   }
+
   async getAllOrders(): Promise<Order[]> {
     return this.orderRepository.findAll();
   }

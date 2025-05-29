@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PaymentModule } from '../payment/payment.module';
 import { DeliveryModule } from '../delivery/delivery.module';
+import { CartModule } from '../cart/cart.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DeliveryModule } from '../delivery/delivery.module';
     PaymentModule,
     MailModule,
     DeliveryModule,
+    CartModule,
     UsersModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,

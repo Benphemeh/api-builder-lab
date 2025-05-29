@@ -6,10 +6,12 @@ import {
   Param,
   Get,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
 import { JwtGuard } from '../guards/jwt-guard';
+import { CartToOrderDto } from '../cart/dto/card.dto';
 
 @Controller('order')
 export class OrderController {
@@ -28,6 +30,20 @@ export class OrderController {
   @Post(':id/apply-coupon')
   async applyCoupon(@Param('id') orderId: string, @Body('code') code: string) {
     return this.orderService.applyCoupon(orderId, code);
+  }
+  @Post('from-cart')
+  @UseGuards(JwtGuard)
+  async createOrderFromCart(
+    @Req() req,
+    @Body() cartToOrderDto: CartToOrderDto,
+  ) {
+    const userId = req.user.id;
+    const { cartId, deliveryAddress } = cartToOrderDto;
+    return this.orderService.createOrderFromCart(
+      userId,
+      deliveryAddress,
+      cartId,
+    );
   }
 
   @Get(':id')
