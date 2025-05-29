@@ -70,7 +70,6 @@ export class CartService {
         );
       }
 
-      // Get or create active cart
       const cart = await this.getOrCreateActiveCart(userId);
 
       // Check if item already exists in cart
@@ -94,7 +93,6 @@ export class CartService {
           { transaction: t },
         );
       } else {
-        // Create new cart item
         await this.cartItemRepository.create(
           {
             cartId: cart.id,
@@ -203,22 +201,44 @@ export class CartService {
     });
   }
 
-  async clearCart(userId: string): Promise<void> {
+  async clearCart(
+    userId: string,
+  ): Promise<{ message: string; itemsRemoved: number }> {
     return await this.sequelize.transaction(async (t) => {
       const cart = await this.cartRepository.findOne({
         where: { userId, status: 'active' },
+        include: [CartItem],
         transaction: t,
       });
 
-      if (cart) {
+      if (!cart) {
+        return {
+          message: 'Cart is already empty',
+          itemsRemoved: 0,
+        };
+      }
+
+      const itemCount = cart.cartItems?.length || 0;
+
+      if (itemCount > 0) {
         await this.cartItemRepository.destroy({
           where: { cartId: cart.id },
           transaction: t,
         });
       }
+
+      // Optionally update cart status
+      await cart.update({ status: 'cleared' }, { transaction: t });
+
+      return {
+        message:
+          itemCount > 0
+            ? 'Cart cleared successfully'
+            : 'Cart was already empty',
+        itemsRemoved: itemCount,
+      };
     });
   }
-
   async convertCartToOrder(
     userId: string,
     cartId?: string,

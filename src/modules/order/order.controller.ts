@@ -55,7 +55,7 @@ export class OrderController {
   @Get()
   @UseGuards(JwtGuard)
   async getAllOrders() {
-    return this.orderService.getAllOrders(); // Fetch all orders
+    return this.orderService.getAllOrders();
   }
 
   // @Patch(':id')
@@ -66,6 +66,7 @@ export class OrderController {
   // ) {
   //   return this.orderService.updateOrder(id, updateOrderDto);
   // }
+
   @Delete(':id')
   @UseGuards(JwtGuard)
   async deleteOrder(@Param('id') id: string) {
