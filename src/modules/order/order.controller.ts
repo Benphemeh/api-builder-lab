@@ -55,7 +55,7 @@ export class OrderController {
   @Get()
   @UseGuards(JwtGuard)
   async getAllOrders() {
-    return this.orderService.getAllOrders(); // Fetch all orders
+    return this.orderService.getAllOrders();
   }
 
   // @Patch(':id')

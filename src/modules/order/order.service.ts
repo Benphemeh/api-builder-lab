@@ -11,7 +11,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { MailService } from 'src/core/mail/mail.service';
 import { Coupon, Delivery, User } from 'src/core/database';
 import { PaymentService } from '../payment/payment.service';
-import { CartService } from '../cart/cart.service'; // Add this import
+import { CartService } from '../cart/cart.service';
 
 @Injectable()
 export class OrderService {
@@ -28,7 +28,7 @@ export class OrderService {
     private readonly couponRepository: typeof Coupon,
     private readonly mailService: MailService,
     private readonly paymentService: PaymentService,
-    private readonly cartService: CartService, // Add this line
+    private readonly cartService: CartService,
   ) {}
 
   async createOrder(
@@ -38,8 +38,6 @@ export class OrderService {
   ): Promise<Order> {
     return this.createOrderWithProducts(userId, products, deliveryAddress);
   }
-
-  // Add this new method to create order from cart
   async createOrderFromCart(
     userId: string,
     deliveryAddress: string,
@@ -51,7 +49,6 @@ export class OrderService {
       cartId,
     );
 
-    // Use existing createOrder logic but skip total calculation since we have it
     return this.createOrderWithProducts(
       userId,
       products,
@@ -60,7 +57,6 @@ export class OrderService {
     );
   }
 
-  // Refactor existing createOrder to use this helper
   private async createOrderWithProducts(
     userId: string,
     products: { productId: string; quantity: number }[],

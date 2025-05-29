@@ -70,7 +70,6 @@ export class CartService {
         );
       }
 
-      // Get or create active cart
       const cart = await this.getOrCreateActiveCart(userId);
 
       // Check if item already exists in cart
@@ -94,7 +93,6 @@ export class CartService {
           { transaction: t },
         );
       } else {
-        // Create new cart item
         await this.cartItemRepository.create(
           {
             cartId: cart.id,
