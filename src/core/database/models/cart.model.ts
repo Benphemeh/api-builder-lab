@@ -9,6 +9,7 @@ import User from './user.model';
 import CartItem from './cart-item.model';
 import { ApiBuilderTable } from '../base-model/table-decorators';
 import { BaseModel } from '../base-model';
+import { LEAD_STATUS } from 'src/core/enums';
 
 @ApiBuilderTable({
   tableName: 'carts',
@@ -24,12 +25,11 @@ export default class Cart extends BaseModel {
   user: User;
 
   @Column({
-    type: DataType.ENUM('active', 'abandoned', 'converted'),
+    type: DataType.ENUM(...Object.values(LEAD_STATUS)),
     allowNull: false,
-    defaultValue: 'active',
+    defaultValue: LEAD_STATUS.ACTIVE,
   })
-  status: 'active' | 'abandoned' | 'converted';
-
+  status: LEAD_STATUS;
   @HasMany(() => CartItem)
   cartItems: CartItem[];
 

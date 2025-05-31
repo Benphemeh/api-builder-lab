@@ -43,7 +43,6 @@ export class OrderService {
     deliveryAddress: string,
     cartId?: string,
   ): Promise<Order> {
-    // Convert cart to order format
     const { products, totalAmount } = await this.cartService.convertCartToOrder(
       userId,
       cartId,
