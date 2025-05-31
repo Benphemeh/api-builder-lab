@@ -31,3 +31,8 @@ export enum ORDER_STATUS {
   DELIVERED = 'delivered',
   CANCELED = 'canceled',
 }
+export enum LEAD_STATUS {
+  ACTIVE = 'active',
+  ABANDONED = 'abandoned',
+  CONVERTED = 'converted',
+}
