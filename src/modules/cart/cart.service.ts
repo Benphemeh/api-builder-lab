@@ -37,7 +37,6 @@ export class CartService {
 
     if (!cart) {
       cart = await this.cartRepository.create({ userId, status: 'active' });
-      // Reload with associations
       cart = await this.cartRepository.findByPk(cart.id, {
         include: [
           {
@@ -55,7 +54,6 @@ export class CartService {
     const { productId, quantity } = addToCartDto;
 
     return await this.sequelize.transaction(async (t) => {
-      // Check if product exists and has sufficient stock
       const product = await this.productRepository.findByPk(productId, {
         transaction: t,
       });
@@ -227,7 +225,6 @@ export class CartService {
         });
       }
 
-      // Optionally update cart status
       await cart.update({ status: 'cleared' }, { transaction: t });
 
       return {

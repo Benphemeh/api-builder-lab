@@ -10,16 +10,12 @@ dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Set global route prefix
   app.setGlobalPrefix('api');
 
-  // Set global validation pipe
   app.useGlobalPipes(new ValidateInputPipe());
 
-  // Handle raw body for payment webhooks
   app.use('/api/payments/webhook', bodyParser.raw({ type: '*/*' }));
 
-  // Swagger configuration
   const config = new DocumentBuilder()
     .setTitle('O’Ben Brands API')
     .setDescription('API documentation for the O’Ben Brands project')
