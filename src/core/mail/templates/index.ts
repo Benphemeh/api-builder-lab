@@ -367,18 +367,14 @@ export const productRestockedEmail = (params: ProductRestockedParams) => {
 export const emailVerificationEmail = (
   firstName: string,
   verificationUrl: string,
-  token?: string, // Optional token for testing
+  token?: string,
 ) => {
   const subject = 'Verify Your Email Address';
   const msg = `
     <p>Hi ${firstName},</p>
     <p>Thank you for registering. Please verify your email by clicking the link below:</p>
     <a href="${verificationUrl}" target="_blank">Verify Email</a>
-    ${
-      token
-        ? `<p><strong>Token:</strong> ${token}</p>` // Include token for testing
-        : ''
-    }
+    ${token ? `<p><strong>Token:</strong> ${token}</p>` : ''}
     <p>If you did not request this, please ignore this email.</p>
     <p>Best regards,<br/>O'Ben Brands</p>
   `;
@@ -387,18 +383,14 @@ export const emailVerificationEmail = (
 export const passwordResetEmail = (
   firstName: string,
   resetUrl: string,
-  token?: string, // Optional token for testing
+  token?: string,
 ) => {
   const subject = 'Reset Your Password';
   const msg = `
     <p>Hi ${firstName},</p>
     <p>You requested a password reset. Click the link below to set a new password:</p>
     <a href="${resetUrl}" target="_blank">Reset Password</a>
-    ${
-      token
-        ? `<p><strong>Token:</strong> ${token}</p>` // Include token for testing
-        : ''
-    }
+    ${token ? `<p><strong>Token:</strong> ${token}</p>` : ''}
     <p>If you did not request this, please ignore this email.</p>
     <p>Best regards,<br/>O'Ben Brands</p>
   `;
@@ -439,4 +431,15 @@ export const invoiceEmailTemplate = (params: InvoiceEmailParams): string => {
   `;
 
   return emailTemplate(msg);
+};
+
+export const emailVerifiedEmail = (firstName: string) => {
+  const subject = ' Email Verified Successfully';
+  const msg = `
+    <p>Hi ${firstName},</p>
+    <p>Your email address has been successfully verified.</p>
+    <p>Welcome to O'Ben Brands. You can now access all features of your account.</p>
+    <p>Best regards,<br/>O'Ben Brands</p>
+  `;
+  return { subject, msg };
 };

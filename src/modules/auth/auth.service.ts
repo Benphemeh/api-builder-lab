@@ -191,7 +191,10 @@ export class AuthService implements OnModuleInit {
     user.isEmailVerified = true;
     user.emailVerificationToken = null;
     await user.save();
-    return { message: 'Email verified successfully' };
+
+    await this.mailService.sendEmailVerified(user.email, user.firstName);
+
+    return { message: 'Email verified ' };
   }
   async forgotPassword(email: string) {
     const user = await this.userRepository.findOne({ where: { email } });

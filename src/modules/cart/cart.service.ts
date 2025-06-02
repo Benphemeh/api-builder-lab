@@ -70,7 +70,6 @@ export class CartService {
 
       const cart = await this.getOrCreateActiveCart(userId);
 
-      // Check if item already exists in cart
       const existingCartItem = await this.cartItemRepository.findOne({
         where: { cartId: cart.id, productId },
         transaction: t,
