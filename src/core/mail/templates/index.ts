@@ -432,3 +432,14 @@ export const invoiceEmailTemplate = (params: InvoiceEmailParams): string => {
 
   return emailTemplate(msg);
 };
+
+export const emailVerifiedEmail = (firstName: string) => {
+  const subject = ' Email Verified Successfully';
+  const msg = `
+    <p>Hi ${firstName},</p>
+    <p>Your email address has been successfully verified.</p>
+    <p>Welcome to O'Ben Brands. You can now access all features of your account.</p>
+    <p>Best regards,<br/>O'Ben Brands</p>
+  `;
+  return { subject, msg };
+};

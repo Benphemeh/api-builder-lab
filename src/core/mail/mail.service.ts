@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer';
 import { MailerService } from '@nestjs-modules/mailer';
 import {
   emailVerificationEmail,
+  emailVerifiedEmail,
   invoiceEmailTemplate,
   orderCreationEmail,
   orderDeliveredEmail,
@@ -303,6 +304,18 @@ export class MailService {
       verificationUrl,
       token,
     );
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      html: msg,
+      from: {
+        name: "O'Ben Brands",
+        address: process.env.MAIL_FROM,
+      },
+    });
+  }
+  async sendEmailVerified(email: string, firstName: string) {
+    const { subject, msg } = emailVerifiedEmail(firstName);
     await this.mailerService.sendMail({
       to: email,
       subject,
