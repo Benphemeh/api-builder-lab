@@ -12,6 +12,7 @@ import { MailService } from 'src/core/mail/mail.service';
 import { Coupon, Delivery, User } from 'src/core/database';
 import { PaymentService } from '../payment/payment.service';
 import { CartService } from '../cart/cart.service';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class OrderService {
@@ -258,8 +259,34 @@ export class OrderService {
     return order;
   }
 
-  async getAllOrders(): Promise<Order[]> {
-    return this.orderRepository.findAll();
+  async getAllOrders(filters: {
+    search?: string;
+    status?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<Order[]> {
+    const { search, status, fromDate, toDate } = filters;
+
+    const where: any = {};
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (search) {
+      where[Op.or] = [
+        { customerName: { [Op.iLike]: `%${search}%` } },
+        { referenceNumber: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+
+    if (fromDate && toDate) {
+      where.createdAt = {
+        [Op.between]: [new Date(fromDate), new Date(toDate)],
+      };
+    }
+
+    return this.orderRepository.findAll({ where });
   }
 
   async updateOrder(

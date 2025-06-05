@@ -7,6 +7,7 @@ import {
   Get,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
@@ -54,8 +55,13 @@ export class OrderController {
 
   @Get()
   @UseGuards(JwtGuard)
-  async getAllOrders() {
-    return this.orderService.getAllOrders();
+  async getAllOrders(
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+    @Query('fromDate') fromDate?: string,
+    @Query('toDate') toDate?: string,
+  ) {
+    return this.orderService.getAllOrders({ search, status, fromDate, toDate });
   }
 
   // @Patch(':id')
