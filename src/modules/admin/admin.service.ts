@@ -33,8 +33,13 @@ export class AdminService {
     private readonly deliveryService: DeliveryService,
   ) {}
 
-  async getAllOrders(): Promise<any> {
-    return this.orderService.getAllOrders();
+  async getAllOrders(filters: {
+    search?: string;
+    status?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<any> {
+    return this.orderService.getAllOrders(filters);
   }
 
   async getOrderById(id: string): Promise<any> {

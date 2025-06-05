@@ -34,9 +34,14 @@ export class AdminController {
     private readonly productService: ProductService,
   ) {}
 
-  @Get('orders')
-  async getAllOrders() {
-    return this.adminService.getAllOrders();
+  @Get()
+  async getAllOrders(
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+    @Query('fromDate') fromDate?: string,
+    @Query('toDate') toDate?: string,
+  ) {
+    return this.adminService.getAllOrders({ search, status, fromDate, toDate });
   }
 
   @Get('orders/:id')
