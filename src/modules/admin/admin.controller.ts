@@ -201,8 +201,12 @@ export class AdminController {
   }
 
   @Get('coupons')
-  async getAllCoupons() {
-    return this.adminService.getAllCoupons();
+  async getAllCoupons(
+    @Query('search') search?: string,
+    @Query('fromDate') fromDate?: string,
+    @Query('toDate') toDate?: string,
+  ) {
+    return this.adminService.getAllCoupons({ search, fromDate, toDate });
   }
   @Delete('coupons/:id')
   async deleteCoupon(@Param('id') id: string) {

@@ -209,8 +209,24 @@ export class AdminService {
     }
     return coupon;
   }
-  async getAllCoupons(): Promise<Coupon[]> {
-    return this.couponRepository.findAll();
+  async getAllCoupons(filters: {
+    search?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<Coupon[]> {
+    const where: any = {};
+
+    if (filters.search) {
+      where.code = { $like: `%${filters.search}%` }; // Search by coupon code
+    }
+
+    if (filters.fromDate && filters.toDate) {
+      where.createdAt = {
+        $between: [new Date(filters.fromDate), new Date(filters.toDate)],
+      }; // Filter by date range
+    }
+
+    return this.couponRepository.findAll({ where });
   }
   async deleteCoupon(id: string): Promise<{ message: string }> {
     const coupon = await this.couponRepository.findByPk(id);
