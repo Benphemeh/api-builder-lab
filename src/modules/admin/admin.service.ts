@@ -218,13 +218,13 @@ export class AdminService {
     const where: any = {};
 
     if (filters.search) {
-      where.code = { [Op.like]: `%${filters.search}%` }; // Use Op.like for pattern matching
+      where.code = { [Op.like]: `%${filters.search}%` };
     }
 
     if (filters.fromDate && filters.toDate) {
       where.createdAt = {
         [Op.between]: [new Date(filters.fromDate), new Date(filters.toDate)],
-      }; // Use Op.between for date range
+      };
     }
 
     return this.couponRepository.findAll({ where });
