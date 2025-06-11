@@ -19,6 +19,7 @@ import { UpdateProductDto } from '../products/dto/update-product.dto';
 import { CreateCouponDto } from './dto/coupon.dto';
 import * as csvParse from 'csv-parse/sync';
 import * as XLSX from 'xlsx';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class AdminService {
@@ -217,12 +218,12 @@ export class AdminService {
     const where: any = {};
 
     if (filters.search) {
-      where.code = { $like: `%${filters.search}%` };
+      where.code = { [Op.like]: `%${filters.search}%` };
     }
 
     if (filters.fromDate && filters.toDate) {
       where.createdAt = {
-        $between: [new Date(filters.fromDate), new Date(filters.toDate)],
+        [Op.between]: [new Date(filters.fromDate), new Date(filters.toDate)],
       };
     }
 
