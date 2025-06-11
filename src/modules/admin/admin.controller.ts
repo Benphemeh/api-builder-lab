@@ -162,6 +162,20 @@ export class AdminController {
   ): Promise<Delivery> {
     return this.adminService.getDeliveryByOrderId(orderId);
   }
+  @Get('deliveries')
+  async getAllDeliveries(
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+    @Query('fromDate') fromDate?: string,
+    @Query('toDate') toDate?: string,
+  ) {
+    return this.adminService.getAllDeliveries({
+      search,
+      status,
+      fromDate,
+      toDate,
+    });
+  }
 
   @Patch('deliveries/:orderId/status')
   async updateDeliveryStatus(

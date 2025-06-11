@@ -184,6 +184,14 @@ export class AdminService {
       products: createdProducts,
     };
   }
+  async getAllDeliveries(filters: {
+    search?: string;
+    status?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<Delivery[]> {
+    return this.deliveryService.getAllDeliveries(filters);
+  }
   async updateDeliveryStatus(
     orderId: string,
     dto: UpdateDeliveryStatusDto,
