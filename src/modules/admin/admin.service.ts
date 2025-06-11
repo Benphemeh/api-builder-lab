@@ -217,13 +217,13 @@ export class AdminService {
     const where: any = {};
 
     if (filters.search) {
-      where.code = { $like: `%${filters.search}%` }; // Search by coupon code
+      where.code = { $like: `%${filters.search}%` };
     }
 
     if (filters.fromDate && filters.toDate) {
       where.createdAt = {
         $between: [new Date(filters.fromDate), new Date(filters.toDate)],
-      }; // Filter by date range
+      };
     }
 
     return this.couponRepository.findAll({ where });
