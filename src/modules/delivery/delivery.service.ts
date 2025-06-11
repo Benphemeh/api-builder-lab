@@ -81,11 +81,11 @@ export class DeliveryService {
     const where: any = {};
 
     if (filters.search) {
-      where.deliveryAddress = { $like: `%${filters.search}%` }; // Search by delivery address
+      where.deliveryAddress = { $like: `%${filters.search}%` };
     }
 
     if (filters.status) {
-      where.status = filters.status; // Filter by status
+      where.status = filters.status;
     }
 
     if (filters.fromDate && filters.toDate) {
