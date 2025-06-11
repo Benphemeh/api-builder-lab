@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Patch, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Patch, Get, Query } from '@nestjs/common';
 import { DeliveryService } from './delivery.service';
 import { CreateDeliveryDto } from './dto/create-delivery.dto';
 import { UpdateDeliveryStatusDto } from './dto/update-delivery.dto';
@@ -23,5 +23,19 @@ export class DeliveryController {
   @Get(':orderId')
   async getDeliveryByOrderId(@Param('orderId') orderId: string) {
     return this.deliveryService.getDeliveryByOrderId(orderId);
+  }
+  @Get()
+  async getAllDeliveries(
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+    @Query('fromDate') fromDate?: string,
+    @Query('toDate') toDate?: string,
+  ) {
+    return this.deliveryService.getAllDeliveries({
+      search,
+      status,
+      fromDate,
+      toDate,
+    });
   }
 }

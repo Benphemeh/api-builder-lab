@@ -71,4 +71,29 @@ export class DeliveryService {
 
     return delivery;
   }
+
+  async getAllDeliveries(filters: {
+    search?: string;
+    status?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<Delivery[]> {
+    const where: any = {};
+
+    if (filters.search) {
+      where.deliveryAddress = { $like: `%${filters.search}%` }; // Search by delivery address
+    }
+
+    if (filters.status) {
+      where.status = filters.status; // Filter by status
+    }
+
+    if (filters.fromDate && filters.toDate) {
+      where.createdAt = {
+        $between: [new Date(filters.fromDate), new Date(filters.toDate)],
+      };
+    }
+
+    return this.deliveryRepository.findAll({ where });
+  }
 }
