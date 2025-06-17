@@ -140,7 +140,9 @@ export class CartService {
       });
 
       if (!cartItem) {
-        throw new NotFoundException('Cart item not found');
+        throw new NotFoundException(
+          `Cart item with ID ${cartItemId} not found`,
+        );
       }
 
       // Check stock availability
@@ -179,7 +181,9 @@ export class CartService {
       });
 
       if (!cartItem) {
-        throw new NotFoundException('Cart item not found');
+        throw new NotFoundException(
+          `Cart item with ID ${cartItemId} not found`,
+        );
       }
 
       const cartId = cartItem.cartId;
