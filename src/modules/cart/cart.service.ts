@@ -185,7 +185,7 @@ export class CartService {
       const cartId = cartItem.cartId;
       await cartItem.destroy({ transaction: t });
 
-      // Return updated cart
+      //  Return updated cart
       return await this.cartRepository.findByPk(cartId, {
         include: [
           {
