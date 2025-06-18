@@ -31,7 +31,22 @@ export class ProductController {
   ) {
     return this.productService.create(createProductDto, req, file);
   }
-
+  @Get('filter')
+  async getFilteredProducts(
+    @Query('categoryId') categoryId?: string,
+    @Query('minPrice') minPrice?: number,
+    @Query('maxPrice') maxPrice?: number,
+    @Query('brand') brand?: string,
+    @Query('minRating') minRating?: number,
+  ) {
+    return this.productService.getFilteredProducts({
+      categoryId,
+      minPrice,
+      maxPrice,
+      brand,
+      minRating,
+    });
+  }
   @UseGuards(JwtGuard)
   @Get(':id')
   async findOneProduct(@Param('id') id: string) {

@@ -120,6 +120,33 @@ export class ProductService {
 
     return { data: rows, total: count };
   }
+  async getFilteredProducts(filters: {
+    categoryId?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    brand?: string;
+    minRating?: number;
+  }): Promise<Product[]> {
+    const where: any = {};
+
+    if (filters.categoryId) {
+      where.categoryId = filters.categoryId;
+    }
+
+    if (filters.minPrice && filters.maxPrice) {
+      where.price = { [Op.between]: [filters.minPrice, filters.maxPrice] };
+    }
+
+    if (filters.brand) {
+      where.brand = { [Op.like]: `%${filters.brand}%` };
+    }
+
+    if (filters.minRating) {
+      where.rating = { [Op.gte]: filters.minRating };
+    }
+
+    return this.productRepository.findAll({ where });
+  }
   async updateProduct(
     id: string,
     updateProductDto: UpdateProductDto,
