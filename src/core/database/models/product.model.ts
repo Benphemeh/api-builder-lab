@@ -10,6 +10,7 @@ import { ApiBuilderTable } from '../base-model/table-decorators';
 import { IPRODUCT } from 'src/core/interfaces/products.interface';
 import User from './user.model';
 import Review from './review.model';
+import Category from './category.model';
 
 @ApiBuilderTable({
   tableName: 'products',
@@ -50,12 +51,6 @@ export default class Product extends BaseModel implements IPRODUCT {
   author: User;
 
   @Column({
-    type: DataType.UUID,
-    allowNull: true,
-  })
-  categoryId: string;
-
-  @Column({
     type: DataType.STRING,
     allowNull: true,
   })
@@ -81,4 +76,14 @@ export default class Product extends BaseModel implements IPRODUCT {
   imageUrl: string;
   @HasMany(() => Review)
   reviews: Review[];
+
+  @ForeignKey(() => Category)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  categoryId: string;
+
+  @BelongsTo(() => Category)
+  category: Category;
 }
