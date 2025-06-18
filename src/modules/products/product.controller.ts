@@ -31,6 +31,7 @@ export class ProductController {
   ) {
     return this.productService.create(createProductDto, req, file);
   }
+  @UseGuards(JwtGuard)
   @Get('filter')
   async getFilteredProducts(
     @Query('categoryId') categoryId?: string,
@@ -47,11 +48,13 @@ export class ProductController {
       minRating,
     });
   }
+
   @UseGuards(JwtGuard)
   @Get(':id')
   async findOneProduct(@Param('id') id: string) {
     return this.productService.findOne(id);
   }
+
   @UseGuards(JwtGuard)
   @Get()
   async getAllProducts(

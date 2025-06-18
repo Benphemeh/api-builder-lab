@@ -1,5 +1,4 @@
 'use strict';
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const baseModelMigration = require('../base-model/base-model.migration');
 

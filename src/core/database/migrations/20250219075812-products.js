@@ -1,4 +1,5 @@
 'use strict';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const baseModelMigration = require('../base-model/base-model.migration');
 
@@ -43,7 +44,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: true,
         references: {
-          model: 'categories', // Reference the categories table
+          model: 'categories',
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -53,7 +54,7 @@ module.exports = {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
-          model: 'users', // Reference the users table
+          model: 'users',
           key: 'id',
         },
         onUpdate: 'CASCADE',

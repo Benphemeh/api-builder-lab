@@ -147,6 +147,7 @@ export class ProductService {
 
     return this.productRepository.findAll({ where });
   }
+
   async updateProduct(
     id: string,
     updateProductDto: UpdateProductDto,
@@ -179,6 +180,7 @@ export class ProductService {
     console.log(`Product ${product.name} updated successfully`);
     return product;
   }
+
   async restockProduct(productId: string, quantity: number): Promise<Product> {
     const product = await this.productRepository.findByPk(productId);
     if (!product) {
