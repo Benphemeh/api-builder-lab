@@ -18,6 +18,7 @@ import { PaymentModule } from './modules/payment/payment.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { ReviewModule } from './modules/review/review.module';
 import { CartModule } from './modules/cart/cart.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CartModule } from './modules/cart/cart.module';
     WishlistModule,
     ReviewModule,
     CartModule,
+    CategoriesModule,
     DeliveryModule,
     ApiLoggerModule,
     WishlistModule,
