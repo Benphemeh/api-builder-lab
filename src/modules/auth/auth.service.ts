@@ -97,7 +97,7 @@ export class AuthService implements OnModuleInit {
 
     const token = await this.generateToken(result);
 
-    // Send confirmation email
+    // send confirmation email
     await this.sendUserConfirmation(result);
 
     //send UserOnBoard email

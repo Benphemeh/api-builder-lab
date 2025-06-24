@@ -24,7 +24,7 @@ export class CategoriesService {
   async getCategoryById(id: string): Promise<Category> {
     const category = await this.categoryRepository.findByPk(id);
     if (!category) {
-      throw new NotFoundException(`Category with ID ${id} not found`);
+      throw new NotFoundException(`category with ID ${id} not found`);
     }
     return category;
   }
