@@ -80,7 +80,7 @@ export class OrderService {
 
       if (productDetails.stock < product.quantity) {
         throw new NotFoundException(
-          `Insufficient stock for product id ${product.productId}`,
+          `insufficient stock for product id ${product.productId}`,
         );
       }
 
