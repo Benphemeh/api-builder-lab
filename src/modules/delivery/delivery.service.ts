@@ -39,7 +39,7 @@ export class DeliveryService {
       where: { id: orderId },
     });
     if (!order) {
-      throw new NotFoundException('Order not found');
+      throw new NotFoundException('order not found');
     }
 
     const user = await this.userRepository.findOne({
