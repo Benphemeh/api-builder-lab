@@ -44,13 +44,22 @@ export class ProductController {
     @Query('brand') brand?: string,
     @Query('minRating') minRating?: number,
   ) {
-    return this.productService.getFilteredProducts({
-      categoryId,
-      minPrice,
-      maxPrice,
-      brand,
-      minRating,
-    });
+    const normalize = (val: any) => val ?? 'all';
+
+    const cacheKey = `products:filter:${normalize(categoryId)}:${normalize(minPrice)}:${normalize(maxPrice)}:${normalize(brand)}:${normalize(minRating)}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.productService.getFilteredProducts({
+          categoryId,
+          minPrice,
+          maxPrice,
+          brand,
+          minRating,
+        }),
+      600, // TTL: 10 minutes
+    );
   }
 
   @UseGuards(JwtGuard)
@@ -87,35 +96,9 @@ export class ProductController {
           breed,
           type,
         ),
-      60 * 5, // cache for 5 minutes
+      60 * 5,
     );
   }
-
-  // @UseGuards(JwtGuard)
-  // @Get()
-  // async getAllProducts(
-  //   @Query('page') page: number = 1,
-  //   @Query('limit') limit: number = 10,
-  //   @Query('search') search: string = '',
-  //   @Query('sortBy') sortBy: string = 'createdAt',
-  //   @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
-  //   @Query('category') category: string = '',
-  //   @Query('size') size?: string,
-  //   @Query('breed') breed?: string,
-  //   @Query('type') type?: string,
-  // ) {
-  //   return this.productService.findAll(
-  //     page,
-  //     limit,
-  //     search,
-  //     sortBy,
-  //     sortOrder,
-  //     category,
-  //     size,
-  //     breed,
-  //     type,
-  //   );
-  // }
 
   @UseGuards(JwtGuard)
   @Patch(':id')
