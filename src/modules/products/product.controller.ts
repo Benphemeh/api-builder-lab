@@ -58,15 +58,22 @@ export class ProductController {
           brand,
           minRating,
         }),
-      600, // TTL: 10 minutes
+      600,
     );
   }
 
   @UseGuards(JwtGuard)
   @Get(':id')
   async findOneProduct(@Param('id') id: string) {
-    return this.productService.findOne(id);
+    const cacheKey = `products:detail:${id}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () => this.productService.findOne(id),
+      600,
+    );
   }
+
   @UseGuards(JwtGuard)
   @Get()
   async getAllProducts(
