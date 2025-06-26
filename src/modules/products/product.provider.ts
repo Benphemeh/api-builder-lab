@@ -3,6 +3,8 @@ import User from 'src/core/database/models/user.model';
 import Product from 'src/core/database/models/product.model';
 import { ProductService } from './product.service';
 import { UsersService } from '../users/users.service';
+import { CacheService } from '../cache/cache.service';
+import { RedisService } from '../redis/redis.service';
 
 export const productProviders = [
   {
@@ -15,4 +17,6 @@ export const productProviders = [
   },
   ProductService,
   UsersService,
+  CacheService,
+  RedisService,
 ];

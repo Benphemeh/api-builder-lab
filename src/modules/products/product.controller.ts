@@ -17,10 +17,14 @@ import { ProductService } from './product.service';
 import { JwtGuard } from '../guards/jwt-guard';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CacheService } from '../cache/cache.service';
 
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly cacheService: CacheService,
+  ) {}
   @UseGuards(JwtGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -40,19 +44,34 @@ export class ProductController {
     @Query('brand') brand?: string,
     @Query('minRating') minRating?: number,
   ) {
-    return this.productService.getFilteredProducts({
-      categoryId,
-      minPrice,
-      maxPrice,
-      brand,
-      minRating,
-    });
+    const normalize = (val: any) => val ?? 'all';
+
+    const cacheKey = `products:filter:${normalize(categoryId)}:${normalize(minPrice)}:${normalize(maxPrice)}:${normalize(brand)}:${normalize(minRating)}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.productService.getFilteredProducts({
+          categoryId,
+          minPrice,
+          maxPrice,
+          brand,
+          minRating,
+        }),
+      600,
+    );
   }
 
   @UseGuards(JwtGuard)
   @Get(':id')
   async findOneProduct(@Param('id') id: string) {
-    return this.productService.findOne(id);
+    const cacheKey = `products:detail:${id}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () => this.productService.findOne(id),
+      600,
+    );
   }
 
   @UseGuards(JwtGuard)
@@ -68,16 +87,23 @@ export class ProductController {
     @Query('breed') breed?: string,
     @Query('type') type?: string,
   ) {
-    return this.productService.findAll(
-      page,
-      limit,
-      search,
-      sortBy,
-      sortOrder,
-      category,
-      size,
-      breed,
-      type,
+    const cacheKey = `products:list:${page}:${limit}:${search}:${sortBy}:${sortOrder}:${category}:${size}:${breed}:${type}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.productService.findAll(
+          page,
+          limit,
+          search,
+          sortBy,
+          sortOrder,
+          category,
+          size,
+          breed,
+          type,
+        ),
+      60 * 5,
     );
   }
 
