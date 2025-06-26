@@ -70,7 +70,7 @@ export class ProductController {
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.productService.findOne(id),
-      600,
+      10,
     );
   }
 
@@ -103,7 +103,7 @@ export class ProductController {
           breed,
           type,
         ),
-      60 * 5,
+      60,
     );
   }
 
