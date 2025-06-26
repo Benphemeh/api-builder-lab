@@ -58,7 +58,7 @@ export class ProductController {
           brand,
           minRating,
         }),
-      600,
+      60,
     );
   }
 
