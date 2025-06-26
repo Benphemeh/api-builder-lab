@@ -35,7 +35,6 @@ export class ProductController {
   ) {
     return this.productService.create(createProductDto, req, file);
   }
-  @UseGuards(JwtGuard)
   @Get('filter')
   async getFilteredProducts(
     @Query('categoryId') categoryId?: string,
@@ -44,22 +43,13 @@ export class ProductController {
     @Query('brand') brand?: string,
     @Query('minRating') minRating?: number,
   ) {
-    const normalize = (val: any) => val ?? 'all';
-
-    const cacheKey = `products:filter:${normalize(categoryId)}:${normalize(minPrice)}:${normalize(maxPrice)}:${normalize(brand)}:${normalize(minRating)}`;
-
-    return this.cacheService.getOrSet(
-      cacheKey,
-      () =>
-        this.productService.getFilteredProducts({
-          categoryId,
-          minPrice,
-          maxPrice,
-          brand,
-          minRating,
-        }),
-      600,
-    );
+    return this.productService.getFilteredProducts({
+      categoryId,
+      minPrice,
+      maxPrice,
+      brand,
+      minRating,
+    });
   }
 
   @UseGuards(JwtGuard)
@@ -70,7 +60,7 @@ export class ProductController {
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.productService.findOne(id),
-      600,
+      10,
     );
   }
 
@@ -103,7 +93,7 @@ export class ProductController {
           breed,
           type,
         ),
-      60 * 5,
+      60,
     );
   }
 
