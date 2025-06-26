@@ -17,10 +17,14 @@ import { ProductService } from './product.service';
 import { JwtGuard } from '../guards/jwt-guard';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CacheService } from '../cache/cache.service';
 
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly cacheService: CacheService,
+  ) {}
   @UseGuards(JwtGuard)
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -54,7 +58,6 @@ export class ProductController {
   async findOneProduct(@Param('id') id: string) {
     return this.productService.findOne(id);
   }
-
   @UseGuards(JwtGuard)
   @Get()
   async getAllProducts(
@@ -68,18 +71,51 @@ export class ProductController {
     @Query('breed') breed?: string,
     @Query('type') type?: string,
   ) {
-    return this.productService.findAll(
-      page,
-      limit,
-      search,
-      sortBy,
-      sortOrder,
-      category,
-      size,
-      breed,
-      type,
+    const cacheKey = `products:list:${page}:${limit}:${search}:${sortBy}:${sortOrder}:${category}:${size}:${breed}:${type}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.productService.findAll(
+          page,
+          limit,
+          search,
+          sortBy,
+          sortOrder,
+          category,
+          size,
+          breed,
+          type,
+        ),
+      60 * 5, // cache for 5 minutes
     );
   }
+
+  // @UseGuards(JwtGuard)
+  // @Get()
+  // async getAllProducts(
+  //   @Query('page') page: number = 1,
+  //   @Query('limit') limit: number = 10,
+  //   @Query('search') search: string = '',
+  //   @Query('sortBy') sortBy: string = 'createdAt',
+  //   @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
+  //   @Query('category') category: string = '',
+  //   @Query('size') size?: string,
+  //   @Query('breed') breed?: string,
+  //   @Query('type') type?: string,
+  // ) {
+  //   return this.productService.findAll(
+  //     page,
+  //     limit,
+  //     search,
+  //     sortBy,
+  //     sortOrder,
+  //     category,
+  //     size,
+  //     breed,
+  //     type,
+  //   );
+  // }
 
   @UseGuards(JwtGuard)
   @Patch(':id')
