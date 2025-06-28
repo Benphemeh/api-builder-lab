@@ -52,8 +52,8 @@ export class ProductController {
     });
   }
 
-  @UseGuards(JwtGuard)
   @Get(':id')
+  @UseGuards(JwtGuard)
   async findOneProduct(@Param('id') id: string) {
     const cacheKey = `products:detail:${id}`;
 

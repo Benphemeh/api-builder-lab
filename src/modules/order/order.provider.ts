@@ -7,6 +7,8 @@ import { ProductService } from '../products/product.service';
 import Delivery from 'src/core/database/models/delivery.model';
 import { DeliveryService } from '../delivery/delivery.service';
 import { Coupon } from 'src/core/database';
+import { CacheService } from '../cache/cache.service';
+import { RedisService } from '../redis/redis.service';
 
 export const orderProviders = [
   {
@@ -32,4 +34,6 @@ export const orderProviders = [
   OrderService,
   ProductService,
   DeliveryService,
+  CacheService,
+  RedisService,
 ];
