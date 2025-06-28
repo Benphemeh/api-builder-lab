@@ -77,7 +77,7 @@ export class OrderController {
       cacheKey,
       () =>
         this.orderService.getAllOrders({ search, status, fromDate, toDate }),
-      60,
+      10,
     );
   }
 
