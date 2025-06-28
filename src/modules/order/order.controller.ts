@@ -13,10 +13,14 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
 import { JwtGuard } from '../guards/jwt-guard';
 import { CartToOrderDto } from '../cart/dto/card.dto';
+import { CacheService } from '../cache/cache.service';
 
 @Controller('order')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly cacheService: CacheService,
+  ) {}
 
   @Post()
   async createOrder(@Body() createOrderDto: CreateOrderDto) {
@@ -50,7 +54,13 @@ export class OrderController {
   @Get(':id')
   @UseGuards(JwtGuard)
   async getOrderById(@Param('id') id: string) {
-    return this.orderService.getOrderById(id);
+    const cacheKey = `orders:detail:${id}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () => this.orderService.getOrderById(id),
+      10,
+    );
   }
 
   @Get()
@@ -61,7 +71,14 @@ export class OrderController {
     @Query('fromDate') fromDate?: string,
     @Query('toDate') toDate?: string,
   ) {
-    return this.orderService.getAllOrders({ search, status, fromDate, toDate });
+    const cacheKey = `orders:list:${search || 'none'}:${status || 'none'}:${fromDate || 'none'}:${toDate || 'none'}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.orderService.getAllOrders({ search, status, fromDate, toDate }),
+      10,
+    );
   }
 
   // @Patch(':id')
