@@ -71,7 +71,14 @@ export class OrderController {
     @Query('fromDate') fromDate?: string,
     @Query('toDate') toDate?: string,
   ) {
-    return this.orderService.getAllOrders({ search, status, fromDate, toDate });
+    const cacheKey = `orders:list:${search || 'none'}:${status || 'none'}:${fromDate || 'none'}:${toDate || 'none'}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.orderService.getAllOrders({ search, status, fromDate, toDate }),
+      60,
+    );
   }
 
   // @Patch(':id')
