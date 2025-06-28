@@ -59,7 +59,7 @@ export class OrderController {
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.orderService.getOrderById(id),
-      60,
+      10,
     );
   }
 

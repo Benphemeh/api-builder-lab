@@ -93,7 +93,7 @@ export class ProductController {
           breed,
           type,
         ),
-      60,
+      10,
     );
   }
 
