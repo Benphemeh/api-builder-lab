@@ -40,7 +40,7 @@ export class UsersController {
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.usersService.getAllUsers(),
-      30, // Cache for 30 seconds
+      60,
     );
   }
 
