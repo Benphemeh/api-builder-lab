@@ -16,6 +16,8 @@ import {
 import { PaymentService } from '../payment/payment.service';
 import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { CacheService } from '../cache/cache.service';
+import { RedisService } from '../redis/redis.service';
 
 export const adminProviders = [
   AdminService,
@@ -27,6 +29,8 @@ export const adminProviders = [
   PaymentService,
   AuthService,
   JwtService,
+  CacheService,
+  RedisService,
   {
     provide: REPOSITORY.ORDER,
     useValue: Order,

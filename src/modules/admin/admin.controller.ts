@@ -25,6 +25,7 @@ import { ProductService } from '../products/product.service';
 import { UpdateProductDto } from '../products/dto/update-product.dto';
 import { CreateCouponDto } from './dto/coupon.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CacheService } from '../cache/cache.service';
 
 @UseGuards(AdminGuard)
 @Controller('admin')
@@ -32,17 +33,42 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly productService: ProductService,
+    private readonly cacheService: CacheService,
   ) {}
 
-  @Get()
+  @Get('orders')
   async getAllOrders(
     @Query('search') search?: string,
     @Query('status') status?: string,
     @Query('fromDate') fromDate?: string,
     @Query('toDate') toDate?: string,
   ) {
-    return this.adminService.getAllOrders({ search, status, fromDate, toDate });
+    const keyParts = ['admin:orders:list'];
+
+    if (search) keyParts.push(`search:${search}`);
+    if (status) keyParts.push(`status:${status}`);
+    if (fromDate) keyParts.push(`fromDate:${fromDate}`);
+    if (toDate) keyParts.push(`toDate:${toDate}`);
+
+    const cacheKey = keyParts.join(':');
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.adminService.getAllOrders({ search, status, fromDate, toDate }),
+      30,
+    );
   }
+
+  // @Get()
+  // async getAllOrders(
+  //   @Query('search') search?: string,
+  //   @Query('status') status?: string,
+  //   @Query('fromDate') fromDate?: string,
+  //   @Query('toDate') toDate?: string,
+  // ) {
+  //   return this.adminService.getAllOrders({ search, status, fromDate, toDate });
+  // }
 
   @Get('orders/:id')
   async getOrderById(@Param('id') id: string) {
