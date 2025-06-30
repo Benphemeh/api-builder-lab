@@ -13,9 +13,13 @@ import User from 'src/core/database/models/user.model';
 import { AuthGuard } from '@nestjs/passport';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { AdminGuard } from 'src/core/guards/admin.guard';
+import { CacheService } from '../cache/cache.service';
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly cacheService: CacheService,
+  ) {}
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async getUser(@Param('id') id: string): Promise<User> {
@@ -32,8 +36,14 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getAllUsers(): Promise<User[]> {
-    return await this.usersService.getAllUsers();
+    const cacheKey = 'users:all';
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () => this.usersService.getAllUsers(),
+      30, // Cache for 30 seconds
+    );
   }
+
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   async updateUser(@Param('id') id: string, @Body() data: UpdateUserDTO) {
