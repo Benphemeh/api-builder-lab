@@ -40,7 +40,7 @@ export class UsersController {
     return this.cacheService.getOrSet(
       cacheKey,
       () => this.usersService.getAllUsers(),
-      60,
+      30,
     );
   }
 
