@@ -43,7 +43,6 @@ export class AdminController {
     @Query('fromDate') fromDate?: string,
     @Query('toDate') toDate?: string,
   ) {
-    // Build a unique cache key based on query params
     const keyParts = ['admin:orders:list'];
 
     if (search) keyParts.push(`search:${search}`);
@@ -57,7 +56,7 @@ export class AdminController {
       cacheKey,
       () =>
         this.adminService.getAllOrders({ search, status, fromDate, toDate }),
-      30, // Cache for 30 seconds
+      30,
     );
   }
 
