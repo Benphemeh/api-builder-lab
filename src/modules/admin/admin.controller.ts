@@ -36,6 +36,8 @@ export class AdminController {
     private readonly cacheService: CacheService,
   ) {}
 
+  // -- Order management --
+
   @Get('orders')
   async getAllOrders(
     @Query('search') search?: string,
@@ -81,6 +83,8 @@ export class AdminController {
   async deleteOrder(@Param('id') id: string) {
     return this.adminService.deleteOrder(id);
   }
+
+  // -- Product management --
 
   @Post('products')
   async createProduct(
@@ -194,6 +198,8 @@ export class AdminController {
     return this.adminService.bulkUploadProducts(file, req);
   }
 
+  // -- delivery management --
+
   @Post('deliveries')
   async createDelivery(@Body() dto: CreateDeliveryDto): Promise<Delivery> {
     return this.adminService.createDelivery(dto);
@@ -212,12 +218,26 @@ export class AdminController {
     @Query('fromDate') fromDate?: string,
     @Query('toDate') toDate?: string,
   ) {
-    return this.adminService.getAllDeliveries({
-      search,
-      status,
-      fromDate,
-      toDate,
-    });
+    const keyParts = ['deliveries'];
+
+    if (search) keyParts.push(`search:${search}`);
+    if (status) keyParts.push(`status:${status}`);
+    if (fromDate) keyParts.push(`fromDate:${fromDate}`);
+    if (toDate) keyParts.push(`toDate:${toDate}`);
+
+    const cacheKey = `admin:deliveries:list:${keyParts.join(':')}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.adminService.getAllDeliveries({
+          search,
+          status,
+          fromDate,
+          toDate,
+        }),
+      30,
+    );
   }
 
   @Patch('deliveries/:orderId/status')
