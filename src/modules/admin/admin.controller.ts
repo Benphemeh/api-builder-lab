@@ -60,16 +60,6 @@ export class AdminController {
     );
   }
 
-  // @Get()
-  // async getAllOrders(
-  //   @Query('search') search?: string,
-  //   @Query('status') status?: string,
-  //   @Query('fromDate') fromDate?: string,
-  //   @Query('toDate') toDate?: string,
-  // ) {
-  //   return this.adminService.getAllOrders({ search, status, fromDate, toDate });
-  // }
-
   @Get('orders/:id')
   async getOrderById(@Param('id') id: string) {
     const order = await this.adminService.getOrderById(id);
