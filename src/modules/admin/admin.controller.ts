@@ -36,6 +36,8 @@ export class AdminController {
     private readonly cacheService: CacheService,
   ) {}
 
+  // -- Order management --
+
   @Get('orders')
   async getAllOrders(
     @Query('search') search?: string,
@@ -81,6 +83,8 @@ export class AdminController {
   async deleteOrder(@Param('id') id: string) {
     return this.adminService.deleteOrder(id);
   }
+
+  // -- Product management --
 
   @Post('products')
   async createProduct(
@@ -194,6 +198,8 @@ export class AdminController {
     return this.adminService.bulkUploadProducts(file, req);
   }
 
+  // -- delivery management --
+
   @Post('deliveries')
   async createDelivery(@Body() dto: CreateDeliveryDto): Promise<Delivery> {
     return this.adminService.createDelivery(dto);
@@ -230,7 +236,7 @@ export class AdminController {
           fromDate,
           toDate,
         }),
-      30, // cache for 30 seconds
+      30,
     );
   }
 
