@@ -50,7 +50,7 @@ export class AdminController {
     if (fromDate) keyParts.push(`fromDate:${fromDate}`);
     if (toDate) keyParts.push(`toDate:${toDate}`);
 
-    const cacheKey = keyParts.join(':');
+    const cacheKey = keyParts.join('-');
 
     return this.cacheService.getOrSet(
       cacheKey,
@@ -133,7 +133,7 @@ export class AdminController {
     if (breed) keyParts.push(`breed:${breed}`);
     if (type) keyParts.push(`type:${type}`);
 
-    const cacheKey = `admin:products:list:${keyParts.join(':')}`;
+    const cacheKey = `admin:products:list:${keyParts.join('')}`;
 
     return this.cacheService.getOrSet(
       cacheKey,
@@ -149,17 +149,24 @@ export class AdminController {
           breed,
           type,
         ),
-      60, // cache for 30 seconds
+      30,
     );
   }
-
   @Get('products/:id')
   async getProductById(@Param('id') id: string) {
-    const product = await this.adminService.getProductById(id);
-    if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
-    }
-    return product;
+    const cacheKey = `admin:product:detail:${id}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        const product = await this.adminService.getProductById(id);
+        if (!product) {
+          throw new NotFoundException(`Product with ID ${id} not found`);
+        }
+        return product;
+      },
+      30,
+    );
   }
 
   @Patch('products/:id')
