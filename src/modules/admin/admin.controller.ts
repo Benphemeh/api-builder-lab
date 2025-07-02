@@ -212,12 +212,26 @@ export class AdminController {
     @Query('fromDate') fromDate?: string,
     @Query('toDate') toDate?: string,
   ) {
-    return this.adminService.getAllDeliveries({
-      search,
-      status,
-      fromDate,
-      toDate,
-    });
+    const keyParts = ['deliveries'];
+
+    if (search) keyParts.push(`search:${search}`);
+    if (status) keyParts.push(`status:${status}`);
+    if (fromDate) keyParts.push(`fromDate:${fromDate}`);
+    if (toDate) keyParts.push(`toDate:${toDate}`);
+
+    const cacheKey = `admin:deliveries:list:${keyParts.join(':')}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.adminService.getAllDeliveries({
+          search,
+          status,
+          fromDate,
+          toDate,
+        }),
+      30, // cache for 30 seconds
+    );
   }
 
   @Patch('deliveries/:orderId/status')
