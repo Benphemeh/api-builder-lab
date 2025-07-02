@@ -130,16 +130,36 @@ export class AdminController {
     @Query('breed') breed?: string,
     @Query('type') type?: string,
   ) {
-    return this.adminService.getAllProducts(
-      +page,
-      +limit,
-      search,
-      sortBy,
-      sortOrder,
-      category,
-      size,
-      breed,
-      type,
+    const keyParts = [
+      `products`,
+      `page:${page}`,
+      `limit:${limit}`,
+      `search:${search}`,
+      `sortBy:${sortBy}`,
+      `sortOrder:${sortOrder}`,
+    ];
+    if (category) keyParts.push(`category:${category}`);
+    if (size) keyParts.push(`size:${size}`);
+    if (breed) keyParts.push(`breed:${breed}`);
+    if (type) keyParts.push(`type:${type}`);
+
+    const cacheKey = `admin:products:list:${keyParts.join(':')}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.adminService.getAllProducts(
+          +page,
+          +limit,
+          search,
+          sortBy,
+          sortOrder,
+          category,
+          size,
+          breed,
+          type,
+        ),
+      60, // cache for 30 seconds
     );
   }
 
