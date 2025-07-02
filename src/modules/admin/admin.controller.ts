@@ -50,7 +50,7 @@ export class AdminController {
     if (fromDate) keyParts.push(`fromDate:${fromDate}`);
     if (toDate) keyParts.push(`toDate:${toDate}`);
 
-    const cacheKey = keyParts.join(':');
+    const cacheKey = keyParts.join('-');
 
     return this.cacheService.getOrSet(
       cacheKey,
@@ -59,16 +59,6 @@ export class AdminController {
       30,
     );
   }
-
-  // @Get()
-  // async getAllOrders(
-  //   @Query('search') search?: string,
-  //   @Query('status') status?: string,
-  //   @Query('fromDate') fromDate?: string,
-  //   @Query('toDate') toDate?: string,
-  // ) {
-  //   return this.adminService.getAllOrders({ search, status, fromDate, toDate });
-  // }
 
   @Get('orders/:id')
   async getOrderById(@Param('id') id: string) {
@@ -130,26 +120,53 @@ export class AdminController {
     @Query('breed') breed?: string,
     @Query('type') type?: string,
   ) {
-    return this.adminService.getAllProducts(
-      +page,
-      +limit,
-      search,
-      sortBy,
-      sortOrder,
-      category,
-      size,
-      breed,
-      type,
+    const keyParts = [
+      `products`,
+      `page:${page}`,
+      `limit:${limit}`,
+      `search:${search}`,
+      `sortBy:${sortBy}`,
+      `sortOrder:${sortOrder}`,
+    ];
+    if (category) keyParts.push(`category:${category}`);
+    if (size) keyParts.push(`size:${size}`);
+    if (breed) keyParts.push(`breed:${breed}`);
+    if (type) keyParts.push(`type:${type}`);
+
+    const cacheKey = `admin:products:list:${keyParts.join('')}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      () =>
+        this.adminService.getAllProducts(
+          +page,
+          +limit,
+          search,
+          sortBy,
+          sortOrder,
+          category,
+          size,
+          breed,
+          type,
+        ),
+      30,
     );
   }
-
   @Get('products/:id')
   async getProductById(@Param('id') id: string) {
-    const product = await this.adminService.getProductById(id);
-    if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
-    }
-    return product;
+    const cacheKey = `admin:product:detail:${id}`;
+
+    return this.cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        const product = await this.adminService.getProductById(id);
+        if (!product) {
+          throw new NotFoundException(`Product with ID ${id} not found`);
+        }
+        return product;
+      },
+      30,
+    );
   }
 
   @Patch('products/:id')
