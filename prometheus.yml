@@ -9,3 +9,5 @@ scrape_configs:
   - job_name: 'api-builder-lab'
     static_configs:
       - targets: ['localhost:3000']
+rule_files:
+  - "alerts.yml"

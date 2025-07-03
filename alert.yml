@@ -1,0 +1,11 @@
+groups:
+  - name: order-alerts
+    rules:
+      - alert: HighOrderRate
+        expr: rate(app_orders_created_total[1m]) > 5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High order rate detected (>5 orders/min)"
+          description: "Orders are being created faster than expected."
