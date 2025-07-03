@@ -19,6 +19,7 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { ReviewModule } from './modules/review/review.module';
 import { CartModule } from './modules/cart/cart.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { MetricsController } from './modules/prometheus/metrics.controller';
 
 @Module({
   imports: [
@@ -44,7 +45,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
       signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, MetricsController],
   providers: [AppService, JwtService],
 })
 export class AppModule {
