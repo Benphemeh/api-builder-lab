@@ -13,9 +13,14 @@ import { Coupon, Delivery, User } from 'src/core/database';
 import { PaymentService } from '../payment/payment.service';
 import { CartService } from '../cart/cart.service';
 import { Op } from 'sequelize';
+import * as client from 'prom-client';
 
 @Injectable()
 export class OrderService {
+  static orderCounter = new client.Counter({
+    name: 'app_orders_created_total',
+    help: 'Total number of orders created',
+  });
   constructor(
     @Inject(REPOSITORY.PRODUCT)
     private readonly productRepository: typeof Product,
@@ -37,8 +42,15 @@ export class OrderService {
     products: { productId: string; quantity: number }[],
     deliveryAddress: string,
   ): Promise<Order> {
-    return this.createOrderWithProducts(userId, products, deliveryAddress);
+    const order = await this.createOrderWithProducts(
+      userId,
+      products,
+      deliveryAddress,
+    );
+    OrderService.orderCounter.inc();
+    return order;
   }
+
   async createOrderFromCart(
     userId: string,
     deliveryAddress: string,
@@ -49,12 +61,14 @@ export class OrderService {
       cartId,
     );
 
-    return this.createOrderWithProducts(
+    const order = await this.createOrderWithProducts(
       userId,
       products,
       deliveryAddress,
       totalAmount,
     );
+    OrderService.orderCounter.inc();
+    return order;
   }
 
   private async createOrderWithProducts(
