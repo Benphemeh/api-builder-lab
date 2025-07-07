@@ -8,7 +8,6 @@ import { CreateCouponDto } from './dto/coupon.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ORDER_STATUS } from 'src/core/enums';
 import { CacheService } from '../cache/cache.service';
-// Make sure this path matches your project
 
 describe('AdminController', () => {
   let controller: AdminController;
@@ -46,7 +45,7 @@ describe('AdminController', () => {
       get: jest.fn(),
       set: jest.fn(),
       del: jest.fn(),
-      getOrSet: jest.fn().mockImplementation((_key, callback) => callback()), // <-- add this
+      getOrSet: jest.fn().mockImplementation((_key, callback) => callback()),
     };
 
     const module: TestingModule = await Test.createTestingModule({
