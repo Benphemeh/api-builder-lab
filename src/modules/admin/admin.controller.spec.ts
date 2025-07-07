@@ -7,14 +7,16 @@ import { CreateProductDto } from '../products/dto/create-product.dto';
 import { CreateCouponDto } from './dto/coupon.dto';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { ORDER_STATUS } from 'src/core/enums';
+import { CacheService } from '../cache/cache.service';
+// Make sure this path matches your project
 
 describe('AdminController', () => {
   let controller: AdminController;
   let adminServiceMock: any;
   let productServiceMock: any;
+  let cacheServiceMock: any;
 
   beforeEach(async () => {
-    // Mock dependencies
     adminServiceMock = {
       getAllOrders: jest.fn(),
       getOrderById: jest.fn(),
@@ -40,11 +42,19 @@ describe('AdminController', () => {
       findOne: jest.fn(),
     };
 
+    cacheServiceMock = {
+      get: jest.fn(),
+      set: jest.fn(),
+      del: jest.fn(),
+      getOrSet: jest.fn().mockImplementation((_key, callback) => callback()), // <-- add this
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AdminController],
       providers: [
         { provide: AdminService, useValue: adminServiceMock },
         { provide: ProductService, useValue: productServiceMock },
+        { provide: CacheService, useValue: cacheServiceMock },
       ],
     }).compile();
 
@@ -92,10 +102,7 @@ describe('AdminController', () => {
       const updateOrderStatusDto: UpdateOrderStatusDto = {
         status: ORDER_STATUS.DELIVERED,
       };
-      const updatedOrder = {
-        id: 1,
-        status: ORDER_STATUS.DELIVERED,
-      };
+      const updatedOrder = { id: 1, status: ORDER_STATUS.DELIVERED };
       adminServiceMock.updateOrderStatus.mockResolvedValue(updatedOrder);
 
       const result = await controller.updateOrderStatus(
