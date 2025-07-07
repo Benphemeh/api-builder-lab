@@ -80,7 +80,8 @@ describe('AdminService', () => {
       const orders = [{ id: 1 }, { id: 2 }];
       orderServiceMock.getAllOrders.mockResolvedValue(orders);
 
-      const result = await service.getAllOrders();
+      const filters = { search: '', fromDate: '', toDate: '' };
+      const result = await service.getAllOrders(filters);
 
       expect(result).toEqual(orders);
       expect(orderServiceMock.getAllOrders).toHaveBeenCalled();
