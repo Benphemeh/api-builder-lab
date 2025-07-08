@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CartService } from './cart.service';
 import { REPOSITORY } from 'src/core/constants';
-import { Sequelize } from 'sequelize-typescript';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 const mockCartRepository = {
