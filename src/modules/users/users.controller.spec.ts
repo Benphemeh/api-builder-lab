@@ -3,10 +3,12 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { CacheService } from '../cache/cache.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
   let usersServiceMock: any;
+  let cacheServiceMock: any;
 
   beforeEach(async () => {
     // Mock the UsersService
@@ -17,9 +19,19 @@ describe('UsersController', () => {
       deleteUser: jest.fn(),
     };
 
+    // Mock the CacheService
+    cacheServiceMock = {
+      get: jest.fn(),
+      set: jest.fn(),
+      del: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [{ provide: UsersService, useValue: usersServiceMock }],
+      providers: [
+        { provide: UsersService, useValue: usersServiceMock },
+        { provide: CacheService, useValue: cacheServiceMock },
+      ],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
