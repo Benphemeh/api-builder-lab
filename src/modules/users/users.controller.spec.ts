@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { UpdateUserDTO } from './dto/update-user.dto'; // Adjust this import if needed
+import { UpdateUserDTO } from './dto/update-user.dto';
 import { CacheService } from '../cache/cache.service';
 
 describe('UsersController', () => {
