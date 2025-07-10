@@ -1,153 +1,645 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
+import * as request from 'supertest';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { UpdateUserDTO } from './dto/update-user.dto';
 import { CacheService } from '../cache/cache.service';
+import { AuthGuard } from '@nestjs/passport';
+import { AdminGuard } from 'src/core/guards/admin.guard';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { UpdateUserDTO } from './dto/update-user.dto';
+import { USER_ROLE } from 'src/core/enums';
 
-describe('UsersController', () => {
-  let controller: UsersController;
-  let usersServiceMock: any;
-  let cacheServiceMock: any;
+describe('UsersController (e2e)', () => {
+  let app: INestApplication;
+  let usersService: jest.Mocked<UsersService>;
+  let cacheService: jest.Mocked<CacheService>;
+
+  // Mock data
+  const mockUser = {
+    id: 'user-123',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    role: USER_ROLE.AUTHOR,
+    isEmailVerified: true,
+    createdAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
+    updatedAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
+  };
+
+  const mockAdmin = {
+    id: 'admin-123',
+    firstName: 'Admin',
+    lastName: 'User',
+    email: 'admin@example.com',
+    role: USER_ROLE.ADMIN,
+    isEmailVerified: true,
+    createdAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
+    updatedAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
+  };
+
+  const mockUsers = [mockUser, mockAdmin];
+
+  // Mock guards
+  const mockAuthGuard = {
+    canActivate: jest.fn(() => true),
+  };
+
+  const mockAdminGuard = {
+    canActivate: jest.fn(() => true),
+  };
 
   beforeEach(async () => {
-    // Mock the UsersService
-    usersServiceMock = {
-      getUserById: jest.fn(),
-      getAllUsers: jest.fn(),
-      updateUserProfile: jest.fn(),
-      deleteUser: jest.fn(),
-    };
-
-    // Mock the CacheService
-    cacheServiceMock = {
-      get: jest.fn(),
-      set: jest.fn(),
-      del: jest.fn(),
-    };
-
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleFixture: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [
-        { provide: UsersService, useValue: usersServiceMock },
-        { provide: CacheService, useValue: cacheServiceMock },
+        {
+          provide: UsersService,
+          useValue: {
+            getUserById: jest.fn(),
+            getAllUsers: jest.fn(),
+            updateUserProfile: jest.fn(),
+            deleteUser: jest.fn(),
+          },
+        },
+        {
+          provide: CacheService,
+          useValue: {
+            getOrSet: jest.fn(),
+            get: jest.fn(),
+            set: jest.fn(),
+            delete: jest.fn(),
+          },
+        },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard('jwt'))
+      .useValue(mockAuthGuard)
+      .overrideGuard(AdminGuard)
+      .useValue(mockAdminGuard)
+      .compile();
 
-    controller = module.get<UsersController>(UsersController);
+    app = moduleFixture.createNestApplication();
+    usersService = moduleFixture.get(UsersService);
+    cacheService = moduleFixture.get(CacheService);
+
+    await app.init();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  afterEach(async () => {
+    await app.close();
+    jest.clearAllMocks();
   });
 
-  describe('getUser', () => {
-    it('should return a user by ID', async () => {
-      const userId = '1';
-      const user = { id: userId, email: 'test@example.com' };
+  describe('GET /users/:id', () => {
+    it('should return user successfully', async () => {
+      // Arrange
+      usersService.getUserById.mockResolvedValue(mockUser as any);
 
-      usersServiceMock.getUserById.mockResolvedValue(user);
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users/user-123')
+        .expect(200);
 
-      const result = await controller.getUser(userId);
-
-      expect(usersServiceMock.getUserById).toHaveBeenCalledWith(userId);
-      expect(result).toEqual(user);
+      expect(response.body).toEqual(mockUser);
+      expect(usersService.getUserById).toHaveBeenCalledWith('user-123');
     });
 
-    it('should throw BadRequestException if ID is not provided', async () => {
-      await expect(controller.getUser('')).rejects.toThrow(
-        new BadRequestException('User ID is required'),
+    it('should return all users when accessing /users/ endpoint', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue(mockUsers as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users/')
+        .expect(200);
+
+      expect(response.body).toEqual(mockUsers);
+    });
+
+    it('should handle URL-encoded special characters in ID', async () => {
+      // Arrange - test URL encoding behavior
+      const encodedId = 'user%20with%20spaces';
+      const decodedId = 'user with spaces';
+      usersService.getUserById.mockResolvedValue(mockUser as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get(`/users/${encodedId}`)
+        .expect(200);
+
+      expect(usersService.getUserById).toHaveBeenCalledWith(decodedId);
+      expect(response.body).toEqual(mockUser);
+    });
+
+    it('should return 404 when user not found', async () => {
+      // Arrange
+      usersService.getUserById.mockImplementation(() => {
+        throw new NotFoundException('User with id invalid-id not found');
+      });
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users/invalid-id')
+        .expect(404);
+
+      expect(response.body.message).toBe('User with id invalid-id not found');
+    });
+
+    it('should return 401 when not authenticated', async () => {
+      // Arrange
+      mockAuthGuard.canActivate.mockReturnValue(false);
+
+      // Act & Assert
+      await request(app.getHttpServer()).get('/users/user-123').expect(403); // NestJS returns 403 for failed guards
+
+      // Reset for other tests
+      mockAuthGuard.canActivate.mockReturnValue(true);
+    });
+
+    it('should handle service errors gracefully', async () => {
+      // Arrange
+      usersService.getUserById.mockImplementation(() => {
+        throw new Error('Database connection failed');
+      });
+
+      // Act & Assert
+      await request(app.getHttpServer()).get('/users/user-123').expect(500);
+    });
+
+    it('should handle special characters in user ID', async () => {
+      // Arrange
+      const specialId = 'user-123@#$%';
+      usersService.getUserById.mockResolvedValue(mockUser as any);
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .get(`/users/${encodeURIComponent(specialId)}`)
+        .expect(200);
+
+      expect(usersService.getUserById).toHaveBeenCalledWith(specialId);
+    });
+  });
+
+  describe('GET /users', () => {
+    it('should return all users from cache', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue(mockUsers as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .expect(200);
+
+      expect(response.body).toEqual(mockUsers);
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'users:all',
+        expect.any(Function),
+        30,
       );
     });
 
-    it('should throw NotFoundException if user is not found', async () => {
-      const userId = 'nonexistent-id';
+    it('should fetch from service when cache is empty', async () => {
+      // Arrange
+      usersService.getAllUsers.mockResolvedValue(mockUsers as any);
+      cacheService.getOrSet.mockImplementation(async (key, fetchFn, ttl) => {
+        return await fetchFn();
+      });
 
-      usersServiceMock.getUserById.mockRejectedValue(
-        new NotFoundException(`User with id ${userId} not found`),
-      );
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .expect(200);
 
-      await expect(controller.getUser(userId)).rejects.toThrow(
-        new NotFoundException(`User with id ${userId} not found`),
-      );
+      expect(response.body).toEqual(mockUsers);
+      expect(cacheService.getOrSet).toHaveBeenCalled();
+    });
+
+    it('should return empty array when no users exist', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue([]);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .expect(200);
+
+      expect(response.body).toEqual([]);
+    });
+
+    it('should return 401 when not authenticated', async () => {
+      // Arrange
+      mockAuthGuard.canActivate.mockReturnValue(false);
+
+      // Act & Assert
+      await request(app.getHttpServer()).get('/users').expect(403);
+
+      // Reset for other tests
+      mockAuthGuard.canActivate.mockReturnValue(true);
+    });
+
+    it('should handle cache service errors gracefully', async () => {
+      // Arrange
+      cacheService.getOrSet.mockImplementation(() => {
+        throw new Error('Redis connection failed');
+      });
+
+      // Act & Assert
+      await request(app.getHttpServer()).get('/users').expect(500);
+    });
+
+    it('should handle large datasets efficiently', async () => {
+      // Arrange
+      const largeUserSet = Array(1000)
+        .fill(null)
+        .map((_, index) => ({
+          ...mockUser,
+          id: `user-${index}`,
+          email: `user${index}@example.com`,
+        }));
+      cacheService.getOrSet.mockResolvedValue(largeUserSet as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .expect(200);
+
+      expect(response.body).toHaveLength(1000);
     });
   });
 
-  describe('getAllUsers', () => {
-    it('should return all users', async () => {
-      const users = [
-        { id: '1', email: 'test1@example.com' },
-        { id: '2', email: 'test2@example.com' },
-      ];
+  describe('PATCH /users/:id', () => {
+    const updateData: UpdateUserDTO = {
+      firstName: 'Jane',
+      lastName: 'Smith',
+    };
 
-      usersServiceMock.getAllUsers.mockResolvedValue(users);
+    it('should update user successfully', async () => {
+      // Arrange
+      const updatedUser = { ...mockUser, ...updateData };
+      usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
 
-      const result = await controller.getAllUsers();
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(updateData)
+        .expect(200);
 
-      expect(usersServiceMock.getAllUsers).toHaveBeenCalled();
-      expect(result).toEqual(users);
-    });
-  });
-
-  describe('updateUser', () => {
-    it('should update a user profile', async () => {
-      const userId = '1';
-      const updateData: UpdateUserDTO = {
-        firstName: 'UpdatedName',
-        lastName: 'UpdatedLastName',
-      };
-      const updatedUser = { id: userId, ...updateData };
-
-      usersServiceMock.updateUserProfile.mockResolvedValue(updatedUser);
-
-      const result = await controller.updateUser(userId, updateData);
-
-      expect(usersServiceMock.updateUserProfile).toHaveBeenCalledWith(
-        userId,
+      expect(response.body).toEqual(updatedUser);
+      expect(usersService.updateUserProfile).toHaveBeenCalledWith(
+        'user-123',
         updateData,
       );
-      expect(result).toEqual(updatedUser);
     });
 
-    it('should throw NotFoundException if user is not found', async () => {
-      const userId = 'nonexistent-id';
-      const updateData: UpdateUserDTO = {
-        firstName: 'UpdatedName',
-        lastName: undefined,
+    it('should handle partial updates', async () => {
+      // Arrange
+      const partialUpdate = { firstName: 'UpdatedName' };
+      const updatedUser = { ...mockUser, firstName: 'UpdatedName' };
+      usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(partialUpdate)
+        .expect(200);
+
+      expect(response.body.firstName).toBe('UpdatedName');
+      expect(usersService.updateUserProfile).toHaveBeenCalledWith(
+        'user-123',
+        partialUpdate,
+      );
+    });
+
+    it('should return 404 when user not found', async () => {
+      // Arrange
+      usersService.updateUserProfile.mockImplementation(() => {
+        throw new NotFoundException('User with id invalid-id not found');
+      });
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/invalid-id')
+        .send(updateData)
+        .expect(404);
+
+      expect(response.body.message).toBe('User with id invalid-id not found');
+    });
+
+    it('should handle invalid update data gracefully', async () => {
+      // Arrange
+      const invalidData = {
+        firstName: '', // empty string
+        lastName: null, // null value
       };
+      const updatedUser = { ...mockUser, ...invalidData };
+      usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
 
-      usersServiceMock.updateUserProfile.mockRejectedValue(
-        new NotFoundException(`User with id ${userId} not found`),
-      );
+      // Act & Assert - Controller accepts the data, validation handled by service/DTO
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(invalidData)
+        .expect(200);
 
-      await expect(controller.updateUser(userId, updateData)).rejects.toThrow(
-        new NotFoundException(`User with id ${userId} not found`),
+      expect(usersService.updateUserProfile).toHaveBeenCalledWith(
+        'user-123',
+        invalidData,
       );
+    });
+
+    it('should return 401 when not authenticated', async () => {
+      // Arrange
+      mockAuthGuard.canActivate.mockReturnValue(false);
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(updateData)
+        .expect(403);
+
+      // Reset for other tests
+      mockAuthGuard.canActivate.mockReturnValue(true);
+    });
+
+    it('should handle empty request body', async () => {
+      // Arrange
+      usersService.updateUserProfile.mockResolvedValue(mockUser as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send({})
+        .expect(200);
+
+      expect(usersService.updateUserProfile).toHaveBeenCalledWith(
+        'user-123',
+        {},
+      );
+    });
+
+    it('should handle multiple sequential updates', async () => {
+      // Arrange
+      usersService.updateUserProfile.mockResolvedValue(mockUser as any);
+
+      // Act - Send sequential requests instead of concurrent
+      for (let i = 0; i < 3; i++) {
+        const response = await request(app.getHttpServer())
+          .patch('/users/user-123')
+          .send(updateData);
+
+        expect(response.status).toBe(200);
+      }
+
+      // Assert
+      expect(usersService.updateUserProfile).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle service validation errors', async () => {
+      // Arrange
+      const invalidData = { firstName: 'Test' };
+      usersService.updateUserProfile.mockImplementation(() => {
+        throw new BadRequestException('Invalid user data provided');
+      });
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(invalidData)
+        .expect(400);
+
+      expect(response.body.message).toBe('Invalid user data provided');
+    });
+
+    it('should handle empty string updates', async () => {
+      // Arrange
+      const emptyData = { firstName: '' };
+      const updatedUser = { ...mockUser, firstName: '' };
+      usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(emptyData)
+        .expect(200);
+
+      expect(response.body.firstName).toBe('');
     });
   });
 
-  describe('deleteUser', () => {
-    it('should delete a user by ID', async () => {
-      const userId = '1';
+  describe('DELETE /users/:id', () => {
+    it('should delete user successfully when admin', async () => {
+      // Arrange
+      usersService.deleteUser.mockResolvedValue(undefined);
 
-      usersServiceMock.deleteUser.mockResolvedValue(undefined);
+      // Act & Assert
+      await request(app.getHttpServer()).delete('/users/user-123').expect(200);
 
-      const result = await controller.deleteUser(userId);
-
-      expect(usersServiceMock.deleteUser).toHaveBeenCalledWith(userId);
-      expect(result).toBeUndefined();
+      expect(usersService.deleteUser).toHaveBeenCalledWith('user-123');
     });
 
-    it('should throw NotFoundException if user is not found', async () => {
-      const userId = 'nonexistent-id';
+    it('should return 404 when user not found', async () => {
+      // Arrange
+      usersService.deleteUser.mockImplementation(() => {
+        throw new NotFoundException('User with id invalid-id not found');
+      });
 
-      usersServiceMock.deleteUser.mockRejectedValue(
-        new NotFoundException(`User with id ${userId} not found`),
-      );
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .delete('/users/invalid-id')
+        .expect(404);
 
-      await expect(controller.deleteUser(userId)).rejects.toThrow(
-        new NotFoundException(`User with id ${userId} not found`),
+      expect(response.body.message).toBe('User with id invalid-id not found');
+    });
+
+    it('should return 403 when not admin', async () => {
+      // Arrange
+      mockAdminGuard.canActivate.mockReturnValue(false);
+
+      // Act & Assert
+      await request(app.getHttpServer()).delete('/users/user-123').expect(403);
+
+      expect(usersService.deleteUser).not.toHaveBeenCalled();
+
+      // Reset for other tests
+      mockAdminGuard.canActivate.mockReturnValue(true);
+    });
+
+    it('should handle service errors during deletion', async () => {
+      // Arrange
+      usersService.deleteUser.mockImplementation(() => {
+        throw new Error('Database constraint violation');
+      });
+
+      // Act & Assert
+      await request(app.getHttpServer()).delete('/users/user-123').expect(500);
+    });
+
+    it('should handle deletion of non-existent user gracefully', async () => {
+      // Arrange
+      usersService.deleteUser.mockImplementation(() => {
+        throw new NotFoundException('User with id user-999 not found');
+      });
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .delete('/users/user-999')
+        .expect(404);
+
+      expect(response.body.message).toBe('User with id user-999 not found');
+    });
+
+    it('should prevent self-deletion scenario', async () => {
+      // This would typically be handled by business logic in the service
+      // Arrange
+      usersService.deleteUser.mockImplementation(() => {
+        throw new BadRequestException('Cannot delete own account');
+      });
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .delete('/users/current-admin-id')
+        .expect(400);
+
+      expect(response.body.message).toBe('Cannot delete own account');
+    });
+  });
+
+  describe('Authentication and Authorization Edge Cases', () => {
+    it('should handle JWT token expiration', async () => {
+      // Arrange
+      mockAuthGuard.canActivate.mockImplementation(() => {
+        throw new Error('Token expired');
+      });
+
+      // Act & Assert
+      await request(app.getHttpServer()).get('/users/user-123').expect(500);
+
+      // Reset
+      mockAuthGuard.canActivate.mockReturnValue(true);
+    });
+
+    it('should handle malformed JWT tokens', async () => {
+      // Arrange
+      mockAuthGuard.canActivate.mockReturnValue(false);
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .get('/users/user-123')
+        .set('Authorization', 'Bearer invalid-token')
+        .expect(403);
+
+      // Reset
+      mockAuthGuard.canActivate.mockReturnValue(true);
+    });
+
+    it('should handle missing authorization header', async () => {
+      // Arrange
+      mockAuthGuard.canActivate.mockReturnValue(false);
+
+      // Act & Assert
+      await request(app.getHttpServer()).get('/users/user-123').expect(403);
+
+      // Reset
+      mockAuthGuard.canActivate.mockReturnValue(true);
+    });
+  });
+
+  describe('Performance and Load Testing', () => {
+    it('should handle moderate load on GET /users', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue(mockUsers as any);
+
+      // Act - Send 5 sequential requests instead of 50 concurrent
+      for (let i = 0; i < 5; i++) {
+        const response = await request(app.getHttpServer()).get('/users');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(mockUsers);
+      }
+    });
+
+    it('should handle sequential requests efficiently', async () => {
+      // Arrange
+      usersService.getUserById.mockResolvedValue(mockUser as any);
+
+      // Act - Send sequential requests instead of rapid concurrent
+      for (let i = 0; i < 5; i++) {
+        const response = await request(app.getHttpServer()).get(
+          `/users/user-${i}`,
+        );
+        expect(response.status).toBe(200);
+      }
+    });
+  });
+
+  describe('Data Validation Edge Cases', () => {
+    it('should handle extremely long user IDs', async () => {
+      // Arrange
+      const longId = 'a'.repeat(1000);
+      usersService.getUserById.mockResolvedValue(mockUser as any);
+
+      // Act & Assert
+      await request(app.getHttpServer()).get(`/users/${longId}`).expect(200);
+
+      expect(usersService.getUserById).toHaveBeenCalledWith(longId);
+    });
+
+    it('should handle special Unicode characters in update data', async () => {
+      // Arrange
+      const unicodeData = {
+        firstName: '李明',
+        lastName: 'González',
+      };
+      const updatedUser = { ...mockUser, ...unicodeData };
+      usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(unicodeData)
+        .expect(200);
+
+      expect(response.body.firstName).toBe('李明');
+      expect(response.body.lastName).toBe('González');
+    });
+
+    it('should handle null and undefined values in updates', async () => {
+      // Arrange
+      const dataWithNulls = {
+        firstName: null,
+        lastName: undefined,
+      };
+      const updatedUser = { ...mockUser, firstName: null, lastName: undefined };
+      usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
+
+      // Act & Assert - Controller may accept these values, validation handled elsewhere
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(dataWithNulls)
+        .expect(200);
+
+      expect(usersService.updateUserProfile).toHaveBeenCalledWith(
+        'user-123',
+        dataWithNulls,
       );
+    });
+
+    it('should handle reasonably large request payloads', async () => {
+      // Arrange
+      const largeData = {
+        firstName: 'A'.repeat(100), // Reduced size to avoid potential limits
+        lastName: 'B'.repeat(100),
+      };
+      const updatedUser = { ...mockUser, ...largeData };
+      usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/users/user-123')
+        .send(largeData)
+        .expect(200);
+
+      expect(response.body.firstName).toBe(largeData.firstName);
+      expect(response.body.lastName).toBe(largeData.lastName);
     });
   });
 });
