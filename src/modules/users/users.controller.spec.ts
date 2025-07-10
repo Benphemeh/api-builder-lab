@@ -626,7 +626,7 @@ describe('UsersController (e2e)', () => {
     it('should handle reasonably large request payloads', async () => {
       // Arrange
       const largeData = {
-        firstName: 'A'.repeat(100), // Reduced size to avoid potential limits
+        firstName: 'A'.repeat(100),
         lastName: 'B'.repeat(100),
       };
       const updatedUser = { ...mockUser, ...largeData };
