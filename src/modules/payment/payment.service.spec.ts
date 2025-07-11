@@ -20,7 +20,7 @@ describe('PaymentService', () => {
     id: 'payment-123',
     orderId: 'order-123',
     reference: 'ref-123',
-    status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
+    status: PAYMENT_STATUS.PENDING,
     amount: 1000,
     update: jest.fn(),
     save: jest.fn(),
@@ -30,7 +30,7 @@ describe('PaymentService', () => {
     id: 'order-123',
     userId: 'user-123',
     totalAmount: 1000,
-    status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
+    status: PAYMENT_STATUS.PENDING,
     deliveryAddress: '123 Test St',
     products: [{ productId: 'prod-1', quantity: 2 }],
     user: {
@@ -284,7 +284,7 @@ describe('PaymentService', () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
+        status: PAYMENT_STATUS.PENDING,
         amount: 1000,
       };
 
@@ -300,7 +300,7 @@ describe('PaymentService', () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
+        status: PAYMENT_STATUS.PENDING,
         amount: 1000,
       };
 
@@ -317,7 +317,7 @@ describe('PaymentService', () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: PAYMENT_STATUS.SUCCESS, // Use enum instead of string literal
+        status: PAYMENT_STATUS.SUCCESS,
         amount: 1000,
       };
 
@@ -336,7 +336,7 @@ describe('PaymentService', () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: PAYMENT_STATUS.FAILED, // Use enum instead of string literal
+        status: PAYMENT_STATUS.FAILED,
         amount: 1000,
       };
 
@@ -594,7 +594,6 @@ describe('PaymentService', () => {
         event: 'charge.success',
         data: {
           reference: 'ref-123',
-          // Missing status and amount
         },
       };
 

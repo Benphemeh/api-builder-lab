@@ -591,7 +591,7 @@ describe('PaymentController (e2e)', () => {
 
     it('should handle invalid status values', async () => {
       // Arrange
-      const invalidDto = { status: 'invalid-status' }; // This will fail DTO validation
+      const invalidDto = { status: 'invalid-status' };
 
       // Act & Assert
       await request(app.getHttpServer())
@@ -809,7 +809,7 @@ describe('PaymentController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/payments/initialize')
         .send(zeroAmountDto)
-        .expect(400); // Should be rejected by validation
+        .expect(400);
     });
   });
 });
