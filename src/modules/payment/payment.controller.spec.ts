@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { PaymentController } from './payment.controller';
 import { PaymentService } from './payment.service';
@@ -33,7 +33,6 @@ describe('PaymentController (e2e)', () => {
     amount: 50000,
     createdAt: '2025-07-10T15:12:07.690Z',
     updatedAt: '2025-07-10T15:12:07.690Z',
-    update: jest.fn(),
   };
 
   const mockPaystackResponse = {
@@ -116,12 +115,27 @@ describe('PaymentController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+
+    // Add ValidationPipe to enable DTO validation
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+        validateCustomDecorators: true,
+        disableErrorMessages: false,
+      }),
+    );
+
     paymentService = moduleFixture.get(PaymentService);
     configService = moduleFixture.get(ConfigService);
 
-    // Mock request user context
+    // Mock request user context for protected routes
     app.use((req, res, next) => {
-      req.user = mockUser;
+      // Only add user context for protected routes
+      if (req.path !== '/payments/webhook') {
+        req.user = mockUser;
+      }
       next();
     });
 
@@ -172,8 +186,11 @@ describe('PaymentController (e2e)', () => {
 
     it('should handle payment initialization without orderId', async () => {
       // Arrange
-      const dtoWithoutOrderId = { ...initializeDto };
-      delete dtoWithoutOrderId.orderId;
+      const dtoWithoutOrderId = {
+        email: 'test@example.com',
+        amount: 50000,
+        // orderId is optional now
+      };
 
       paymentService.initializePayment.mockResolvedValue(mockPaystackResponse);
       paymentService.createPayment.mockResolvedValue(mockPayment as any);
@@ -382,6 +399,7 @@ describe('PaymentController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/payments/webhook')
         .set('x-paystack-signature', validSignature)
+        .set('content-type', 'application/json')
         .send(mockWebhookPayload)
         .expect(200);
 
@@ -398,6 +416,7 @@ describe('PaymentController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/payments/webhook')
         .set('x-paystack-signature', invalidSignature)
+        .set('content-type', 'application/json')
         .send(mockWebhookPayload)
         .expect(400);
 
@@ -409,6 +428,7 @@ describe('PaymentController (e2e)', () => {
       // Act & Assert
       const response = await request(app.getHttpServer())
         .post('/payments/webhook')
+        .set('content-type', 'application/json')
         .send(mockWebhookPayload)
         .expect(400);
 
@@ -428,6 +448,7 @@ describe('PaymentController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/payments/webhook')
         .set('x-paystack-signature', validSignature)
+        .set('content-type', 'application/json')
         .send(mockWebhookPayload)
         .expect(500);
     });
@@ -449,6 +470,7 @@ describe('PaymentController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/payments/webhook')
         .set('x-paystack-signature', validSignature)
+        .set('content-type', 'application/json')
         .send(differentEventPayload)
         .expect(200);
 
@@ -468,6 +490,7 @@ describe('PaymentController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/payments/webhook')
         .set('x-paystack-signature', validSignature)
+        .set('content-type', 'application/json')
         .send(malformedPayload)
         .expect(200);
     });
@@ -483,6 +506,7 @@ describe('PaymentController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/payments/webhook')
         .set('x-paystack-signature', validSignature)
+        .set('content-type', 'application/json')
         .send(emptyPayload)
         .expect(200);
     });
@@ -504,6 +528,7 @@ describe('PaymentController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/payments/webhook')
         .set('x-paystack-signature', validSignature)
+        .set('content-type', 'application/json')
         .send(largePayload)
         .expect(200);
     });
@@ -516,7 +541,10 @@ describe('PaymentController (e2e)', () => {
 
     it('should update payment status successfully', async () => {
       // Arrange
-      const updatedPayment = { ...mockPayment, status: PAYMENT_STATUS.SUCCESS };
+      const updatedPayment = {
+        ...mockPayment,
+        status: PAYMENT_STATUS.SUCCESS,
+      };
       paymentService.updatePayment.mockResolvedValue(updatedPayment as any);
 
       // Act & Assert
@@ -575,7 +603,10 @@ describe('PaymentController (e2e)', () => {
     it('should update payment to failed status', async () => {
       // Arrange
       const failedUpdateDto = { status: PAYMENT_STATUS.FAILED };
-      const failedPayment = { ...mockPayment, status: PAYMENT_STATUS.FAILED };
+      const failedPayment = {
+        ...mockPayment,
+        status: PAYMENT_STATUS.FAILED,
+      };
       paymentService.updatePayment.mockResolvedValue(failedPayment as any);
 
       // Act & Assert
@@ -594,7 +625,10 @@ describe('PaymentController (e2e)', () => {
     it('should handle special characters in reference parameter', async () => {
       // Arrange
       const specialRef = 'ref@#$%^&*()_+';
-      const updatedPayment = { ...mockPayment, status: 'success' };
+      const updatedPayment = {
+        ...mockPayment,
+        status: PAYMENT_STATUS.SUCCESS,
+      };
       paymentService.updatePayment.mockResolvedValue(updatedPayment as any);
 
       // Act & Assert
@@ -610,7 +644,7 @@ describe('PaymentController (e2e)', () => {
     });
 
     it('should handle empty request body', async () => {
-      // Act & Assert
+      // Act & Assert - Now should return 400 because status is required
       await request(app.getHttpServer())
         .patch('/payments/paystack_ref_123')
         .send({})
@@ -619,7 +653,11 @@ describe('PaymentController (e2e)', () => {
 
     it('should handle concurrent update requests', async () => {
       // Arrange
-      paymentService.updatePayment.mockResolvedValue(mockPayment as any);
+      const updatedPayment = {
+        ...mockPayment,
+        status: PAYMENT_STATUS.SUCCESS,
+      };
+      paymentService.updatePayment.mockResolvedValue(updatedPayment as any);
 
       // Act - Send sequential requests instead of concurrent to avoid connection issues
       for (let i = 0; i < 3; i++) {
@@ -767,7 +805,7 @@ describe('PaymentController (e2e)', () => {
         orderId: 'order-123',
       };
 
-      // Act & Assert
+      // Act & Assert - This should fail validation due to minimum amount constraint
       await request(app.getHttpServer())
         .post('/payments/initialize')
         .send(zeroAmountDto)

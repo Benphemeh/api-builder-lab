@@ -20,7 +20,7 @@ describe('PaymentService', () => {
     id: 'payment-123',
     orderId: 'order-123',
     reference: 'ref-123',
-    status: 'pending', // Use string literal instead of enum
+    status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
     amount: 1000,
     update: jest.fn(),
     save: jest.fn(),
@@ -30,7 +30,7 @@ describe('PaymentService', () => {
     id: 'order-123',
     userId: 'user-123',
     totalAmount: 1000,
-    status: 'pending', // Use string literal instead of enum
+    status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
     deliveryAddress: '123 Test St',
     products: [{ productId: 'prod-1', quantity: 2 }],
     user: {
@@ -284,7 +284,7 @@ describe('PaymentService', () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: 'pending' as const,
+        status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
         amount: 1000,
       };
 
@@ -300,7 +300,7 @@ describe('PaymentService', () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: 'pending' as const,
+        status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
         amount: 1000,
       };
 
@@ -317,38 +317,38 @@ describe('PaymentService', () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: 'success' as const,
+        status: PAYMENT_STATUS.SUCCESS, // Use enum instead of string literal
         amount: 1000,
       };
 
       mockPaymentRepository.create.mockResolvedValue({
         ...mockPayment,
-        status: 'success',
+        status: PAYMENT_STATUS.SUCCESS,
       });
 
       const result = await service.createPayment(paymentData);
 
       expect(mockPaymentRepository.create).toHaveBeenCalledWith(paymentData);
-      expect(result.status).toBe('success');
+      expect(result.status).toBe(PAYMENT_STATUS.SUCCESS);
     });
 
     it('should create payment with failed status', async () => {
       const paymentData = {
         orderId: 'order-123',
         reference: 'ref-123',
-        status: 'failed' as const,
+        status: PAYMENT_STATUS.FAILED, // Use enum instead of string literal
         amount: 1000,
       };
 
       mockPaymentRepository.create.mockResolvedValue({
         ...mockPayment,
-        status: 'failed',
+        status: PAYMENT_STATUS.FAILED,
       });
 
       const result = await service.createPayment(paymentData);
 
       expect(mockPaymentRepository.create).toHaveBeenCalledWith(paymentData);
-      expect(result.status).toBe('failed');
+      expect(result.status).toBe(PAYMENT_STATUS.FAILED);
     });
   });
 
@@ -362,16 +362,23 @@ describe('PaymentService', () => {
       mockPaymentRepository.findOne.mockResolvedValue(mockPayment);
       mockOrderRepository.findByPk.mockResolvedValue(mockOrder);
 
-      const result = await service.updatePayment('ref-123', 'success');
+      const result = await service.updatePayment(
+        'ref-123',
+        PAYMENT_STATUS.SUCCESS,
+      );
 
       expect(mockPaymentRepository.findOne).toHaveBeenCalledWith({
         where: { reference: 'ref-123' },
       });
-      expect(mockPayment.update).toHaveBeenCalledWith({ status: 'success' });
+      expect(mockPayment.update).toHaveBeenCalledWith({
+        status: PAYMENT_STATUS.SUCCESS,
+      });
       expect(mockOrderRepository.findByPk).toHaveBeenCalledWith('order-123', {
         include: ['user'],
       });
-      expect(mockOrder.update).toHaveBeenCalledWith({ status: 'success' });
+      expect(mockOrder.update).toHaveBeenCalledWith({
+        status: PAYMENT_STATUS.SUCCESS,
+      });
       expect(mockMailService.sendOrderPaymentEmail).toHaveBeenCalledWith(
         'test@example.com',
         'John',
@@ -385,12 +392,17 @@ describe('PaymentService', () => {
     it('should successfully update payment to failed without sending email', async () => {
       mockPaymentRepository.findOne.mockResolvedValue(mockPayment);
 
-      const result = await service.updatePayment('ref-123', 'failed');
+      const result = await service.updatePayment(
+        'ref-123',
+        PAYMENT_STATUS.FAILED,
+      );
 
       expect(mockPaymentRepository.findOne).toHaveBeenCalledWith({
         where: { reference: 'ref-123' },
       });
-      expect(mockPayment.update).toHaveBeenCalledWith({ status: 'failed' });
+      expect(mockPayment.update).toHaveBeenCalledWith({
+        status: PAYMENT_STATUS.FAILED,
+      });
       expect(mockOrderRepository.findByPk).not.toHaveBeenCalled();
       expect(mockMailService.sendOrderPaymentEmail).not.toHaveBeenCalled();
       expect(result).toEqual(mockPayment);
@@ -400,7 +412,7 @@ describe('PaymentService', () => {
       mockPaymentRepository.findOne.mockResolvedValue(null);
 
       await expect(
-        service.updatePayment('invalid-ref', 'success'),
+        service.updatePayment('invalid-ref', PAYMENT_STATUS.SUCCESS),
       ).rejects.toThrow('Payment with reference invalid-ref not found');
 
       expect(mockPaymentRepository.findOne).toHaveBeenCalledWith({
@@ -413,9 +425,14 @@ describe('PaymentService', () => {
       mockPaymentRepository.findOne.mockResolvedValue(mockPayment);
       mockOrderRepository.findByPk.mockResolvedValue(null);
 
-      const result = await service.updatePayment('ref-123', 'success');
+      const result = await service.updatePayment(
+        'ref-123',
+        PAYMENT_STATUS.SUCCESS,
+      );
 
-      expect(mockPayment.update).toHaveBeenCalledWith({ status: 'success' });
+      expect(mockPayment.update).toHaveBeenCalledWith({
+        status: PAYMENT_STATUS.SUCCESS,
+      });
       expect(mockOrderRepository.findByPk).toHaveBeenCalledWith('order-123', {
         include: ['user'],
       });
@@ -432,7 +449,7 @@ describe('PaymentService', () => {
       mockPaymentRepository.findOne.mockResolvedValue(mockPayment);
       mockOrderRepository.findByPk.mockResolvedValue(orderWithoutFirstName);
 
-      await service.updatePayment('ref-123', 'success');
+      await service.updatePayment('ref-123', PAYMENT_STATUS.SUCCESS);
 
       expect(mockMailService.sendOrderPaymentEmail).toHaveBeenCalledWith(
         'test@example.com',
@@ -447,9 +464,9 @@ describe('PaymentService', () => {
       mockPaymentRepository.findOne.mockResolvedValue(mockPayment);
       mockPayment.update.mockRejectedValue(new Error('Database update failed'));
 
-      await expect(service.updatePayment('ref-123', 'success')).rejects.toThrow(
-        'Database update failed',
-      );
+      await expect(
+        service.updatePayment('ref-123', PAYMENT_STATUS.SUCCESS),
+      ).rejects.toThrow('Database update failed');
     });
 
     it('should handle email service errors', async () => {
@@ -459,9 +476,9 @@ describe('PaymentService', () => {
         new Error('Email service failed'),
       );
 
-      await expect(service.updatePayment('ref-123', 'success')).rejects.toThrow(
-        'Email service failed',
-      );
+      await expect(
+        service.updatePayment('ref-123', PAYMENT_STATUS.SUCCESS),
+      ).rejects.toThrow('Email service failed');
     });
   });
 
@@ -692,8 +709,8 @@ describe('PaymentService', () => {
       mockOrderRepository.findByPk.mockResolvedValue(mockOrder);
 
       const promises = [
-        service.updatePayment('ref-123', 'success'),
-        service.updatePayment('ref-123', 'failed'),
+        service.updatePayment('ref-123', PAYMENT_STATUS.SUCCESS),
+        service.updatePayment('ref-123', PAYMENT_STATUS.FAILED),
       ];
 
       await Promise.all(promises);
