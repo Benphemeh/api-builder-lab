@@ -100,6 +100,6 @@ export class PaymentController {
     @Param('reference') reference: string,
     @Body() dto: UpdatePaymentDto,
   ) {
-    return this.paymentService.updatePayment(reference, dto.status);
+    return this.paymentService.updatePayment(reference, dto.PAYMENT_STATUS);
   }
 }

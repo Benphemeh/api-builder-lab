@@ -18,6 +18,7 @@ export enum Gender {
 export enum PAYMENT_STATUS {
   SUCCESS = 'success',
   FAILED = 'failed',
+  PENDING = 'pending',
 }
 
 export enum DELIVERY_STATUS {
