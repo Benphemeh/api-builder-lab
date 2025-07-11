@@ -16,6 +16,7 @@ import { InitializePaymentDto } from './dto/initialize-payment.dto';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
 import { ConfigService } from '@nestjs/config';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 @Controller('payments')
 export class PaymentController {
@@ -41,7 +42,7 @@ export class PaymentController {
     await this.paymentService.createPayment({
       orderId,
       reference: paymentResponse.data.reference,
-      status: 'pending',
+      status: PAYMENT_STATUS.PENDING,
       amount: dto.amount,
     });
 
@@ -56,6 +57,7 @@ export class PaymentController {
   async verifyPayment(@Body() dto: VerifyPaymentDto) {
     return this.paymentService.verifyPayment(dto.reference);
   }
+
   @Post('webhook')
   @HttpCode(200)
   async webhook(
@@ -65,7 +67,7 @@ export class PaymentController {
   ) {
     console.log('Incoming Webhook Request:');
     console.log('Headers:', req.headers);
-    console.log('Raw Body:', req.body.toString());
+    console.log('Raw Body:', req.body);
 
     if (!signature) {
       console.error('Missing Paystack signature');
@@ -74,11 +76,35 @@ export class PaymentController {
 
     const secret = this.configService.get<string>('PAYSTACK_SECRET_KEY');
 
+    // Get the raw body string for signature verification
+    let rawBodyString: string;
+    let parsedBody: any = body;
+
+    // Check if body is already parsed (test environment) or raw string (production)
+    if (typeof req.body === 'string') {
+      // Production environment - body is raw string
+      rawBodyString = req.body;
+      try {
+        parsedBody = JSON.parse(rawBodyString);
+      } catch (error) {
+        console.error('Failed to parse webhook body JSON:', error);
+        throw new BadRequestException('Invalid JSON in webhook body');
+      }
+    } else if (typeof req.body === 'object' && req.body !== null) {
+      // Test environment - body is already parsed JSON object
+      rawBodyString = JSON.stringify(req.body);
+      parsedBody = req.body;
+    } else {
+      // Handle edge cases
+      rawBodyString = '';
+      parsedBody = {};
+    }
+
     // Verify the webhook signature
     const crypto = await import('crypto');
     const hash = crypto
       .createHmac('sha512', secret)
-      .update(req.body)
+      .update(rawBodyString)
       .digest('hex');
 
     console.log('Calculated Hash:', hash);
@@ -91,15 +117,20 @@ export class PaymentController {
 
     console.log('Webhook signature verified successfully');
 
-    await this.paymentService.handleWebhook(body);
+    await this.paymentService.handleWebhook(parsedBody);
     console.log('Webhook event processed successfully');
   }
+
   @UseGuards(JwtGuard)
   @Patch(':reference')
   async updatePaymentStatus(
     @Param('reference') reference: string,
     @Body() dto: UpdatePaymentDto,
   ) {
-    return this.paymentService.updatePayment(reference, dto.status);
+    const updatedStatus = await this.paymentService.updatePayment(
+      reference,
+      dto.status,
+    );
+    return updatedStatus;
   }
 }

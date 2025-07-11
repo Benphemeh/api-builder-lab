@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class VerifyPaymentDto {
-  @IsNotEmpty()
-  @IsString()
+  @IsString({ message: 'Reference must be a string' })
+  @IsNotEmpty({ message: 'Reference is required and cannot be empty' })
   reference: string;
 }

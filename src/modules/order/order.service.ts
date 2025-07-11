@@ -14,6 +14,7 @@ import { PaymentService } from '../payment/payment.service';
 import { CartService } from '../cart/cart.service';
 import { Op } from 'sequelize';
 import * as client from 'prom-client';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 @Injectable()
 export class OrderService {
@@ -135,7 +136,7 @@ export class OrderService {
     await this.paymentService.createPayment({
       orderId: order.id,
       reference: payment.data.reference,
-      status: 'pending',
+      status: PAYMENT_STATUS.PENDING,
       amount: calculatedTotal,
     });
 
@@ -165,7 +166,10 @@ export class OrderService {
         await order.update({ status: 'completed' });
 
         // Update payment status to success
-        await this.paymentService.updatePayment(reference, 'success');
+        await this.paymentService.updatePayment(
+          reference,
+          PAYMENT_STATUS.SUCCESS,
+        );
 
         await this.createDelivery(order);
 
@@ -189,13 +193,19 @@ export class OrderService {
         };
       } else if (payment.data.status === 'abandoned') {
         // Handle abandoned payment
-        await this.paymentService.updatePayment(reference, 'failed');
+        await this.paymentService.updatePayment(
+          reference,
+          PAYMENT_STATUS.FAILED,
+        );
         throw new BadRequestException(
           'The payment was abandoned. Please try again or contact support if the issue persists.',
         );
       } else {
         // Handle other payment statuses
-        await this.paymentService.updatePayment(reference, 'failed');
+        await this.paymentService.updatePayment(
+          reference,
+          PAYMENT_STATUS.FAILED,
+        );
         throw new BadRequestException(
           `Payment verification failed with status: ${payment.data.status}. Please try again.`,
         );

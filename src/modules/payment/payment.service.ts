@@ -4,6 +4,7 @@ import { REPOSITORY } from 'src/core/constants';
 import { Order } from 'src/core/database';
 
 import Payment from 'src/core/database/models/payment.model';
+import { PAYMENT_STATUS } from 'src/core/enums';
 import { MailService } from 'src/core/mail/mail.service';
 
 @Injectable()
@@ -71,7 +72,7 @@ export class PaymentService {
   async createPayment(data: {
     orderId: string;
     reference: string;
-    status: 'pending' | 'success' | 'failed';
+    status: PAYMENT_STATUS;
     amount: number;
   }): Promise<Payment> {
     return this.paymentRepository.create(data);
@@ -79,7 +80,7 @@ export class PaymentService {
 
   async updatePayment(
     reference: string,
-    status: 'success' | 'failed',
+    status: PAYMENT_STATUS,
   ): Promise<Payment> {
     const payment = await this.paymentRepository.findOne({
       where: { reference },
@@ -92,13 +93,13 @@ export class PaymentService {
     await payment.update({ status });
 
     // If status is 'success', update order and send confirmation email
-    if (status === 'success') {
+    if (status === PAYMENT_STATUS.SUCCESS) {
       const order = await this.orderRepository.findByPk(payment.orderId, {
         include: ['user'],
       });
 
       if (order) {
-        await order.update({ status: 'success' });
+        await order.update({ status: PAYMENT_STATUS.SUCCESS });
 
         const user = order.user;
         await this.mailService.sendOrderPaymentEmail(
