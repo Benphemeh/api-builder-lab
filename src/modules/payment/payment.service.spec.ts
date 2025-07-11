@@ -20,7 +20,7 @@ describe('PaymentService', () => {
     id: 'payment-123',
     orderId: 'order-123',
     reference: 'ref-123',
-    status: PAYMENT_STATUS.PENDING, // Use enum instead of string literal
+    status: PAYMENT_STATUS.PENDING,
     amount: 1000,
     update: jest.fn(),
     save: jest.fn(),
