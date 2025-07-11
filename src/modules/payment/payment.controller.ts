@@ -16,6 +16,7 @@ import { InitializePaymentDto } from './dto/initialize-payment.dto';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
 import { ConfigService } from '@nestjs/config';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 @Controller('payments')
 export class PaymentController {
@@ -41,7 +42,7 @@ export class PaymentController {
     await this.paymentService.createPayment({
       orderId,
       reference: paymentResponse.data.reference,
-      status: 'pending',
+      status: PAYMENT_STATUS.PENDING,
       amount: dto.amount,
     });
 
@@ -100,6 +101,10 @@ export class PaymentController {
     @Param('reference') reference: string,
     @Body() dto: UpdatePaymentDto,
   ) {
-    return this.paymentService.updatePayment(reference, dto.PAYMENT_STATUS);
+    const updatedStatus = await this.paymentService.updatePayment(
+      reference,
+      dto.status,
+    );
+    return updatedStatus;
   }
 }
