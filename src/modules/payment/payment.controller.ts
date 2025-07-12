@@ -66,8 +66,6 @@ export class PaymentController {
     @Req() req: any,
   ) {
     console.log('Incoming Webhook Request:');
-    console.log('Headers:', req.headers);
-    console.log('Raw Body:', req.body);
 
     if (!signature) {
       console.error('Missing Paystack signature');
@@ -76,7 +74,6 @@ export class PaymentController {
 
     const secret = this.configService.get<string>('PAYSTACK_SECRET_KEY');
 
-    // Get the raw body string for signature verification
     let rawBodyString: string;
     let parsedBody: any = body;
 
