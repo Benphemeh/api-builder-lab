@@ -65,7 +65,6 @@ export class UsersService {
   ): Promise<{ data: User[]; total: number }> {
     const offset = (page - 1) * limit;
 
-    /** Build dynamic "where" condition */
     const where: any = {};
     if (search) {
       where[Op.or] = [

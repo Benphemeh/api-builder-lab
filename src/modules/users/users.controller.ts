@@ -43,14 +43,13 @@ export class UsersController {
     @Query('role') role?: string,
     @Query('status') status?: string,
   ) {
-    /** Cache key includes all query‑params so each combination is stored separately */
     const cacheKey = `users:list:${page}:${limit}:${search}:${role ?? ''}:${status ?? ''}`;
 
     return this.cacheService.getOrSet(
       cacheKey,
       () =>
         this.usersService.getAllUsers(page, limit, search.trim(), role, status),
-      30, // minutes
+      30,
     );
   }
 
