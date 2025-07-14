@@ -16,7 +16,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidateInputPipe());
   app.use('/api/payments/webhook', bodyParser.raw({ type: '*/*' }));
 
-  // Swagger setup
+  // Swagger documentation setup
   const config = new DocumentBuilder()
     .setTitle('O’Ben Brands API')
     .setDescription('API documentation for the O’Ben Brands project')
