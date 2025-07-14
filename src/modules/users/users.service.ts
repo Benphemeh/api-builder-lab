@@ -12,6 +12,7 @@ import { CreateUserDTO } from './dto/user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth/auth.service';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
@@ -55,8 +56,34 @@ export class UsersService {
     }
     return user;
   }
-  async getAllUsers(): Promise<User[]> {
-    return await this.userRepository.findAll<User>({});
+  async getAllUsers(
+    page = 1,
+    limit = 10,
+    search = '',
+    role?: string,
+    status?: string,
+  ): Promise<{ data: User[]; total: number }> {
+    const offset = (page - 1) * limit;
+
+    const where: any = {};
+    if (search) {
+      where[Op.or] = [
+        { firstName: { [Op.iLike]: `%${search}%` } },
+        { lastName: { [Op.iLike]: `%${search}%` } },
+        { email: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+    if (role) where.role = role;
+    if (status) where.status = status;
+
+    const { rows, count } = await this.userRepository.findAndCountAll({
+      where,
+      order: [['createdAt', 'DESC']],
+      offset,
+      limit,
+    });
+
+    return { data: rows, total: count };
   }
 
   async validateAdmin(email: string, password: string) {

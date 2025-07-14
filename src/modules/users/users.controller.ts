@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -35,11 +36,19 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async getAllUsers(): Promise<User[]> {
-    const cacheKey = 'users:all';
+  async getAllUsers(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('search') search = '',
+    @Query('role') role?: string,
+    @Query('status') status?: string,
+  ) {
+    const cacheKey = `users:list:${page}:${limit}:${search}:${role ?? ''}:${status ?? ''}`;
+
     return this.cacheService.getOrSet(
       cacheKey,
-      () => this.usersService.getAllUsers(),
+      () =>
+        this.usersService.getAllUsers(page, limit, search.trim(), role, status),
       30,
     );
   }

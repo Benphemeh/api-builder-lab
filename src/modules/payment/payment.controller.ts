@@ -59,7 +59,6 @@ export class PaymentController {
   }
 
   @Post('webhook')
-  @HttpCode(200)
   async webhook(
     @Body() body: any,
     @Headers('x-paystack-signature') signature: string,
