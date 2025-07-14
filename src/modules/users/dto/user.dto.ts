@@ -6,7 +6,7 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { Gender, USER_ROLE } from 'src/core/enums';
+import { GENDER, USER_ROLE } from 'src/core/enums';
 
 export class CreateUserDTO {
   @IsOptional()
@@ -27,14 +27,10 @@ export class CreateUserDTO {
   password: string;
 
   @IsNotEmpty()
-  @IsEnum(Gender, {
-    message: `Gender must be one of: ${Object.values(Gender).join(', ')}`,
+  @IsEnum(GENDER, {
+    message: `Gender must be one of: ${Object.values(GENDER).join(', ')}`,
   })
-  gender: Gender;
-
-  // @IsNotEmpty()
-  // @IsEnum(['male', 'female'])
-  // gender: string;
+  gender: GENDER;
 
   @IsOptional()
   @IsEnum(USER_ROLE, {
