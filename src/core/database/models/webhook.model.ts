@@ -16,6 +16,7 @@ export default class WebhookEvent extends BaseModel {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    field: 'event_type', // Maps camelCase property to snake_case DB column
   })
   eventType: string;
 
@@ -27,6 +28,7 @@ export default class WebhookEvent extends BaseModel {
 
   @Column({
     type: DataType.DATE,
+    field: 'processed_at', // Maps camelCase property to snake_case DB column
   })
   processedAt: Date;
 
@@ -35,4 +37,5 @@ export default class WebhookEvent extends BaseModel {
   })
   payload: object;
 }
+
 export { WebhookEvent };

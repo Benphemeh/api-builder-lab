@@ -3,7 +3,6 @@ import {
   Post,
   Body,
   UseGuards,
-  Req,
   Patch,
   Param,
 } from '@nestjs/common';
@@ -20,7 +19,7 @@ export class PaymentController {
 
   @UseGuards(JwtGuard)
   @Post('initialize')
-  async initializePayment(@Body() dto: InitializePaymentDto, @Req() req: any) {
+  async initializePayment(@Body() dto: InitializePaymentDto) {
     const paymentResponse = await this.paymentService.initializePayment(
       dto.email,
       dto.amount,
