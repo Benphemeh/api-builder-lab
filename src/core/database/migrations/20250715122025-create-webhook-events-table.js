@@ -7,7 +7,7 @@ const baseModelMigration = require('../base-model/base-model.migration');
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('webhook_events', {
-      ...baseModelMigration(Sequelize), // adds id, created_at, updated_at, deleted_at
+      ...baseModelMigration(Sequelize),
 
       reference: {
         type: Sequelize.STRING,
@@ -37,13 +37,11 @@ module.exports = {
       },
     });
 
-    // ✅ Fixed indexes - using correct snake_case column names
     await queryInterface.addIndex('webhook_events', ['reference'], {
       name: 'idx_webhook_events_reference',
     });
 
     await queryInterface.addIndex('webhook_events', ['event_type'], {
-      // Fixed: was 'eventType'
       name: 'idx_webhook_events_event_type',
     });
 
@@ -58,7 +56,7 @@ module.exports = {
 
     await queryInterface.addIndex(
       'webhook_events',
-      ['reference', 'event_type', 'status'], // Fixed: was 'eventType'
+      ['reference', 'event_type', 'status'],
       {
         name: 'idx_webhook_events_ref_event_status',
       },
