@@ -24,7 +24,7 @@ export default class WebhookEvent extends BaseModel {
     type: DataType.ENUM('pending', 'processed', 'failed'),
     defaultValue: 'pending',
   })
-  status: string;
+  status: 'pending' | 'processed' | 'failed';
 
   @Column({
     type: DataType.DATE,

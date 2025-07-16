@@ -20,11 +20,13 @@ import { ReviewModule } from './modules/review/review.module';
 import { CartModule } from './modules/cart/cart.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { MetricsController } from './modules/prometheus/metrics.controller';
+import { WebhooksModule } from './modules/webhooks/webhook.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    WebhooksModule,
     AdminModule,
     MailModule,
     UsersModule,

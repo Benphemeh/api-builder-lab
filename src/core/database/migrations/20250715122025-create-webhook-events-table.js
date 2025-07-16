@@ -12,18 +12,15 @@ module.exports = {
       reference: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: 'Payment reference from webhook',
       },
       event_type: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: 'Type of webhook event (e.g., charge.success)',
       },
       status: {
         type: Sequelize.ENUM('pending', 'processed', 'failed'),
         defaultValue: 'pending',
         allowNull: false,
-        comment: 'Processing status of the webhook',
       },
       processed_at: {
         type: Sequelize.DATE,
@@ -33,7 +30,6 @@ module.exports = {
       payload: {
         type: Sequelize.JSON,
         allowNull: true,
-        comment: 'Original webhook payload from Paystack',
       },
     });
 
@@ -50,7 +46,6 @@ module.exports = {
     });
 
     await queryInterface.addIndex('webhook_events', ['created_at'], {
-      // Fixed: was 'createdAt'
       name: 'idx_webhook_events_created_at',
     });
 
