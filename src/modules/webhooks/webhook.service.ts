@@ -56,7 +56,8 @@ export class WebhookService {
   async processWebhookEvent(event: PaystackWebhookDto): Promise<void> {
     const { event: eventType, data } = event;
 
-    this.logger.log(`Processing webhook event: ${eventType}`, {
+    this.logger.log(`Processing webhook event: ${eventType}`);
+    this.logger.log('Object:', {
       reference: data.reference,
       amount: data.amount,
     });
@@ -82,15 +83,6 @@ export class WebhookService {
           await this.handleChargeFailed(data);
           break;
 
-        // Remove transfer methods since they don't exist yet
-        // case 'transfer.success':
-        //   await this.handleTransferSuccess(data);
-        //   break;
-
-        // case 'transfer.failed':
-        //   await this.handleTransferFailed(data);
-        //   break;
-
         default:
           this.logger.warn(`Unhandled event type: ${eventType}`);
       }
@@ -111,8 +103,19 @@ export class WebhookService {
     const { reference, amount } = data;
     const amountInNaira = amount / 100; // Convert from kobo
 
+    this.logger.log('Object:', { reference, amount });
+
     try {
-      // Use your existing updatePayment method
+      // Check if this is a test reference
+      if (this.isTestReference(reference)) {
+        this.logger.log(`🧪 Test webhook detected for reference: ${reference}`);
+        this.logger.log(
+          `✅ Test webhook processed successfully - Amount: ₦${amountInNaira}`,
+        );
+        return; // Exit early for test webhooks
+      }
+
+      // Use your existing updatePayment method for real payments
       const payment = await this.paymentService.updatePayment(
         reference,
         PAYMENT_STATUS.SUCCESS,
@@ -137,7 +140,18 @@ export class WebhookService {
     const { reference, gateway_response } = data;
 
     try {
-      // Use your existing updatePayment method
+      // Check if this is a test reference
+      if (this.isTestReference(reference)) {
+        this.logger.log(
+          `🧪 Test failed webhook detected for reference: ${reference}`,
+        );
+        this.logger.log(
+          `✅ Test failed webhook processed successfully - Reason: ${gateway_response}`,
+        );
+        return; // Exit early for test webhooks
+      }
+
+      // Use your existing updatePayment method for real payments
       await this.paymentService.updatePayment(reference, PAYMENT_STATUS.FAILED);
 
       this.logger.log(`❌ Payment failed: ${reference}`, {
@@ -159,6 +173,22 @@ export class WebhookService {
       });
       throw error;
     }
+  }
+
+  /**
+   * Check if a reference is a test reference
+   */
+  private isTestReference(reference: string): boolean {
+    // Define patterns that indicate test references
+    const testPatterns = [
+      /^test_/i, // Starts with "test_"
+      /^demo_/i, // Starts with "demo_"
+      /_test$/i, // Ends with "_test"
+      /^webhook_test/i, // Starts with "webhook_test"
+      /test.*\d+$/i, // Contains "test" followed by numbers
+    ];
+
+    return testPatterns.some((pattern) => pattern.test(reference));
   }
 
   /**
