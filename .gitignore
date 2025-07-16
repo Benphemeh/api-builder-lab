@@ -3,6 +3,8 @@
 /node_modules
 /build
 .env
+generate-signature.mjs
+test-webhook-complete.mjs
 
 # Logs
 logs
