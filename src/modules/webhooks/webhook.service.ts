@@ -18,7 +18,7 @@ export class WebhookService {
     private paymentService: PaymentService,
     private orderService: OrderService,
     private mailService: MailService,
-    @Inject(REPOSITORY.WEBHOOK_EVENT) // Add this to your constants
+    @Inject(REPOSITORY.WEBHOOK_EVENT)
     private readonly webhookEventRepository: typeof WebhookEvent,
   ) {}
 
