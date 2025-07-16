@@ -12,7 +12,6 @@ module.exports = {
       reference: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: 'Payment reference from webhook',
       },
       event_type: {
         type: Sequelize.STRING,
@@ -33,7 +32,6 @@ module.exports = {
       payload: {
         type: Sequelize.JSON,
         allowNull: true,
-        comment: 'Original webhook payload from Paystack',
       },
     });
 

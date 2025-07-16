@@ -1,6 +1,7 @@
 import { Column, DataType } from 'sequelize-typescript';
 import { ApiBuilderTable } from '../base-model/table-decorators';
 import { BaseModel } from '../base-model';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 @ApiBuilderTable({
   tableName: 'webhook_events',
@@ -21,10 +22,11 @@ export default class WebhookEvent extends BaseModel {
   eventType: string;
 
   @Column({
-    type: DataType.ENUM('pending', 'processed', 'failed'),
-    defaultValue: 'pending',
+    type: DataType.ENUM(...Object.values(PAYMENT_STATUS)),
+    defaultValue: PAYMENT_STATUS.PENDING,
+    allowNull: false,
   })
-  status: string;
+  status: PAYMENT_STATUS;
 
   @Column({
     type: DataType.DATE,
