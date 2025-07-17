@@ -245,10 +245,48 @@ describe('UsersController (e2e)', () => {
       );
     });
 
+    it('should return all users with role filter', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue(mockUsersResponse as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users?role=admin')
+        .expect(200);
+
+      expect(response.body).toEqual(mockUsersResponse);
+
+      // Should include role in cache key
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'users:list:1:10::admin:',
+        expect.any(Function),
+        30,
+      );
+    });
+
+    it('should return all users with all filters', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue(mockUsersResponse as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users?search=test&role=author&status=active')
+        .expect(200);
+
+      expect(response.body).toEqual(mockUsersResponse);
+
+      // Should include all filters in cache key
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'users:list:1:10:test:author:active',
+        expect.any(Function),
+        30,
+      );
+    });
+
     it('should fetch from service when cache is empty', async () => {
       // Arrange
       usersService.getAllUsers.mockResolvedValue(mockUsersResponse as any);
-      cacheService.getOrSet.mockImplementation(async (key, fetchFn, ttl) => {
+      cacheService.getOrSet.mockImplementation(async (key, fetchFn, _ttl) => {
         return await fetchFn();
       });
 
@@ -432,11 +470,10 @@ describe('UsersController (e2e)', () => {
 
       // Act - Send sequential requests
       for (let i = 0; i < 3; i++) {
-        const response = await request(app.getHttpServer())
+        await request(app.getHttpServer())
           .patch('/users/user-123')
-          .send(updateData);
-
-        expect(response.status).toBe(200);
+          .send(updateData)
+          .expect(200);
       }
 
       // Assert
@@ -599,9 +636,7 @@ describe('UsersController (e2e)', () => {
 
       // Act - Send 5 sequential requests
       for (let i = 0; i < 5; i++) {
-        const response = await request(app.getHttpServer()).get('/users');
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual(mockUsersResponse);
+        await request(app.getHttpServer()).get('/users').expect(200);
       }
     });
 
@@ -611,10 +646,7 @@ describe('UsersController (e2e)', () => {
 
       // Act - Send sequential requests
       for (let i = 0; i < 5; i++) {
-        const response = await request(app.getHttpServer()).get(
-          `/users/user-${i}`,
-        );
-        expect(response.status).toBe(200);
+        await request(app.getHttpServer()).get(`/users/user-${i}`).expect(200);
       }
     });
   });
@@ -660,7 +692,7 @@ describe('UsersController (e2e)', () => {
       usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
 
       // Act & Assert
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .patch('/users/user-123')
         .send(dataWithNulls)
         .expect(200);
