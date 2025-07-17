@@ -23,8 +23,8 @@ describe('UsersController (e2e)', () => {
     email: 'john.doe@example.com',
     role: USER_ROLE.AUTHOR,
     isEmailVerified: true,
-    createdAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
-    updatedAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
+    createdAt: '2025-07-10T15:12:07.690Z',
+    updatedAt: '2025-07-10T15:12:07.690Z',
   };
 
   const mockAdmin = {
@@ -34,11 +34,17 @@ describe('UsersController (e2e)', () => {
     email: 'admin@example.com',
     role: USER_ROLE.ADMIN,
     isEmailVerified: true,
-    createdAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
-    updatedAt: '2025-07-10T15:12:07.690Z', // Use string for HTTP serialization
+    createdAt: '2025-07-10T15:12:07.690Z',
+    updatedAt: '2025-07-10T15:12:07.690Z',
   };
 
   const mockUsers = [mockUser, mockAdmin];
+
+  // Mock response structure that matches your service
+  const mockUsersResponse = {
+    data: mockUsers,
+    total: mockUsers.length,
+  };
 
   // Mock guards
   const mockAuthGuard = {
@@ -107,18 +113,18 @@ describe('UsersController (e2e)', () => {
 
     it('should return all users when accessing /users/ endpoint', async () => {
       // Arrange
-      cacheService.getOrSet.mockResolvedValue(mockUsers as any);
+      cacheService.getOrSet.mockResolvedValue(mockUsersResponse as any);
 
       // Act & Assert
       const response = await request(app.getHttpServer())
         .get('/users/')
         .expect(200);
 
-      expect(response.body).toEqual(mockUsers);
+      expect(response.body).toEqual(mockUsersResponse);
     });
 
     it('should handle URL-encoded special characters in ID', async () => {
-      // Arrange - test URL encoding behavior
+      // Arrange
       const encodedId = 'user%20with%20spaces';
       const decodedId = 'user with spaces';
       usersService.getUserById.mockResolvedValue(mockUser as any);
@@ -151,7 +157,7 @@ describe('UsersController (e2e)', () => {
       mockAuthGuard.canActivate.mockReturnValue(false);
 
       // Act & Assert
-      await request(app.getHttpServer()).get('/users/user-123').expect(403); // NestJS returns 403 for failed guards
+      await request(app.getHttpServer()).get('/users/user-123').expect(403);
 
       // Reset for other tests
       mockAuthGuard.canActivate.mockReturnValue(true);
@@ -184,16 +190,56 @@ describe('UsersController (e2e)', () => {
   describe('GET /users', () => {
     it('should return all users from cache', async () => {
       // Arrange
-      cacheService.getOrSet.mockResolvedValue(mockUsers as any);
+      cacheService.getOrSet.mockResolvedValue(mockUsersResponse as any);
 
       // Act & Assert
       const response = await request(app.getHttpServer())
         .get('/users')
         .expect(200);
 
-      expect(response.body).toEqual(mockUsers);
+      expect(response.body).toEqual(mockUsersResponse);
+
+      // Fixed: Match the actual cache key format with pagination parameters
       expect(cacheService.getOrSet).toHaveBeenCalledWith(
-        'users:all',
+        'users:list:1:10:::',
+        expect.any(Function),
+        30,
+      );
+    });
+
+    it('should return all users with custom pagination', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue(mockUsersResponse as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users?page=2&limit=5')
+        .expect(200);
+
+      expect(response.body).toEqual(mockUsersResponse);
+
+      // Should use different cache key for different pagination
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'users:list:2:5:::',
+        expect.any(Function),
+        30,
+      );
+    });
+
+    it('should return all users with search and status filters', async () => {
+      // Arrange
+      cacheService.getOrSet.mockResolvedValue(mockUsersResponse as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .get('/users?search=john&status=active')
+        .expect(200);
+
+      expect(response.body).toEqual(mockUsersResponse);
+
+      // Fixed: Match the actual cache key format: users:list:page:limit:search:role:status
+      expect(cacheService.getOrSet).toHaveBeenCalledWith(
+        'users:list:1:10:john::active',
         expect.any(Function),
         30,
       );
@@ -201,7 +247,7 @@ describe('UsersController (e2e)', () => {
 
     it('should fetch from service when cache is empty', async () => {
       // Arrange
-      usersService.getAllUsers.mockResolvedValue(mockUsers as any);
+      usersService.getAllUsers.mockResolvedValue(mockUsersResponse as any);
       cacheService.getOrSet.mockImplementation(async (key, fetchFn, ttl) => {
         return await fetchFn();
       });
@@ -211,20 +257,21 @@ describe('UsersController (e2e)', () => {
         .get('/users')
         .expect(200);
 
-      expect(response.body).toEqual(mockUsers);
+      expect(response.body).toEqual(mockUsersResponse);
       expect(cacheService.getOrSet).toHaveBeenCalled();
     });
 
     it('should return empty array when no users exist', async () => {
       // Arrange
-      cacheService.getOrSet.mockResolvedValue([]);
+      const emptyResponse = { data: [], total: 0 };
+      cacheService.getOrSet.mockResolvedValue(emptyResponse);
 
       // Act & Assert
       const response = await request(app.getHttpServer())
         .get('/users')
         .expect(200);
 
-      expect(response.body).toEqual([]);
+      expect(response.body).toEqual(emptyResponse);
     });
 
     it('should return 401 when not authenticated', async () => {
@@ -257,14 +304,16 @@ describe('UsersController (e2e)', () => {
           id: `user-${index}`,
           email: `user${index}@example.com`,
         }));
-      cacheService.getOrSet.mockResolvedValue(largeUserSet as any);
+      const largeResponse = { data: largeUserSet, total: 1000 };
+      cacheService.getOrSet.mockResolvedValue(largeResponse as any);
 
       // Act & Assert
       const response = await request(app.getHttpServer())
         .get('/users')
         .expect(200);
 
-      expect(response.body).toHaveLength(1000);
+      expect(response.body.data).toHaveLength(1000);
+      expect(response.body.total).toBe(1000);
     });
   });
 
@@ -329,13 +378,13 @@ describe('UsersController (e2e)', () => {
     it('should handle invalid update data gracefully', async () => {
       // Arrange
       const invalidData = {
-        firstName: '', // empty string
-        lastName: null, // null value
+        firstName: '',
+        lastName: null,
       };
       const updatedUser = { ...mockUser, ...invalidData };
       usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
 
-      // Act & Assert - Controller accepts the data, validation handled by service/DTO
+      // Act & Assert
       const response = await request(app.getHttpServer())
         .patch('/users/user-123')
         .send(invalidData)
@@ -381,7 +430,7 @@ describe('UsersController (e2e)', () => {
       // Arrange
       usersService.updateUserProfile.mockResolvedValue(mockUser as any);
 
-      // Act - Send sequential requests instead of concurrent
+      // Act - Send sequential requests
       for (let i = 0; i < 3; i++) {
         const response = await request(app.getHttpServer())
           .patch('/users/user-123')
@@ -489,7 +538,6 @@ describe('UsersController (e2e)', () => {
     });
 
     it('should prevent self-deletion scenario', async () => {
-      // This would typically be handled by business logic in the service
       // Arrange
       usersService.deleteUser.mockImplementation(() => {
         throw new BadRequestException('Cannot delete own account');
@@ -547,13 +595,13 @@ describe('UsersController (e2e)', () => {
   describe('Performance and Load Testing', () => {
     it('should handle moderate load on GET /users', async () => {
       // Arrange
-      cacheService.getOrSet.mockResolvedValue(mockUsers as any);
+      cacheService.getOrSet.mockResolvedValue(mockUsersResponse as any);
 
-      // Act - Send 5 sequential requests instead of 50 concurrent
+      // Act - Send 5 sequential requests
       for (let i = 0; i < 5; i++) {
         const response = await request(app.getHttpServer()).get('/users');
         expect(response.status).toBe(200);
-        expect(response.body).toEqual(mockUsers);
+        expect(response.body).toEqual(mockUsersResponse);
       }
     });
 
@@ -561,7 +609,7 @@ describe('UsersController (e2e)', () => {
       // Arrange
       usersService.getUserById.mockResolvedValue(mockUser as any);
 
-      // Act - Send sequential requests instead of rapid concurrent
+      // Act - Send sequential requests
       for (let i = 0; i < 5; i++) {
         const response = await request(app.getHttpServer()).get(
           `/users/user-${i}`,
@@ -611,7 +659,7 @@ describe('UsersController (e2e)', () => {
       const updatedUser = { ...mockUser, firstName: null, lastName: undefined };
       usersService.updateUserProfile.mockResolvedValue(updatedUser as any);
 
-      // Act & Assert - Controller may accept these values, validation handled elsewhere
+      // Act & Assert
       const response = await request(app.getHttpServer())
         .patch('/users/user-123')
         .send(dataWithNulls)
