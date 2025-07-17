@@ -4,6 +4,7 @@ import { AuthService } from '../auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { REPOSITORY } from '../../core/constants';
 import { NotFoundException } from '@nestjs/common';
+import { GENDER } from '../../core/enums';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -12,11 +13,12 @@ describe('UsersService', () => {
   let jwtServiceMock: any;
 
   beforeEach(async () => {
-    // Mock the user repository
+    // Mock the user repository - includes all required methods
     userRepositoryMock = {
       create: jest.fn(),
       findOne: jest.fn(),
       findAll: jest.fn(),
+      findAndCountAll: jest.fn(),
       update: jest.fn(),
       destroy: jest.fn(),
     };
@@ -50,9 +52,11 @@ describe('UsersService', () => {
   describe('create', () => {
     it('should create a new user', async () => {
       const userDto = {
+        firstName: 'John',
+        lastName: 'Doe',
         email: 'test@example.com',
         password: 'password123',
-        gender: 'male',
+        gender: GENDER.MALE,
       };
       const createdUser = { id: '1', ...userDto };
 
@@ -66,9 +70,20 @@ describe('UsersService', () => {
   });
 
   describe('findOneByEmail', () => {
-    it('should return a user by email', async () => {
+    it('should return a user by email with selected attributes', async () => {
       const email = 'test@example.com';
-      const user = { id: '1', email, password: 'hashedPassword' };
+      const user = {
+        id: '1',
+        firstName: 'John',
+        lastName: 'Doe',
+        email,
+        password: 'hashedPassword',
+        role: 'author',
+        isEmailVerified: false,
+        emailVerificationToken: null,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      };
 
       userRepositoryMock.findOne.mockResolvedValue(user);
 
@@ -126,18 +141,31 @@ describe('UsersService', () => {
   });
 
   describe('getAllUsers', () => {
-    it('should return all users', async () => {
+    it('should return all users with correct structure', async () => {
       const users = [
         { id: '1', email: 'test1@example.com' },
         { id: '2', email: 'test2@example.com' },
       ];
 
-      userRepositoryMock.findAll.mockResolvedValue(users);
+      userRepositoryMock.findAndCountAll.mockResolvedValue({
+        rows: users,
+        count: users.length,
+      });
 
       const result = await service.getAllUsers();
 
-      expect(userRepositoryMock.findAll).toHaveBeenCalledWith({});
-      expect(result).toEqual(users);
+      expect(userRepositoryMock.findAndCountAll).toHaveBeenCalledWith({
+        where: {},
+        order: [['createdAt', 'DESC']],
+        offset: 0,
+        limit: 10,
+      });
+
+      // Fixed: Match the actual return structure from your service
+      expect(result).toEqual({
+        data: users,
+        total: users.length,
+      });
     });
   });
 
@@ -145,7 +173,12 @@ describe('UsersService', () => {
     it('should update a user profile', async () => {
       const id = '1';
       const updateData = { firstName: 'UpdatedName' };
-      const user = { id, firstName: 'OldName', update: jest.fn() };
+      const user = {
+        id,
+        firstName: 'OldName',
+        save: jest.fn(),
+        update: jest.fn().mockResolvedValue(updateData),
+      };
 
       userRepositoryMock.findOne.mockResolvedValue(user);
 
@@ -173,10 +206,14 @@ describe('UsersService', () => {
   describe('deleteUser', () => {
     it('should delete a user by ID', async () => {
       const id = '1';
-      const user = { id, destroy: jest.fn() };
+      const user = {
+        id,
+        destroy: jest.fn().mockResolvedValue(true),
+      };
 
       userRepositoryMock.findOne.mockResolvedValue(user);
 
+      // Fixed: Don't expect a return value if the method returns void
       await service.deleteUser(id);
 
       expect(userRepositoryMock.findOne).toHaveBeenCalledWith({
