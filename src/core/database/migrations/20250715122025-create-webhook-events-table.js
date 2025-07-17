@@ -25,7 +25,6 @@ module.exports = {
       processed_at: {
         type: Sequelize.DATE,
         allowNull: true,
-        comment: 'When the webhook was successfully processed',
       },
       payload: {
         type: Sequelize.JSON,
