@@ -9,6 +9,7 @@ import { RequestEmailVerificationDto } from './dto/request-email-verification.dt
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { GENDER } from '../../core/enums';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -55,7 +56,7 @@ describe('AuthController', () => {
         lastName: 'Doe',
         email: 'jane@example.com',
         password: 'securePass123',
-        gender: 'female',
+        gender: GENDER.FEMALE,
       };
 
       const expected = { user: { ...dto, id: 'abc123' }, token: 'jwt.token' };
