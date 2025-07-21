@@ -26,7 +26,6 @@ export class PaymentController {
       dto.orderId,
     );
 
-    // Fix: Explicitly set orderId to null if undefined
     const orderId = dto.orderId || null;
 
     await this.paymentService.createPayment({
