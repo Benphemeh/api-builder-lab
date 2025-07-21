@@ -782,6 +782,31 @@ describe('PaymentController (e2e)', () => {
         .send(unicodeDto)
         .expect(201);
     });
+    it('should handle payment initialization without orderId', async () => {
+      // Arrange
+      const dtoWithoutOrderId = {
+        email: 'test@example.com',
+        amount: 50000,
+        // orderId is optional now
+      };
+
+      paymentService.initializePayment.mockResolvedValue(mockPaystackResponse);
+      paymentService.createPayment.mockResolvedValue(mockPayment as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .post('/payments/initialize')
+        .send(dtoWithoutOrderId)
+        .expect(201);
+
+      // Fix: Expect null instead of undefined
+      expect(paymentService.createPayment).toHaveBeenCalledWith({
+        orderId: null, // This should now be null, not undefined
+        reference: mockPaystackResponse.data.reference,
+        status: PAYMENT_STATUS.PENDING,
+        amount: dtoWithoutOrderId.amount,
+      });
+    });
 
     it('should handle extremely long reference strings', async () => {
       // Arrange

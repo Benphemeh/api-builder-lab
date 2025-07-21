@@ -11,11 +11,15 @@ import { JwtGuard } from 'src/modules/guards/jwt-guard';
 import { InitializePaymentDto } from './dto/initialize-payment.dto';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { ConfigService } from '@nestjs/config';
 import { PAYMENT_STATUS } from 'src/core/enums';
 
 @Controller('payments')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @UseGuards(JwtGuard)
   @Post('initialize')
@@ -26,8 +30,11 @@ export class PaymentController {
       dto.orderId,
     );
 
+    // Fix: Explicitly set orderId to null if undefined
+    const orderId = dto.orderId || null;
+
     await this.paymentService.createPayment({
-      orderId: dto.orderId,
+      orderId,
       reference: paymentResponse.data.reference,
       status: PAYMENT_STATUS.PENDING,
       amount: dto.amount,
