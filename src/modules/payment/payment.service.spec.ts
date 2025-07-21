@@ -4,7 +4,7 @@ import axios from 'axios';
 import { PaymentService } from './payment.service';
 import { MailService } from 'src/core/mail/mail.service';
 import { REPOSITORY } from 'src/core/constants';
-import { PAYMENT_STATUS, ORDER_STATUS } from 'src/core/enums';
+import { PAYMENT_STATUS } from 'src/core/enums';
 
 // Mock axios
 jest.mock('axios');

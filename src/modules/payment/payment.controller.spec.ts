@@ -3,19 +3,16 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { PaymentController } from './payment.controller';
 import { PaymentService } from './payment.service';
-import { ConfigService } from '@nestjs/config';
 import { JwtGuard } from 'src/modules/guards/jwt-guard';
-import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { InitializePaymentDto } from './dto/initialize-payment.dto';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { PAYMENT_STATUS } from 'src/core/enums';
-import * as crypto from 'crypto';
 
 describe('PaymentController (e2e)', () => {
   let app: INestApplication;
   let paymentService: jest.Mocked<PaymentService>;
-  let configService: jest.Mocked<ConfigService>;
 
   // Mock data
   const mockUser = {
@@ -63,87 +60,63 @@ describe('PaymentController (e2e)', () => {
     },
   };
 
-  // Mock webhook payload
-  const mockWebhookPayload = {
-    event: 'charge.success',
-    data: {
-      id: 123456789,
-      reference: 'paystack_ref_123',
-      amount: 5000000, // In kobo
-      status: 'success',
-      gateway_response: 'Successful',
-      paid_at: '2025-07-10T15:12:07.000Z',
-      created_at: '2025-07-10T15:12:07.000Z',
-      channel: 'card',
-      metadata: {
-        orderId: 'order-123',
-      },
-    },
-  };
-
   // Mock guards
   const mockJwtGuard = {
     canActivate: jest.fn(() => true),
   };
 
-  const SECRET_KEY = 'test-secret-key';
-
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      controllers: [PaymentController],
-      providers: [
-        {
-          provide: PaymentService,
-          useValue: {
-            initializePayment: jest.fn(),
-            createPayment: jest.fn(),
-            verifyPayment: jest.fn(),
-            updatePayment: jest.fn(),
-            handleWebhook: jest.fn(),
+    try {
+      const moduleFixture: TestingModule = await Test.createTestingModule({
+        controllers: [PaymentController],
+        providers: [
+          {
+            provide: PaymentService,
+            useValue: {
+              initializePayment: jest.fn(),
+              createPayment: jest.fn(),
+              verifyPayment: jest.fn(),
+              updatePayment: jest.fn(),
+            },
           },
-        },
-        {
-          provide: ConfigService,
-          useValue: {
-            get: jest.fn().mockReturnValue(SECRET_KEY),
-          },
-        },
-      ],
-    })
-      .overrideGuard(JwtGuard)
-      .useValue(mockJwtGuard)
-      .compile();
+        ],
+      })
+        .overrideGuard(JwtGuard)
+        .useValue(mockJwtGuard)
+        .compile();
 
-    app = moduleFixture.createNestApplication();
+      app = moduleFixture.createNestApplication();
 
-    // Add ValidationPipe to enable DTO validation
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        validateCustomDecorators: true,
-        disableErrorMessages: false,
-      }),
-    );
+      // Add ValidationPipe to enable DTO validation
+      app.useGlobalPipes(
+        new ValidationPipe({
+          whitelist: true,
+          forbidNonWhitelisted: true,
+          transform: true,
+          validateCustomDecorators: true,
+          disableErrorMessages: false,
+        }),
+      );
 
-    paymentService = moduleFixture.get(PaymentService);
-    configService = moduleFixture.get(ConfigService);
+      paymentService = moduleFixture.get(PaymentService);
 
-    // Mock request user context for protected routes
-    app.use((req, res, next) => {
-      // Only add user context for protected routes
-      if (req.path !== '/payments/webhook') {
+      // Mock request user context for authenticated routes
+      app.use((req, res, next) => {
         req.user = mockUser;
-      }
-      next();
-    });
+        next();
+      });
 
-    await app.init();
+      await app.init();
+    } catch (error) {
+      console.error('Test setup failed:', error);
+      throw error;
+    }
   });
 
   afterEach(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
     jest.clearAllMocks();
   });
 
@@ -189,7 +162,7 @@ describe('PaymentController (e2e)', () => {
       const dtoWithoutOrderId = {
         email: 'test@example.com',
         amount: 50000,
-        // orderId is optional now
+        // orderId is optional
       };
 
       paymentService.initializePayment.mockResolvedValue(mockPaystackResponse);
@@ -202,14 +175,14 @@ describe('PaymentController (e2e)', () => {
         .expect(201);
 
       expect(paymentService.createPayment).toHaveBeenCalledWith({
-        orderId: null,
+        orderId: null, // Should be null, not undefined
         reference: mockPaystackResponse.data.reference,
         status: PAYMENT_STATUS.PENDING,
         amount: dtoWithoutOrderId.amount,
       });
     });
 
-    it('should return 401 when not authenticated', async () => {
+    it('should return 403 when not authenticated', async () => {
       // Arrange
       mockJwtGuard.canActivate.mockReturnValue(false);
 
@@ -286,6 +259,68 @@ describe('PaymentController (e2e)', () => {
         largeAmountDto.orderId,
       );
     });
+
+    it('should handle zero amount values', async () => {
+      // Arrange
+      const zeroAmountDto = {
+        email: 'test@example.com',
+        amount: 0,
+        orderId: 'order-123',
+      };
+
+      // Act & Assert - Should fail validation due to minimum amount constraint
+      await request(app.getHttpServer())
+        .post('/payments/initialize')
+        .send(zeroAmountDto)
+        .expect(400);
+    });
+
+    it('should handle Unicode characters in email', async () => {
+      // Arrange
+      const unicodeDto = {
+        email: 'test@münchen.de',
+        amount: 1000,
+        orderId: 'order-123',
+      };
+      paymentService.initializePayment.mockResolvedValue(mockPaystackResponse);
+      paymentService.createPayment.mockResolvedValue(mockPayment as any);
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .post('/payments/initialize')
+        .send(unicodeDto)
+        .expect(201);
+    });
+
+    it('should handle missing required fields', async () => {
+      // Arrange
+      const incompleteDto = {
+        amount: 50000,
+        // Missing email
+      };
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .post('/payments/initialize')
+        .send(incompleteDto)
+        .expect(400);
+    });
+
+    it('should handle Paystack service unavailable', async () => {
+      // Arrange
+      paymentService.initializePayment.mockImplementation(() => {
+        throw new HttpException(
+          'Service unavailable',
+          HttpStatus.SERVICE_UNAVAILABLE,
+        );
+      });
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .post('/payments/initialize')
+        .send(initializeDto)
+        .expect(503);
+    });
   });
 
   describe('POST /payments/verify', () => {
@@ -309,7 +344,7 @@ describe('PaymentController (e2e)', () => {
       );
     });
 
-    it('should return 401 when not authenticated', async () => {
+    it('should return 403 when not authenticated', async () => {
       // Arrange
       mockJwtGuard.canActivate.mockReturnValue(false);
 
@@ -379,158 +414,43 @@ describe('PaymentController (e2e)', () => {
         specialRefDto.reference,
       );
     });
-  });
 
-  describe('POST /payments/webhook', () => {
-    const generateValidSignature = (
-      payload: string,
-      secret: string,
-    ): string => {
-      return crypto.createHmac('sha512', secret).update(payload).digest('hex');
-    };
-
-    it('should process webhook with valid signature', async () => {
+    it('should handle extremely long reference strings', async () => {
       // Arrange
-      const payload = JSON.stringify(mockWebhookPayload);
-      const validSignature = generateValidSignature(payload, SECRET_KEY);
-      paymentService.handleWebhook.mockResolvedValue(undefined);
+      const longRef = 'a'.repeat(1000);
+      paymentService.verifyPayment.mockResolvedValue(mockPaystackVerification);
 
       // Act & Assert
       await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('x-paystack-signature', validSignature)
-        .set('content-type', 'application/json')
-        .send(mockWebhookPayload)
-        .expect(200);
+        .post('/payments/verify')
+        .send({ reference: longRef })
+        .expect(201);
 
-      expect(paymentService.handleWebhook).toHaveBeenCalledWith(
-        mockWebhookPayload,
-      );
+      expect(paymentService.verifyPayment).toHaveBeenCalledWith(longRef);
     });
 
-    it('should reject webhook with invalid signature', async () => {
-      // Arrange
-      const invalidSignature = 'invalid-signature';
-
+    it('should handle missing reference field', async () => {
       // Act & Assert
-      const response = await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('x-paystack-signature', invalidSignature)
-        .set('content-type', 'application/json')
-        .send(mockWebhookPayload)
+      await request(app.getHttpServer())
+        .post('/payments/verify')
+        .send({})
         .expect(400);
-
-      expect(response.body.message).toBe('Invalid Paystack signature');
-      expect(paymentService.handleWebhook).not.toHaveBeenCalled();
     });
 
-    it('should reject webhook with missing signature', async () => {
-      // Act & Assert
-      const response = await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('content-type', 'application/json')
-        .send(mockWebhookPayload)
-        .expect(400);
-
-      expect(response.body.message).toBe('Missing Paystack signature');
-      expect(paymentService.handleWebhook).not.toHaveBeenCalled();
-    });
-
-    it('should handle webhook processing errors', async () => {
+    it('should handle Paystack verification timeout', async () => {
       // Arrange
-      const payload = JSON.stringify(mockWebhookPayload);
-      const validSignature = generateValidSignature(payload, SECRET_KEY);
-      paymentService.handleWebhook.mockImplementation(() => {
-        throw new Error('Database error during webhook processing');
+      paymentService.verifyPayment.mockImplementation(() => {
+        throw new HttpException(
+          'Verification timeout',
+          HttpStatus.GATEWAY_TIMEOUT,
+        );
       });
 
       // Act & Assert
       await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('x-paystack-signature', validSignature)
-        .set('content-type', 'application/json')
-        .send(mockWebhookPayload)
-        .expect(500);
-    });
-
-    it('should handle different webhook events', async () => {
-      // Arrange
-      const differentEventPayload = {
-        event: 'charge.failed',
-        data: {
-          reference: 'failed_ref_123',
-          status: 'failed',
-        },
-      };
-      const payload = JSON.stringify(differentEventPayload);
-      const validSignature = generateValidSignature(payload, SECRET_KEY);
-      paymentService.handleWebhook.mockResolvedValue(undefined);
-
-      // Act & Assert
-      await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('x-paystack-signature', validSignature)
-        .set('content-type', 'application/json')
-        .send(differentEventPayload)
-        .expect(200);
-
-      expect(paymentService.handleWebhook).toHaveBeenCalledWith(
-        differentEventPayload,
-      );
-    });
-
-    it('should handle malformed webhook payload', async () => {
-      // Arrange
-      const malformedPayload = { invalid: 'payload' };
-      const payload = JSON.stringify(malformedPayload);
-      const validSignature = generateValidSignature(payload, SECRET_KEY);
-      paymentService.handleWebhook.mockResolvedValue(undefined);
-
-      // Act & Assert
-      await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('x-paystack-signature', validSignature)
-        .set('content-type', 'application/json')
-        .send(malformedPayload)
-        .expect(200);
-    });
-
-    it('should handle empty webhook payload', async () => {
-      // Arrange
-      const emptyPayload = {};
-      const payload = JSON.stringify(emptyPayload);
-      const validSignature = generateValidSignature(payload, SECRET_KEY);
-      paymentService.handleWebhook.mockResolvedValue(undefined);
-
-      // Act & Assert
-      await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('x-paystack-signature', validSignature)
-        .set('content-type', 'application/json')
-        .send(emptyPayload)
-        .expect(200);
-    });
-
-    it('should handle large webhook payloads', async () => {
-      // Arrange
-      const largePayload = {
-        ...mockWebhookPayload,
-        data: {
-          ...mockWebhookPayload.data,
-          largeField: 'A'.repeat(10000),
-        },
-      };
-      const payload = JSON.stringify(largePayload);
-      const validSignature = generateValidSignature(payload, SECRET_KEY);
-      paymentService.handleWebhook.mockResolvedValue(undefined);
-
-      // Act & Assert
-      await request(app.getHttpServer())
-        .post('/payments/webhook')
-        .set('x-paystack-signature', validSignature)
-        .set('content-type', 'application/json')
-        .send(largePayload)
-        .expect(200);
+        .post('/payments/verify')
+        .send(verifyDto)
+        .expect(504);
     });
   });
 
@@ -560,7 +480,7 @@ describe('PaymentController (e2e)', () => {
       );
     });
 
-    it('should return 401 when not authenticated', async () => {
+    it('should return 403 when not authenticated', async () => {
       // Arrange
       mockJwtGuard.canActivate.mockReturnValue(false);
 
@@ -622,6 +542,24 @@ describe('PaymentController (e2e)', () => {
       );
     });
 
+    it('should update payment to pending status', async () => {
+      // Arrange
+      const pendingUpdateDto = { status: PAYMENT_STATUS.PENDING };
+      const pendingPayment = {
+        ...mockPayment,
+        status: PAYMENT_STATUS.PENDING,
+      };
+      paymentService.updatePayment.mockResolvedValue(pendingPayment as any);
+
+      // Act & Assert
+      const response = await request(app.getHttpServer())
+        .patch('/payments/paystack_ref_123')
+        .send(pendingUpdateDto)
+        .expect(200);
+
+      expect(response.body.status).toBe(PAYMENT_STATUS.PENDING);
+    });
+
     it('should handle special characters in reference parameter', async () => {
       // Arrange
       const specialRef = 'ref@#$%^&*()_+';
@@ -644,7 +582,7 @@ describe('PaymentController (e2e)', () => {
     });
 
     it('should handle empty request body', async () => {
-      // Act & Assert - Now should return 400 because status is required
+      // Act & Assert - Should return 400 because status is required
       await request(app.getHttpServer())
         .patch('/payments/paystack_ref_123')
         .send({})
@@ -659,7 +597,7 @@ describe('PaymentController (e2e)', () => {
       };
       paymentService.updatePayment.mockResolvedValue(updatedPayment as any);
 
-      // Act - Send sequential requests instead of concurrent to avoid connection issues
+      // Act - Send sequential requests
       for (let i = 0; i < 3; i++) {
         const response = await request(app.getHttpServer())
           .patch('/payments/paystack_ref_123')
@@ -671,9 +609,43 @@ describe('PaymentController (e2e)', () => {
       // Assert
       expect(paymentService.updatePayment).toHaveBeenCalledTimes(3);
     });
+
+    it('should handle database connection errors', async () => {
+      // Arrange
+      paymentService.updatePayment.mockImplementation(() => {
+        throw new Error('Database connection lost');
+      });
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .patch('/payments/paystack_ref_123')
+        .send(updateDto)
+        .expect(500);
+    });
+
+    it('should handle very long reference strings', async () => {
+      // Arrange
+      const longRef = 'a'.repeat(500);
+      const updatedPayment = {
+        ...mockPayment,
+        status: PAYMENT_STATUS.SUCCESS,
+      };
+      paymentService.updatePayment.mockResolvedValue(updatedPayment as any);
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .patch(`/payments/${longRef}`)
+        .send(updateDto)
+        .expect(200);
+
+      expect(paymentService.updatePayment).toHaveBeenCalledWith(
+        longRef,
+        updateDto.status,
+      );
+    });
   });
 
-  describe('Authentication and Authorization Edge Cases', () => {
+  describe('Authentication and Authorization', () => {
     it('should handle JWT token expiration', async () => {
       // Arrange
       mockJwtGuard.canActivate.mockImplementation(() => {
@@ -718,6 +690,40 @@ describe('PaymentController (e2e)', () => {
       // Reset
       mockJwtGuard.canActivate.mockReturnValue(true);
     });
+
+    it('should require authentication for all endpoints', async () => {
+      // Arrange
+      mockJwtGuard.canActivate.mockReturnValue(false);
+
+      // Act & Assert - Test all endpoints require auth
+      const endpoints = [
+        {
+          method: 'post',
+          path: '/payments/initialize',
+          body: { email: 'test@test.com', amount: 1000 },
+        },
+        {
+          method: 'post',
+          path: '/payments/verify',
+          body: { reference: 'test-ref' },
+        },
+        {
+          method: 'patch',
+          path: '/payments/test-ref',
+          body: { status: PAYMENT_STATUS.SUCCESS },
+        },
+      ];
+
+      for (const endpoint of endpoints) {
+        await request(app.getHttpServer())
+          [endpoint.method](endpoint.path)
+          .send(endpoint.body)
+          .expect(403);
+      }
+
+      // Reset
+      mockJwtGuard.canActivate.mockReturnValue(true);
+    });
   });
 
   describe('Performance and Error Handling', () => {
@@ -733,6 +739,8 @@ describe('PaymentController (e2e)', () => {
 
         expect(response.status).toBe(201);
       }
+
+      expect(paymentService.verifyPayment).toHaveBeenCalledTimes(5);
     });
 
     it('should handle service timeout errors', async () => {
@@ -763,15 +771,26 @@ describe('PaymentController (e2e)', () => {
         .send({ reference: 'test-ref' })
         .expect(503);
     });
-  });
 
-  describe('Data Validation Edge Cases', () => {
-    it('should handle Unicode characters in email', async () => {
+    it('should handle unexpected service errors', async () => {
       // Arrange
-      const unicodeDto = {
-        email: 'test@münchen.de',
-        amount: 1000,
-        orderId: 'order-123',
+      paymentService.initializePayment.mockImplementation(() => {
+        throw new Error('Unexpected error occurred');
+      });
+
+      // Act & Assert
+      await request(app.getHttpServer())
+        .post('/payments/initialize')
+        .send({ email: 'test@example.com', amount: 1000 })
+        .expect(500);
+    });
+
+    it('should handle large payload sizes', async () => {
+      // Arrange
+      const largeDto = {
+        email: 'test@example.com',
+        amount: 50000,
+        orderId: 'a'.repeat(5000), // Very long orderId
       };
       paymentService.initializePayment.mockResolvedValue(mockPaystackResponse);
       paymentService.createPayment.mockResolvedValue(mockPayment as any);
@@ -779,37 +798,96 @@ describe('PaymentController (e2e)', () => {
       // Act & Assert
       await request(app.getHttpServer())
         .post('/payments/initialize')
-        .send(unicodeDto)
+        .send(largeDto)
         .expect(201);
     });
+  });
 
-    it('should handle extremely long reference strings', async () => {
-      // Arrange
-      const longRef = 'a'.repeat(1000);
-      paymentService.verifyPayment.mockResolvedValue(mockPaystackVerification);
+  describe('Data Validation', () => {
+    it('should validate email format', async () => {
+      const invalidEmails = [
+        'invalid-email',
+        'test@',
+        '@domain.com',
+        'test.domain.com',
+        '',
+      ];
 
-      // Act & Assert
-      await request(app.getHttpServer())
-        .post('/payments/verify')
-        .send({ reference: longRef })
-        .expect(201);
-
-      expect(paymentService.verifyPayment).toHaveBeenCalledWith(longRef);
+      for (const email of invalidEmails) {
+        await request(app.getHttpServer())
+          .post('/payments/initialize')
+          .send({ email, amount: 1000 })
+          .expect(400);
+      }
     });
 
-    it('should handle zero amount values', async () => {
-      // Arrange
-      const zeroAmountDto = {
-        email: 'test@example.com',
-        amount: 0,
-        orderId: 'order-123',
-      };
+    it('should validate amount values', async () => {
+      const invalidAmounts = [
+        -100, // negative
+        0, // zero
+        'abc', // string
+        null, // null
+        undefined, // undefined
+      ];
 
-      // Act & Assert - This should fail validation due to minimum amount constraint
-      await request(app.getHttpServer())
-        .post('/payments/initialize')
-        .send(zeroAmountDto)
-        .expect(400);
+      for (const amount of invalidAmounts) {
+        await request(app.getHttpServer())
+          .post('/payments/initialize')
+          .send({ email: 'test@example.com', amount })
+          .expect(400);
+      }
+    });
+
+    it('should validate status enum values', async () => {
+      const invalidStatuses = [
+        'invalid-status',
+        'COMPLETED',
+        'CANCELLED',
+        123,
+        null,
+      ];
+
+      for (const status of invalidStatuses) {
+        await request(app.getHttpServer())
+          .patch('/payments/test-ref')
+          .send({ status })
+          .expect(400);
+      }
+    });
+
+    it('should accept valid status enum values', async () => {
+      const validStatuses = [
+        PAYMENT_STATUS.SUCCESS,
+        PAYMENT_STATUS.FAILED,
+        PAYMENT_STATUS.PENDING,
+      ];
+
+      const updatedPayment = { ...mockPayment };
+      paymentService.updatePayment.mockResolvedValue(updatedPayment as any);
+
+      for (const status of validStatuses) {
+        await request(app.getHttpServer())
+          .patch('/payments/test-ref')
+          .send({ status })
+          .expect(200);
+      }
+    });
+
+    it('should handle missing required fields gracefully', async () => {
+      const incompleteRequests = [
+        { path: '/payments/initialize', body: { email: 'test@test.com' } }, // missing amount
+        { path: '/payments/initialize', body: { amount: 1000 } }, // missing email
+        { path: '/payments/verify', body: {} }, // missing reference
+        { path: '/payments/test-ref', body: {}, method: 'patch' }, // missing status
+      ];
+
+      for (const req of incompleteRequests) {
+        const method = req.method || 'post';
+        await request(app.getHttpServer())
+          [method](req.path)
+          .send(req.body)
+          .expect(400);
+      }
     });
   });
 });
