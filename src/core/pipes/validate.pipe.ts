@@ -6,6 +6,9 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
+// Define a constructor type for better readability
+type Constructor = new (...args: any[]) => any;
+
 export class ValidateInputPipe implements PipeTransform {
   async transform(value: any, { metatype }: ArgumentMetadata) {
     if (!metatype || !this.toValidate(metatype)) {
@@ -26,8 +29,8 @@ export class ValidateInputPipe implements PipeTransform {
     return value;
   }
 
-  private toValidate(metatype: Function): boolean {
-    const types: Function[] = [String, Boolean, Number, Array, Object];
+  private toValidate(metatype: Constructor): boolean {
+    const types: Constructor[] = [String, Boolean, Number, Array, Object];
     return !types.includes(metatype);
   }
 }

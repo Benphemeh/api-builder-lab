@@ -27,7 +27,7 @@ export class JwtGuard implements CanActivate {
       // Map `sub` to `id` for consistency
       request.user = { ...user, id: user.sub };
       return true;
-    } catch (_error) {
+    } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

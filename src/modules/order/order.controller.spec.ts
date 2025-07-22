@@ -11,8 +11,6 @@ import { CartToOrderDto } from '../cart/dto/card.dto';
 
 describe('OrderController (e2e)', () => {
   let app: INestApplication;
-  // let orderService: OrderService;
-  // let cacheService: CacheService;
 
   const validUUID = '123e4567-e89b-12d3-a456-426614174000';
 
@@ -93,9 +91,6 @@ describe('OrderController (e2e)', () => {
     );
 
     await app.init();
-
-    // orderService = module.get<OrderService>(OrderService);
-    // cacheService = module.get<CacheService>(CacheService);
 
     jest.clearAllMocks();
 
