@@ -175,7 +175,7 @@ describe('PaymentController (e2e)', () => {
         .expect(201);
 
       expect(paymentService.createPayment).toHaveBeenCalledWith({
-        orderId: null, // Should be null, not undefined
+        orderId: null,
         reference: mockPaystackResponse.data.reference,
         status: PAYMENT_STATUS.PENDING,
         amount: dtoWithoutOrderId.amount,
