@@ -169,13 +169,13 @@ describe('PaymentController (e2e)', () => {
       paymentService.createPayment.mockResolvedValue(mockPayment as any);
 
       // Act & Assert
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .post('/payments/initialize')
         .send(dtoWithoutOrderId)
         .expect(201);
 
       expect(paymentService.createPayment).toHaveBeenCalledWith({
-        orderId: null,
+        orderId: null, // Should be null, not undefined
         reference: mockPaystackResponse.data.reference,
         status: PAYMENT_STATUS.PENDING,
         amount: dtoWithoutOrderId.amount,
