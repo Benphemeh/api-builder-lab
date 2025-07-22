@@ -169,7 +169,7 @@ describe('PaymentController (e2e)', () => {
       paymentService.createPayment.mockResolvedValue(mockPayment as any);
 
       // Act & Assert
-      const response = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .post('/payments/initialize')
         .send(dtoWithoutOrderId)
         .expect(201);

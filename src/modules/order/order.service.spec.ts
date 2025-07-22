@@ -697,7 +697,7 @@ describe('OrderService', () => {
       mailService.sendOrderCreationEmail.mockResolvedValue(undefined);
 
       // Act
-      const result = await service.createOrder(
+      await service.createOrder(
         'user-123',
         multipleProducts,
         '123 Farm Lane, Lagos, Nigeria',

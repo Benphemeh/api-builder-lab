@@ -21,7 +21,7 @@ describe('ProductController', () => {
   };
 
   const mockCacheService = {
-    getOrSet: jest.fn((key, callback, ttl) => callback()),
+    getOrSet: jest.fn((key, callback) => callback()),
   };
 
   const mockJwtGuard = {

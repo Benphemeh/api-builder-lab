@@ -729,9 +729,7 @@ describe('PaymentService', () => {
       for (const payload of malformedPayloads) {
         try {
           await service.handleWebhook(payload);
-        } catch (error) {
-          // Expected for some malformed payloads
-        }
+        } catch {}
       }
     });
   });
