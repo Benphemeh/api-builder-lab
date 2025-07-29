@@ -92,9 +92,7 @@ export class AuthService implements OnModuleInit {
     const pass = await this.hashPassword(user.password);
 
     const newUser = await this.userService.create({ ...user, password: pass });
-
     const { ...result } = newUser['dataValues'];
-
     const token = await this.generateToken(result);
 
     // send confirmation email
