@@ -6,7 +6,6 @@ import {
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 
-// Define a constructor type for better readability
 type Constructor = new (...args: any[]) => any;
 
 export class ValidateInputPipe implements PipeTransform {
