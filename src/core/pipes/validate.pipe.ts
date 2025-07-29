@@ -16,7 +16,6 @@ export class ValidateInputPipe implements PipeTransform {
     const object = plainToInstance(metatype, value);
     const errors = await validate(object);
 
-    // Ensure errors is an array
     if (Array.isArray(errors) && errors.length > 0) {
       const messages = errors.map(
         (err) =>
