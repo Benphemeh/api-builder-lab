@@ -504,17 +504,18 @@ with real evidence.
 
 ## 17. Licence and usage
 
-**This needs your decision before any public release.** There is currently no
-`LICENSE` file in the repository, and `package.json` declares the package as
-`"private": true` with `"license": "UNLICENSED"`. That means the public
-currently has no permission to reuse this code.
+API Builder Lab is licensed under the [MIT License](LICENSE).
 
-- Do not treat the absence of a licence file as permission to share or reuse.
-- If you intend to make this repository public for learning purposes, choose
-  and add an explicit licence (for example MIT for permissive reuse, or a more
-  restrictive licence if you want to limit reuse) and update `package.json`
-  to match.
-- This task does not change the licence, the `private` flag, or the
-  repository's visibility. The repository remains private unless you
-  explicitly decide otherwise through your own release process.
+The MIT Licence permits use, modification, distribution, and reuse of the
+software, subject to the terms in the licence file — including keeping the
+copyright and permission notices in copies or substantial portions of the
+software. See [MIT License](LICENSE) for the full terms.
+
+Note: the licence applies to this repository's own code. It does not change
+the licences of third-party dependencies or services, which remain under
+their own terms.
+
+If you notice that `package.json` metadata (such as the licence field) does
+not yet match the `LICENSE` file, that is a known follow-up for the
+repository owner to align — the `LICENSE` file is authoritative.
 
